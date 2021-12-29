@@ -1,4 +1,6 @@
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "array.h"
 
 double
@@ -27,9 +29,24 @@ vec_min(struct vec *v)
     return min;
 }
 
-struct vec
-vec_fread(FILE *file, char *format)
+double
+vec_sum(struct vec *v)
 {
-    return NULL;
+    // TODO
+    return 0;
+}
+
+struct vec
+vec_read(FILE *file, char *format)
+{
+    // TODO
+    struct vec v;
+    return v;
+}
+
+void
+vec_write(FILE *file, struct vec *v)
+{
+    // TODO
 }
 

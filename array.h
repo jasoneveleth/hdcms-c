@@ -1,6 +1,14 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 #include <stdlib.h>
+#include <stdio.h>
+
+struct array
+{
+    size_t length;
+    size_t elewidth;
+    void *data;
+};
 
 struct vec
 {
@@ -21,5 +29,7 @@ struct matrix
 
 double vec_max(struct vec *v);
 double vec_min(struct vec *v);
+double vec_sum(struct vec *v);
+struct vec vec_fread(FILE *file, char *format);
 
 #endif // ARRAY_H
