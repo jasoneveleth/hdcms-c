@@ -50,3 +50,14 @@ vec_write(FILE *file, struct vec *v)
     // TODO
 }
 
+double
+vec_get(struct vec v, size_t i)
+{
+    return v.data[v.stride * i];
+}
+
+void
+vec_set(struct vec v, size_t i, double a)
+{
+    v.data[v.stride * i] = a;
+}
