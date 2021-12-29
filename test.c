@@ -17,7 +17,7 @@ int main()
     for (size_t i = 0; i < len; i++) {
         int ret = tests[i]();
         if (ret) {
-            printf(RED " ERROR" RESET "\n");
+            printf(RED " FAILED" RESET "\n");
         } else {
             printf(GREEN " OK" RESET "\n");
         }
