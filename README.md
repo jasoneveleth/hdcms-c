@@ -16,3 +16,8 @@ helpers:
 5 matrices of spectra, number of peaks -> n matrices s.t. ith matrix is 5
 pts assoc. with ith largest peak
 
+
+### Questions:
+
+* How does integration work for `<f1,f2>/(|f1| |f2|)`
+* Why do we add 1e-4 to all std?
