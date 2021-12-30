@@ -24,11 +24,11 @@ TEST := test/run_test
 
 all: $(TARGET) $(TEST)
 
-run:
-	$(TARGET)
+run: $(TARGET)
+	$^
 
-test:
-	$(TEST)
+test: $(TEST)
+	$^
 
 clean:
 	rm -f $(OBJ) $(TEST_OBJ) $(TARGET) $(TEST)
@@ -41,7 +41,7 @@ clean:
 $(OUTPUTDIR):
 	@mkdir -p $@
 
-$(TEST): $(filter_out main.o,OBJ) $(TEST_OBJ)
+$(TEST): $(filter-out src/main.o,$(OBJ)) $(TEST_OBJ)
 	gcc $(FLAGS) $^ -o $@
 
 $(TARGET): $(OBJ) | $(OUTPUTDIR)
