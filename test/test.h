@@ -1,6 +1,6 @@
 #ifndef TEST_H
 #define TEST_H
-#include "array.h"
+#include "../src/array.h"
 
 typedef int (*testfunc)();
 

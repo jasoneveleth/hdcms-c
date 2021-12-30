@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "test.h"
-#include "main.h"
+#include "../src/main.h"
 
 int
 simple() {
