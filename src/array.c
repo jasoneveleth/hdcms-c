@@ -5,11 +5,11 @@
 #include "array.h"
 
 double
-vec_max(struct vec *v)
+vec_max(const struct vec v)
 {
     double max = -INFINITY;
-    for (size_t i = 0; i < v->length; i++) {
-        double ith = v->data[i * v->stride];
+    for (size_t i = 0; i < v.length; i++) {
+        double ith = v.data[i * v.stride];
         if (ith > max) {
             max = ith;
         }
@@ -18,11 +18,11 @@ vec_max(struct vec *v)
 }
 
 double
-vec_min(struct vec *v)
+vec_min(const struct vec v)
 {
     double min = INFINITY;
-    for (size_t i = 0; i < v->length; i++) {
-        double ith = v->data[i * v->stride];
+    for (size_t i = 0; i < v.length; i++) {
+        double ith = v.data[i * v.stride];
         if (ith < min) {
             min = ith;
         }
@@ -32,7 +32,7 @@ vec_min(struct vec *v)
 
 /* kahan summation */
 double
-vec_sum(struct vec v)
+vec_sum(const struct vec v)
 {
     double sum = 0;
     double old_low_bits = 0;
@@ -57,7 +57,7 @@ vec_from_data(double *data, size_t len)
 }
 
 void
-vec_printf(char *format, struct vec v)
+vec_printf(const char *const format, const struct vec v)
 {
     for (size_t i = 0; i < v.length; i++) {
         printf(format, vec_get(v, i));
@@ -74,7 +74,7 @@ vec_scale(struct vec v, const double c)
 }
 
 struct vec
-vec_read(FILE *file, char *format)
+vec_read(FILE *file, const char *const format)
 {
     // TODO
     struct vec v;
@@ -82,13 +82,13 @@ vec_read(FILE *file, char *format)
 }
 
 void
-vec_write(FILE *file, struct vec *v)
+vec_write(FILE *file, const struct vec v)
 {
     // TODO
 }
 
 double
-vec_get(struct vec v, size_t i)
+vec_get(const struct vec v, size_t i)
 {
     return v.data[v.stride * i];
 }

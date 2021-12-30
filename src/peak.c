@@ -3,26 +3,26 @@
 #include "peak.h"
 
 bool
-equals(double a, double b)
+equals(const double a, const double b)
 {
     double ratio = a / b;
     return fabs(ratio - 1) < TOLRAT;
 }
 
 size_t
-min2(size_t x, size_t y) 
+min2(const size_t x, const size_t y) 
 {
     return x < y ? x : y;
 }
 
 size_t
-min3(size_t x, size_t y, size_t z) 
+min3(const size_t x, const size_t y, const size_t z) 
 {
     return min2(min2(x, y), z);
 }
 
 double
-peak_sim_measure_L2(struct array m1, struct array m2, size_t n) 
+peak_sim_measure_L2(const struct array m1, const struct array m2, size_t n) 
 {
     // 2 4xn matrices (output of `peak_stat`), number of peaks -> similarity of them btwn
     // 0 and 1
@@ -31,7 +31,7 @@ peak_sim_measure_L2(struct array m1, struct array m2, size_t n)
 }
 
 struct matrix
-peak_stat(struct array matrices) 
+peak_stat(const struct array matrices) 
 {
     // 5 matrices of spectra, and number of peaks -> nx4 matrix of peaks
     // TODO
@@ -40,7 +40,7 @@ peak_stat(struct array matrices)
 }
 
 double
-cos_sim_L2(struct vec u, struct vec v)
+cos_sim_L2(const struct vec u, const struct vec v)
 {
     // add 1e-4 to all std
     double v0 = vec_get(v, 0),        v1 = vec_get(v, 1),
@@ -56,7 +56,7 @@ cos_sim_L2(struct vec u, struct vec v)
 }
 
 struct array
-peak_sort(struct array matrices, size_t n)
+peak_sort(const struct array matrices, size_t n)
 {
     // 5 matrices of spectra, number of peaks -> n matrices s.t. ith matrix is 5
     // pts assoc. with ith largest peak

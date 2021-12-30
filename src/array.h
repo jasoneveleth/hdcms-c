@@ -27,15 +27,15 @@ struct matrix
     int is_owner;
 };
 
-double vec_max(struct vec *v);
-double vec_min(struct vec *v);
-double vec_sum(struct vec v);
-struct vec vec_fread(FILE *file, char *format);
-void vec_write(FILE *file, struct vec *v);
-double vec_get(struct vec v, size_t i);
+double vec_max(const struct vec v);
+double vec_min(const struct vec v);
+double vec_sum(const struct vec v);
+struct vec vec_fread(FILE *file, const char *const format);
+void vec_write(FILE *file, const struct vec v);
+double vec_get(const struct vec v, size_t i);
 void vec_set(struct vec v, size_t i, double a);
 struct vec vec_from_data(double *data, size_t len);
-void vec_printf(char *format, struct vec v);
+void vec_printf(const char *const format, const struct vec v);
 void vec_scale(struct vec v, const double c);
 
 

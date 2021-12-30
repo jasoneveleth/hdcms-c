@@ -77,6 +77,8 @@ simple()
 
 int main() 
 {
+    int ret = EXIT_SUCCESS;
+    puts("================");
     testfunc tests[] = {simple, test_cos_sim_L2, test_cos_sim_3rd_highest_of_12_11_30V, test_cos_sim_11th_highest_of_12_11_30V};
     const size_t len = sizeof(tests)/sizeof(tests[0]);
     for (size_t i = 0; i < len; i++) {
@@ -85,9 +87,10 @@ int main()
             printf(GREEN " OK" RESET "\n");
         } else {
             printf(RED " FAILED" RESET "\n");
+            ret = EXIT_FAILURE;
         }
     }
-
-    return 0;
+    puts("================");
+    return ret;
 }
 

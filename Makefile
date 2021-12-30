@@ -1,12 +1,6 @@
 CC = gcc
 FlAGS = -Wall -Wextra
 FLAGS += -std=c11 -Werror
-FLAGS += -Wno-error=unused-parameter 
-FLAGS += -Wno-error=unused-variable 
-FLAGS += -Wno-error=unused-function
-FLAGS += -Wno-error=double-promotion
-FLAGS += -Wno-reserved-id-macro
-FLAGS += -Wno-format-nonliteral
 FLAGS += -g -O2 -march=native
 LINKER = -lm
 
