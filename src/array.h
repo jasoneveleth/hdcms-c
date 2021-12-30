@@ -29,7 +29,7 @@ struct matrix
 
 double vec_max(struct vec *v);
 double vec_min(struct vec *v);
-double vec_sum(struct vec *v);
+double vec_sum(struct vec v);
 struct vec vec_fread(FILE *file, char *format);
 void vec_write(FILE *file, struct vec *v);
 double vec_get(struct vec v, size_t i);

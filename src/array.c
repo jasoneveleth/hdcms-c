@@ -30,11 +30,19 @@ vec_min(struct vec *v)
     return min;
 }
 
+/* kahan summation */
 double
-vec_sum(struct vec *v)
+vec_sum(struct vec v)
 {
-    // TODO
-    return 0;
+    double sum = 0;
+    double old_low_bits = 0;
+    for (size_t i = 0; i < v.length; i++) {
+        double y = vec_get(v, i) - old_low_bits; // = high - low - oldlow = newhigh - newlow
+        double t = sum + y;                      // = sum + newhigh
+        old_low_bits = (t - sum) - y;            // = (newhigh) - (newhigh - newlow)
+        sum = t;
+    }
+    return sum;
 }
 
 struct vec
