@@ -57,6 +57,14 @@ vec_printf(char *format, struct vec v)
     printf("\n");
 }
 
+void
+vec_scale(struct vec v, const double c)
+{
+    for (size_t i = 0; i < v.length; i++) {
+        vec_set(v, i, vec_get(v, i) * c);
+    }
+}
+
 struct vec
 vec_read(FILE *file, char *format)
 {

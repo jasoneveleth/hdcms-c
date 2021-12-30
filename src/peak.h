@@ -3,6 +3,10 @@
 #include <stdbool.h>
 #include "array.h"
 
+#define E (2.718281828459045235360287471352)
+// tolerance ratio
+#define TOLRAT (0.0001)
+
 bool equals(double a, double b);
 size_t min2(size_t x, size_t y);
 size_t min3(size_t x, size_t y, size_t z);

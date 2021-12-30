@@ -36,6 +36,7 @@ double vec_get(struct vec v, size_t i);
 void vec_set(struct vec v, size_t i, double a);
 struct vec vec_from_data(double *data, size_t len);
 void vec_printf(char *format, struct vec v);
+void vec_scale(struct vec v, const double c);
 
 
 #endif // ARRAY_H
