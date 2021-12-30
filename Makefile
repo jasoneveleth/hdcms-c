@@ -1,16 +1,49 @@
-# .PHONY all run
+CC = gcc
+FlAGS = -Wall -Wextra
+FLAGS += -std=c11 -Werror
+FLAGS += -Wno-error=unused-parameter 
+FLAGS += -Wno-error=unused-variable 
+FLAGS += -Wno-error=unused-function
+FLAGS += -Wno-error=double-promotion
+FLAGS += -Wno-reserved-id-macro
+FLAGS += -Wno-format-nonliteral
+FLAGS += -g -O2 -march=native
+LINKER = -lm
 
-all: run_test run
+TEST_SRC := $(wildcard test/*.c)
+TEST_OBJ := $(TEST_SRC:.c=.o)
 
-test: test.c test.h array.h array.c
-	gcc -Wall test.c -o test
+SRC := $(wildcard src/*.c)
+OBJ := $(SRC:.c=.o)
 
-run_test: test
-	./test
+OUTPUTDIR := target
+TARGET := $(OUTPUTDIR)/pmcs
+TEST := test/run_test 
 
-main: main.c
-	gcc -Wall main.c -o main
+.PHONY: all run test clean
 
-run: main
-	./main
+all: $(TARGET) $(TEST)
+
+run:
+	$(TARGET)
+
+test:
+	$(TEST)
+
+clean:
+	rm -f $(OBJ) $(TEST_OBJ) $(TARGET) $(TEST)
+	rm -rf target
+
+%.o: %.c %.h
+	$(CC) $(FLAGS) -c $< -o $@
+
+# the leading '@' means don't echo the command
+$(OUTPUTDIR):
+	@mkdir -p $@
+
+$(TEST): $(filter_out main.o,OBJ) $(TEST_OBJ)
+	gcc $(FLAGS) $^ -o $@
+
+$(TARGET): $(OBJ) | $(OUTPUTDIR)
+	$(CC) $(FLAGS) $(LINKER) $^ -o $@
 
