@@ -34,6 +34,8 @@ struct vec vec_fread(FILE *file, char *format);
 void vec_write(FILE *file, struct vec *v);
 double vec_get(struct vec v, size_t i);
 void vec_set(struct vec v, size_t i, double a);
+struct vec vec_from_data(double *data, size_t len);
+void vec_printf(char *format, struct vec v);
 
 
 #endif // ARRAY_H
