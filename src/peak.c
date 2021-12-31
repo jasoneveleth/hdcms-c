@@ -22,7 +22,7 @@ min3(const size_t x, const size_t y, const size_t z)
 }
 
 double
-peak_sim_measure_L2(const struct array m1, const struct array m2, size_t n) 
+peak_sim_measure_L2(const struct matarray m1, const struct matarray m2, size_t n) 
 {
     // 2 4xn matrices (output of `peak_stat`), number of peaks -> similarity of them btwn
     // 0 and 1
@@ -31,7 +31,7 @@ peak_sim_measure_L2(const struct array m1, const struct array m2, size_t n)
 }
 
 struct matrix
-peak_stat(const struct array matrices) 
+peak_stat(const struct matarray matrices) 
 {
     // 5 matrices of spectra, and number of peaks -> nx4 matrix of peaks
     // TODO
@@ -55,13 +55,58 @@ cos_sim_L2(const struct vec u, const struct vec v)
     return a * exp(-0.5 * (bx + by));
 }
 
-struct array
-peak_sort(const struct array matrices, size_t n)
+struct matarray
+peak_sort(const struct matarray matrices, size_t n)
 {
     // 5 matrices of spectra, number of peaks -> n matrices s.t. ith matrix is 5
     // pts assoc. with ith largest peak
-    // TODO
-    struct array arr;
-    return arr;
+
+    // reset n
+    for (int i = 0; i < matrices.length; i++) {
+        n = min2(n, matarr_get(matrices, i).len1);
+    }
+
+    struct matarray P = matarr_zeros(n);
+    struct matarray matrices_copy = matarr_copy(matrices);
+    for (size_t i = 0; i < matrices.length; i++) {
+        // find largest point left in all replicates
+        double maxy = -INFINITY;
+        double maxx = 0;
+        for (size_t j = 0; j < matrices_copy.length; j++) {
+            struct matrix mj = matarr_get(matrices_copy, j);
+            struct vec ys = vec_from_col(mj, 1);
+            size_t argmax = vec_argmax(ys);
+            if (vec_get(ys, argmax) > maxy) {
+                maxx = mat_get(mj, argmax, 0);
+                maxy = mat_get(mj, argmax, 1);
+            }
+        }
+
+        // find points in replicates closest to p
+        struct matrix peak = mat_zeros(matrices_copy.length, 2);
+        for (size_t j = 0; j < matrices_copy.length; j++) {
+            struct matrix mj = matarr_get(matrices_copy, j);
+            double mindist = INFINITY;
+            
+            // get closest pt in mj matrix
+            size_t rowargmin = 0;
+            for (size_t row = 0; row < mj.len1; row++) {
+                double dx = maxx - mat_get(mj, row, 0);
+                double dy = maxy * mat_get(mj, row, 1);
+                double dist = dx*dx + dy*dy;
+                if (dist < mindist) {
+                    rowargmin = row;
+                }
+            }
+
+            // assign smallest point to peak mat
+            mat_set(peak, rowargmin, 0, mat_get(mj, rowargmin, 0));
+            mat_set(peak, rowargmin, 1, mat_get(mj, rowargmin, 1));
+        }
+
+        // make them a new matrix in P
+        matarr_set(P, i, peak);
+    }
+    return P;
 }
 

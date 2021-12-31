@@ -11,9 +11,9 @@ bool equals(const double a, const double b);
 size_t min2(const size_t x, const size_t y);
 size_t min3(const size_t x, const size_t y, const size_t z);
 
-double peak_sim_measure_L2(const struct array m1, const struct array m2, size_t n);
+double peak_sim_measure_L2(const struct matarray m1, const struct matarray m2, size_t n);
 double cos_sim_L2(const struct vec u, const struct vec v);
-struct array peak_sort(const struct array matrices, size_t n);
-struct matrix peak_stat(const struct array matrices);
+struct matarray peak_sort(const struct matarray matrices, size_t n);
+struct matrix peak_stat(const struct matarray matrices);
 
 #endif // PEAK_H
