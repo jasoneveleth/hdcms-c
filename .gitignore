@@ -1,2 +1,3 @@
 *.o
 target/
+test/run_test
