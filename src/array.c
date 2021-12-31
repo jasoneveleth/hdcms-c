@@ -9,7 +9,7 @@ vec_max(const struct vec v)
 {
     double max = -INFINITY;
     for (size_t i = 0; i < v.length; i++) {
-        double ith = v.data[i * v.stride];
+        double ith = vec_get(v, i);
         if (ith > max) {
             max = ith;
         }
@@ -17,12 +17,39 @@ vec_max(const struct vec v)
     return max;
 }
 
+void
+mat_set(struct matrix m, size_t i, size_t j, double x)
+{
+    m.data[i * m.physlen1 + j] = x;
+}
+
+struct matrix
+mat_zeros(size_t len1, size_t len2)
+{
+    return mat_from_data(calloc(len1 * len2, sizeof(double)), len1, len2, len1);
+}
+
+double
+vec_argmax(const struct vec v)
+{
+    double max = -INFINITY;
+    size_t argmax = 0;
+    for (size_t i = 0; i < v.length; i++) {
+        double ith = vec_get(v, i);
+        if (ith > max) {
+            max = ith;
+            argmax = i;
+        }
+    }
+    return argmax;
+}
+
 double
 vec_min(const struct vec v)
 {
     double min = INFINITY;
     for (size_t i = 0; i < v.length; i++) {
-        double ith = v.data[i * v.stride];
+        double ith = vec_get(v, i);
         if (ith < min) {
             min = ith;
         }
@@ -91,6 +118,86 @@ double
 vec_get(const struct vec v, size_t i)
 {
     return v.data[v.stride * i];
+}
+
+struct vec
+vec_zeros(size_t len)
+{
+    double *data = calloc(len, sizeof(double));
+    return vec_from_data(data, len);
+}
+
+double
+mat_get(const struct matrix m, size_t i, size_t j)
+{
+    return m.data[i * m.physlen1 + j];
+}
+
+struct matrix
+mat_from_data(double *data, size_t len1, size_t len2, size_t physlen1)
+{
+    struct matrix m;
+    m.is_owner = 1;
+    m.data = data;
+    m.len1 = len1;
+    m.len2 = len2;
+    m.physlen1 = physlen1;
+    return m;
+}
+
+struct matrix
+mat_copy(struct matrix m)
+{
+    double *newdata = malloc(m.len1 * m.len2 * sizeof(double));
+    for (size_t i = 0; i < m.len1; i++) {
+        for (size_t j = 0; j < m.len2; j++) {
+            newdata[i * m.len1 + j] = mat_get(m, i, j);
+        }
+    }
+    return mat_from_data(newdata, m.len1, m.len2, m.len1);
+}
+
+struct matarray
+matarr_copy(const struct matarray old)
+{
+    struct matarray new;
+    for (size_t i = 0; i < old.length; i++)
+    {
+        matarr_set(new, i, mat_copy(matarr_get(old, i)));
+    }
+    return new;
+}
+
+struct vec
+vec_from_col(struct matrix m, size_t col)
+{
+    struct vec v;
+    v.data = m.data + col;
+    v.is_owner = false;
+    v.length = m.len2;
+    v.stride = m.physlen1;
+    return v;
+}
+
+struct matarray
+matarr_zeros(size_t len)
+{
+    struct matarray arr;
+    arr.length = len;
+    arr.data = calloc(len, sizeof(struct matarray));
+    return arr;
+}
+
+void
+matarr_set(const struct matarray arr, size_t i, struct matrix m)
+{
+    arr.data[i] = m;
+}
+
+struct matrix
+matarr_get(const struct matarray arr, size_t i)
+{
+    return arr.data[i];
 }
 
 void

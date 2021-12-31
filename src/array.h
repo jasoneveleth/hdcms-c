@@ -3,11 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct array
+struct matarray
 {
     size_t length;
-    size_t elewidth;
-    void *data;
+    struct matrix *data;
 };
 
 struct vec
@@ -37,6 +36,17 @@ void vec_set(struct vec v, size_t i, double a);
 struct vec vec_from_data(double *data, size_t len);
 void vec_printf(const char *const format, const struct vec v);
 void vec_scale(struct vec v, const double c);
+struct matrix matarr_get(const struct matarray arr, size_t i);
+struct vec vec_zeros(size_t len);
+void matarr_set(const struct matarray arr, size_t i, struct matrix m);
+struct matarray matarr_copy(const struct matarray old);
+struct matarray matarr_zeros(size_t len);
+struct vec vec_from_col(struct matrix m, size_t col);
+double mat_get(const struct matrix m, size_t i, size_t j);
+double vec_argmax(const struct vec v);
+struct matrix mat_from_data(double *data, size_t len1, size_t len2, size_t physlen1);
+struct matrix mat_zeros(size_t len1, size_t len2);
+void mat_set(struct matrix m, const size_t i, const size_t j, const double x);
 
 
 #endif // ARRAY_H
