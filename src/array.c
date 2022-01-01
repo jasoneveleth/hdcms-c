@@ -163,7 +163,7 @@ mat_copy(struct matrix m)
             newdata[i * m.len2 + j] = mat_get(m, i, j);
         }
     }
-    return mat_from_data(newdata, m.len1, m.len2, m.len1);
+    return mat_from_data(newdata, m.len1, m.len2, m.len2);
 }
 
 struct matarray
