@@ -195,7 +195,7 @@ matarr_zeros(size_t len)
 {
     struct matarray arr;
     arr.length = len;
-    arr.data = calloc(len, sizeof(struct matarray));
+    arr.data = calloc(len, sizeof(struct matrix));
     return arr;
 }
 
