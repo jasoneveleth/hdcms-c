@@ -110,13 +110,13 @@ test_peak_sort_simple()
     bool b2 = mat_equal(peak2, matarr_get(ans, 2));
     bool b3 = mat_equal(peak3, matarr_get(ans, 3));
 
-    matarr_free(arr);
     mat_free(m1);
     mat_free(m2);
     mat_free(peak0);
     mat_free(peak1);
     mat_free(peak2);
     mat_free(peak3);
+    // no need to free arr because it's data is on the stack
     return b0 && b1 && b2 && b3;
 }
 
