@@ -12,6 +12,8 @@ test_cos_sim_L2()
     struct vec u = vec_from_data(udata, 4);
     struct vec v = vec_from_data(vdata, 4);
     double sim = cos_sim_L2(u, v);
+    vec_free(u);
+    vec_free(v);
     return equals(sim, 7.9235e-13);
 }
 
@@ -38,6 +40,8 @@ test_cos_sim_3rd_highest_of_12_11_30V()
     vec_scale(u, 1e2);
     vec_scale(v, 1e2);
     double sim1 = cos_sim_L2(u, v);
+    vec_free(u);
+    vec_free(v);
     return equals(sim1, 0.599328450629485);
 }
 
@@ -64,6 +68,8 @@ test_cos_sim_11th_highest_of_12_11_30V()
     vec_scale(u, 1e2);
     vec_scale(v, 1e2);
     double sim2 = cos_sim_L2(u, v);
+    vec_free(u);
+    vec_free(v);
     return equals(sim2, 0.734449667053694);
 }
 
@@ -103,6 +109,14 @@ test_peak_sort_simple()
     bool b1 = mat_equal(peak1, matarr_get(ans, 1));
     bool b2 = mat_equal(peak2, matarr_get(ans, 2));
     bool b3 = mat_equal(peak3, matarr_get(ans, 3));
+
+    matarr_free(arr);
+    mat_free(m1);
+    mat_free(m2);
+    mat_free(peak0);
+    mat_free(peak1);
+    mat_free(peak2);
+    mat_free(peak3);
     return b0 && b1 && b2 && b3;
 }
 

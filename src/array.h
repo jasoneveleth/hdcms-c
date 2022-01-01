@@ -52,6 +52,8 @@ struct matrix mat_from_data(double *data, size_t len1, size_t len2, size_t physl
 struct matrix mat_zeros(size_t len1, size_t len2);
 void mat_set(struct matrix m, const size_t i, const size_t j, const double x);
 struct matarray matarr_from_data(struct matrix *data, size_t len);
-
+void matarr_free(struct matarray arr);
+void mat_free(struct matrix m);
+void vec_free(struct vec v);
 
 #endif // ARRAY_H

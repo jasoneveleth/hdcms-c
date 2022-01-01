@@ -200,6 +200,26 @@ matarr_zeros(size_t len)
 }
 
 void
+matarr_free(struct matarray arr)
+{
+    free(arr.data);
+}
+
+void
+mat_free(struct matrix m)
+{
+    if (m.is_owner)
+        free(m.data);
+}
+
+void
+vec_free(struct vec v)
+{
+    if (v.is_owner)
+        free(v.data);
+}
+
+void
 matarr_set(const struct matarray arr, size_t i, struct matrix m)
 {
     arr.data[i] = m;
