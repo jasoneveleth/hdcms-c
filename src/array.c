@@ -198,11 +198,7 @@ vec_from_col(struct matrix m, size_t col)
 struct matarray
 matarr_zeros(size_t len)
 {
-    struct matarray arr;
-    arr.length = len;
-    arr.data = calloc(len, sizeof(struct matrix));
-    arr.is_owner = true;
-    return arr;
+    return matarr_from_data(calloc(len, sizeof(struct matrix)), len, true);
 }
 
 void
