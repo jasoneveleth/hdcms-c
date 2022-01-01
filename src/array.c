@@ -35,7 +35,7 @@ mat_set(struct matrix m, const size_t i, const size_t j, const double x)
 struct matrix
 mat_zeros(size_t len1, size_t len2)
 {
-    return mat_from_data(calloc(len1 * len2, sizeof(double)), len1, len2, len1);
+    return mat_from_data(calloc(len1 * len2, sizeof(double)), len1, len2, len2);
 }
 
 double

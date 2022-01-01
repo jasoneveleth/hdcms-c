@@ -110,9 +110,7 @@ peak_sort(const struct matarray matrices, size_t n)
             
             // get closest pt in mj matrix
             size_t rowargmin = 0;
-            printf("%zd %zd\n", mj.len1, mj.len2);
             for (size_t row = 0; row < mj.len1; row++) {
-                printf("%zd %d\n", row, 0);
                 double dx = maxx - mat_get(mj, row, 0);
                 double dy = maxy * mat_get(mj, row, 1);
                 double dist = dx*dx + dy*dy;
