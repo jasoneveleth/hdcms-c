@@ -131,6 +131,7 @@ peak_sort(const struct matarray matrices, size_t n)
         // make the next peak a new matrix in P
         matarr_set(P, i, peak);
     }
+    matarr_free(matrices_copy);
     return P;
 }
 

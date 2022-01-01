@@ -205,6 +205,9 @@ matarr_zeros(size_t len)
 void
 matarr_free(struct matarray arr)
 {
+    for (size_t i = 0; i < arr.length; i++) {
+        mat_free(matarr_get(arr, i));
+    }
     free(arr.data);
 }
 
