@@ -38,7 +38,7 @@ void vec_write(FILE *file, const struct vec v);
 double vec_get(const struct vec v, size_t i);
 void vec_set(struct vec v, size_t i, double a);
 struct vec vec_from_data(double *data, size_t len, int is_owner);
-void vec_printf(const char *const format, const struct vec v);
+void vec_printf(const struct vec v);
 void vec_scale(struct vec v, const double c);
 struct matrix matarr_get(const struct matarray arr, size_t i);
 struct vec vec_zeros(size_t len);
@@ -55,5 +55,7 @@ struct matarray matarr_from_data(struct matrix *data, size_t len);
 void matarr_free(struct matarray arr);
 void mat_free(struct matrix m);
 void vec_free(struct vec v);
+void mat_printf(const struct matrix m);
+void matarr_printf(const struct matarray arr);
 
 #endif // ARRAY_H

@@ -73,20 +73,36 @@ test_cos_sim_11th_highest_of_12_11_30V()
     return equals(sim2, 0.734449667053694);
 }
 
+bool
+test_argmax()
+{
+    printf("test_argmax");
+    double m2data[] = {83, 0.23,
+        92, 0.47,
+        79, 0.61,
+        110, 0.5};
+    struct matrix m = mat_from_data(m2data, 4, 2, 2, false);
+    struct vec ys = vec_from_col(m, 1);
+    size_t argmax = vec_argmax(ys);
+    double x = mat_get(m, argmax, 0);
+    double y = mat_get(m, argmax, 1);
+    mat_free(m);
+    return equals(y, 0.61);
+}
 
 bool
 test_peak_sort_simple()
 {
     printf("test_peak_sort_simple");
     size_t n = 20;
-    double m1data[] = {83, 0.23,
-                   92, 0.47,
-                   79, 0.61,
-                   110, 0.5};
-    double m2data[] = {72, 0.68,
-                   97, 0.43,
-                   89, 0.27,
-                   100, 0.1};
+    double m1data[] = {72, 0.68,
+        97, 0.43,
+        89, 0.27,
+        100, 0.1};
+    double m2data[] = {83, 0.23,
+        92, 0.47,
+        79, 0.61,
+        110, 0.5};
     struct matrix m1 = mat_from_data(m1data, 4, 2, 2, false);
     struct matrix m2 = mat_from_data(m2data, 4, 2, 2, false);
 
@@ -136,7 +152,8 @@ int main()
         test_cos_sim_L2,
         test_cos_sim_3rd_highest_of_12_11_30V,
         test_cos_sim_11th_highest_of_12_11_30V, 
-        test_peak_sort_simple
+        test_argmax,
+        test_peak_sort_simple,
     };
     const size_t len = sizeof(tests)/sizeof(tests[0]);
     for (size_t i = 0; i < len; i++) {

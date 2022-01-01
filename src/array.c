@@ -93,12 +93,15 @@ vec_from_data(double *data, size_t len, int is_owner)
 }
 
 void
-vec_printf(const char *const format, const struct vec v)
+vec_printf(const struct vec v)
 {
+    printf("[");
     for (size_t i = 0; i < v.length; i++) {
-        printf(format, vec_get(v, i));
+        printf("%6g", vec_get(v, i));
+        if (i != v.length - 1)
+            printf(", ");
     }
-    printf("\n");
+    printf("]\n");
 }
 
 void
@@ -185,7 +188,7 @@ vec_from_col(struct matrix m, size_t col)
     struct vec v;
     v.data = m.data + col;
     v.is_owner = false;
-    v.length = m.len2;
+    v.length = m.len1;
     v.stride = m.physlen;
     return v;
 }
@@ -203,6 +206,32 @@ void
 matarr_free(struct matarray arr)
 {
     free(arr.data);
+}
+
+void
+matarr_printf(const struct matarray arr)
+{
+    for (size_t j = 0; j < arr.length; j++) {
+        printf("%zd:\n", j);
+        mat_printf(matarr_get(arr, j));
+    }
+}
+
+void
+mat_printf(const struct matrix m)
+{
+    printf("[");
+    for (size_t i = 0; i < m.len1; i++) {
+        if (i != 0) printf(" ");
+        printf("[");
+        for (size_t j = 0; j < m.len2; j++) {
+            printf("%6g, ", mat_get(m, i, j));
+        }
+        printf("]");
+        if (i != m.len1 - 1) printf("\n");
+    }
+    printf("]");
+    printf("\n");
 }
 
 void
