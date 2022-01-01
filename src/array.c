@@ -170,6 +170,8 @@ struct matarray
 matarr_copy(const struct matarray old)
 {
     struct matarray new;
+    new.length = old.length;
+    new.data = calloc(old.length, sizeof(struct matrix));
     for (size_t i = 0; i < old.length; i++)
     {
         matarr_set(new, i, mat_copy(matarr_get(old, i)));
