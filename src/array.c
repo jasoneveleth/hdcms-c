@@ -17,8 +17,17 @@ vec_max(const struct vec v)
     return max;
 }
 
+struct matarray
+matarr_from_data(struct matrix *data, size_t len)
+{
+    struct matarray arr;
+    arr.length = len;
+    arr.data = data;
+    return arr;
+}
+
 void
-mat_set(struct matrix m, size_t i, size_t j, double x)
+mat_set(struct matrix m, const size_t i, const size_t j, const double x)
 {
     m.data[i * m.physlen1 + j] = x;
 }

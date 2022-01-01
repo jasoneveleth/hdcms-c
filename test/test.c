@@ -69,6 +69,43 @@ test_cos_sim_11th_highest_of_12_11_30V()
 
 
 bool
+test_peak_sort_simple()
+{
+    printf("test_peak_sort_simple");
+    size_t n = 20;
+    double m1data[] = {83, 0.23,
+                   92, 0.47,
+                   79, 0.61,
+                   110, 0.5};
+    double m2data[] = {72, 0.68,
+                   97, 0.43,
+                   89, 0.27,
+                   100, 0.1};
+    struct matrix m1 = mat_from_data(m1data, 4, 2, 2);
+    struct matrix m2 = mat_from_data(m2data, 4, 2, 2);
+
+    struct matrix adata[] = {m1, m2};
+    struct matarray arr = matarr_from_data(adata, 2);
+    struct matarray ans = peak_sort(arr, n);
+
+    // answer
+    double peak0data[] = {72, 0.68, 79, 0.61};
+    double peak1data[] = {100, 0.1, 110, 0.5};
+    double peak2data[] = {89, 0.27, 92, 0.47};
+    double peak3data[] = {97, 0.43, 83, 0.23};
+    struct matrix peak0 = mat_from_data(peak0data, 2, 2, 2);
+    struct matrix peak1 = mat_from_data(peak1data, 2, 2, 2);
+    struct matrix peak2 = mat_from_data(peak2data, 2, 2, 2);
+    struct matrix peak3 = mat_from_data(peak3data, 2, 2, 2);
+    bool b0 = mat_equal(peak0, matarr_get(ans, 0));
+    bool b1 = mat_equal(peak1, matarr_get(ans, 1));
+    bool b2 = mat_equal(peak2, matarr_get(ans, 2));
+    bool b3 = mat_equal(peak3, matarr_get(ans, 3));
+    return b0 && b1 && b2 && b3;
+}
+
+
+bool
 simple() 
 {
     printf("simple test");
@@ -79,7 +116,12 @@ int main()
 {
     int ret = EXIT_SUCCESS;
     puts("================");
-    testfunc tests[] = {simple, test_cos_sim_L2, test_cos_sim_3rd_highest_of_12_11_30V, test_cos_sim_11th_highest_of_12_11_30V};
+    testfunc tests[] = {simple, 
+        test_cos_sim_L2,
+        test_cos_sim_3rd_highest_of_12_11_30V,
+        test_cos_sim_11th_highest_of_12_11_30V, 
+        test_peak_sort_simple
+    };
     const size_t len = sizeof(tests)/sizeof(tests[0]);
     for (size_t i = 0; i < len; i++) {
         bool passed = tests[i]();

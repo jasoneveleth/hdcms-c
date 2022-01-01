@@ -12,7 +12,7 @@ OBJ := $(SRC:.c=.o)
 
 OUTPUTDIR := target
 TARGET := $(OUTPUTDIR)/pmcs
-TEST := test/run_test 
+TEST := test/test_runner 
 
 .PHONY: all run test clean
 

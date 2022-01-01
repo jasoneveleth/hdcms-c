@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define RED "\033[31m"
+#define GREEN "\033[32m"
+#define RESET "\033[0m"
+
 struct matarray
 {
     size_t length;
@@ -47,6 +51,7 @@ double vec_argmax(const struct vec v);
 struct matrix mat_from_data(double *data, size_t len1, size_t len2, size_t physlen1);
 struct matrix mat_zeros(size_t len1, size_t len2);
 void mat_set(struct matrix m, const size_t i, const size_t j, const double x);
+struct matarray matarr_from_data(struct matrix *data, size_t len);
 
 
 #endif // ARRAY_H

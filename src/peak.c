@@ -5,8 +5,28 @@
 bool
 equals(const double a, const double b)
 {
+    if (b == 0) {
+        return fabs(a) < TOLRAT;
+    }
     double ratio = a / b;
     return fabs(ratio - 1) < TOLRAT;
+}
+
+bool
+mat_equal(const struct matrix A, const struct matrix B)
+{
+    if (A.len1 != B.len1 || A.len2 != B.len2) {
+        WARNING("wrong size for matrix on matrix equal %zdx%zd vs %zdx%zd", A.len1, A.len2, B.len1, B.len2);
+        return false;
+    }
+    for (size_t i = 0; i < A.len1; i++) {
+        for (size_t j = 0; j < A.len1; j++) {
+            if (!equals(mat_get(A, i, j), mat_get(B, i, j))) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 size_t
@@ -102,6 +122,9 @@ peak_sort(const struct matarray matrices, size_t n)
             // assign smallest point to peak mat
             mat_set(peak, rowargmin, 0, mat_get(mj, rowargmin, 0));
             mat_set(peak, rowargmin, 1, mat_get(mj, rowargmin, 1));
+            // set the point to (-1, -1) so it doesn't become another max
+            mat_set(mj, rowargmin, 0, -1);
+            mat_set(mj, rowargmin, 1, -1);
         }
 
         // make them a new matrix in P
