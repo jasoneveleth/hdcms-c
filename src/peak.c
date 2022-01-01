@@ -16,7 +16,7 @@ bool
 mat_equal(const struct matrix A, const struct matrix B)
 {
     if (A.len1 != B.len1 || A.len2 != B.len2) {
-        WARNING("wrong size for matrix on matrix equal %zdx%zd vs %zdx%zd\n", A.len1, A.len2, B.len1, B.len2);
+        WARNING("incompatible matrices\n\tmat_equal %zdx%zd vs %zdx%zd\n", A.len1, A.len2, B.len1, B.len2);
         return false;
     }
     for (size_t i = 0; i < A.len1; i++) {
