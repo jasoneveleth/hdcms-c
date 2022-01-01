@@ -97,6 +97,8 @@ test_peak_sort_simple()
     struct matrix peak1 = mat_from_data(peak1data, 2, 2, 2);
     struct matrix peak2 = mat_from_data(peak2data, 2, 2, 2);
     struct matrix peak3 = mat_from_data(peak3data, 2, 2, 2);
+
+    // each is equal
     bool b0 = mat_equal(peak0, matarr_get(ans, 0));
     bool b1 = mat_equal(peak1, matarr_get(ans, 1));
     bool b2 = mat_equal(peak2, matarr_get(ans, 2));
