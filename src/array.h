@@ -25,7 +25,7 @@ struct matrix
 {
     size_t len1;
     size_t len2;
-    size_t physlen1;
+    size_t physlen;
     double *data;
     int is_owner;
 };
@@ -48,7 +48,7 @@ struct matarray matarr_zeros(size_t len);
 struct vec vec_from_col(struct matrix m, size_t col);
 double mat_get(const struct matrix m, size_t i, size_t j);
 double vec_argmax(const struct vec v);
-struct matrix mat_from_data(double *data, size_t len1, size_t len2, size_t physlen1);
+struct matrix mat_from_data(double *data, size_t len1, size_t len2, size_t physlen);
 struct matrix mat_zeros(size_t len1, size_t len2);
 void mat_set(struct matrix m, const size_t i, const size_t j, const double x);
 struct matarray matarr_from_data(struct matrix *data, size_t len);

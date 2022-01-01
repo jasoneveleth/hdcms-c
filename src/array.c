@@ -29,7 +29,7 @@ matarr_from_data(struct matrix *data, size_t len)
 void
 mat_set(struct matrix m, const size_t i, const size_t j, const double x)
 {
-    m.data[i * m.physlen1 + j] = x;
+    m.data[i * m.physlen + j] = x;
 }
 
 struct matrix
@@ -139,28 +139,28 @@ vec_zeros(size_t len)
 double
 mat_get(const struct matrix m, size_t i, size_t j)
 {
-    return m.data[i * m.physlen1 + j];
+    return m.data[i * m.physlen + j];
 }
 
 struct matrix
-mat_from_data(double *data, size_t len1, size_t len2, size_t physlen1)
+mat_from_data(double *data, size_t len1, size_t len2, size_t physlen)
 {
     struct matrix m;
     m.is_owner = 1;
     m.data = data;
     m.len1 = len1;
     m.len2 = len2;
-    m.physlen1 = physlen1;
+    m.physlen = physlen;
     return m;
 }
 
 struct matrix
 mat_copy(struct matrix m)
 {
-    double *newdata = malloc(m.len1 * m.len2 * sizeof(double));
+    double *newdata = calloc(m.len1 * m.len2, sizeof(double));
     for (size_t i = 0; i < m.len1; i++) {
         for (size_t j = 0; j < m.len2; j++) {
-            newdata[i * m.len1 + j] = mat_get(m, i, j);
+            newdata[i * m.len2 + j] = mat_get(m, i, j);
         }
     }
     return mat_from_data(newdata, m.len1, m.len2, m.len1);
@@ -184,7 +184,7 @@ vec_from_col(struct matrix m, size_t col)
     v.data = m.data + col;
     v.is_owner = false;
     v.length = m.len2;
-    v.stride = m.physlen1;
+    v.stride = m.physlen;
     return v;
 }
 
