@@ -129,7 +129,7 @@ peak_sort(const struct matarray matrices, size_t n)
             mat_set(mj, rowargmin, 1, -INFINITY);
         }
 
-        // make them a new matrix in P
+        // make the next peak a new matrix in P
         matarr_set(P, i, peak);
     }
     return P;
