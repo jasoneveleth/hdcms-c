@@ -35,7 +35,7 @@ mat_set(struct matrix m, const size_t i, const size_t j, const double x)
 struct matrix
 mat_zeros(size_t len1, size_t len2)
 {
-    return mat_from_data(calloc(len1 * len2, sizeof(double)), len1, len2, len2);
+    return mat_from_data(calloc(len1 * len2, sizeof(double)), len1, len2, len2, true);
 }
 
 double
@@ -82,11 +82,11 @@ vec_sum(const struct vec v)
 }
 
 struct vec
-vec_from_data(double *data, size_t len)
+vec_from_data(double *data, size_t len, int is_owner)
 {
     struct vec v;
     v.data = data;
-    v.is_owner = true;
+    v.is_owner = is_owner;
     v.length = len;
     v.stride = 1;
     return v;
@@ -133,7 +133,7 @@ struct vec
 vec_zeros(size_t len)
 {
     double *data = calloc(len, sizeof(double));
-    return vec_from_data(data, len);
+    return vec_from_data(data, len, true);
 }
 
 double
@@ -143,10 +143,10 @@ mat_get(const struct matrix m, size_t i, size_t j)
 }
 
 struct matrix
-mat_from_data(double *data, size_t len1, size_t len2, size_t physlen)
+mat_from_data(double *data, size_t len1, size_t len2, size_t physlen, int is_owner)
 {
     struct matrix m;
-    m.is_owner = 1;
+    m.is_owner = is_owner;
     m.data = data;
     m.len1 = len1;
     m.len2 = len2;
@@ -163,7 +163,7 @@ mat_copy(struct matrix m)
             newdata[i * m.len2 + j] = mat_get(m, i, j);
         }
     }
-    return mat_from_data(newdata, m.len1, m.len2, m.len2);
+    return mat_from_data(newdata, m.len1, m.len2, m.len2, true);
 }
 
 struct matarray

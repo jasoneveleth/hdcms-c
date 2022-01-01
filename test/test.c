@@ -9,8 +9,8 @@ test_cos_sim_L2()
     printf("test_cos_sim_L2");
     double udata[] = {91, 0.9, 0.1, 0.08};
     double vdata[] = {90, 1, 0.09, 0.11};
-    struct vec u = vec_from_data(udata, 4);
-    struct vec v = vec_from_data(vdata, 4);
+    struct vec u = vec_from_data(udata, 4, false);
+    struct vec v = vec_from_data(vdata, 4, false);
     double sim = cos_sim_L2(u, v);
     vec_free(u);
     vec_free(v);
@@ -35,8 +35,8 @@ test_cos_sim_3rd_highest_of_12_11_30V()
     printf("test_cos_sim_3rd_highest_of_12_11_30V");
     double udata[] = {3.882976388000000, 0.002553558503045, 0.000017707525801, 0.000093945978461};
     double vdata[] = {3.882982086000000, 0.002463295137625, 0.000007833634533, 0.000323634722072};
-    struct vec u = vec_from_data(udata, 4);
-    struct vec v = vec_from_data(vdata, 4);
+    struct vec u = vec_from_data(udata, 4, false);
+    struct vec v = vec_from_data(vdata, 4, false);
     vec_scale(u, 1e2);
     vec_scale(v, 1e2);
     double sim1 = cos_sim_L2(u, v);
@@ -63,8 +63,8 @@ test_cos_sim_11th_highest_of_12_11_30V()
     printf("test_cos_sim_11th_highest_of_12_11_30V");
     double udata2[] = {3.893009976000000, 0.000527014227888, 0.000015185034738, 0.000069406478369};
     double vdata2[] = {3.893016630000000, 0.000479664131948, 0.000006732993391, 0.000109354061818};
-    struct vec u = vec_from_data(udata2, 4);
-    struct vec v = vec_from_data(vdata2, 4);
+    struct vec u = vec_from_data(udata2, 4, false);
+    struct vec v = vec_from_data(vdata2, 4, false);
     vec_scale(u, 1e2);
     vec_scale(v, 1e2);
     double sim2 = cos_sim_L2(u, v);
@@ -87,8 +87,8 @@ test_peak_sort_simple()
                    97, 0.43,
                    89, 0.27,
                    100, 0.1};
-    struct matrix m1 = mat_from_data(m1data, 4, 2, 2);
-    struct matrix m2 = mat_from_data(m2data, 4, 2, 2);
+    struct matrix m1 = mat_from_data(m1data, 4, 2, 2, false);
+    struct matrix m2 = mat_from_data(m2data, 4, 2, 2, false);
 
     struct matrix adata[] = {m1, m2};
     struct matarray arr = matarr_from_data(adata, 2);
@@ -99,10 +99,10 @@ test_peak_sort_simple()
     double peak1data[] = {100, 0.1, 110, 0.5};
     double peak2data[] = {89, 0.27, 92, 0.47};
     double peak3data[] = {97, 0.43, 83, 0.23};
-    struct matrix peak0 = mat_from_data(peak0data, 2, 2, 2);
-    struct matrix peak1 = mat_from_data(peak1data, 2, 2, 2);
-    struct matrix peak2 = mat_from_data(peak2data, 2, 2, 2);
-    struct matrix peak3 = mat_from_data(peak3data, 2, 2, 2);
+    struct matrix peak0 = mat_from_data(peak0data, 2, 2, 2, false);
+    struct matrix peak1 = mat_from_data(peak1data, 2, 2, 2, false);
+    struct matrix peak2 = mat_from_data(peak2data, 2, 2, 2, false);
+    struct matrix peak3 = mat_from_data(peak3data, 2, 2, 2, false);
 
     // each is equal
     bool b0 = mat_equal(peak0, matarr_get(ans, 0));
