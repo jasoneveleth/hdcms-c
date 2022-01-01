@@ -36,7 +36,7 @@ $(OUTPUTDIR):
 	@mkdir -p $@
 
 $(TEST): $(filter-out src/main.o,$(OBJ)) $(TEST_OBJ)
-	gcc $(FLAGS) $^ -o $@
+	gcc $(FLAGS) $(LINKER) $^ -o $@
 
 $(TARGET): $(OBJ) | $(OUTPUTDIR)
 	$(CC) $(FLAGS) $(LINKER) $^ -o $@
