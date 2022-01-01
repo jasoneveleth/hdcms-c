@@ -107,7 +107,7 @@ test_peak_sort_simple()
     struct matrix m2 = mat_from_data(m2data, 4, 2, 2, false);
 
     struct matrix adata[] = {m1, m2};
-    struct matarray arr = matarr_from_data(adata, 2);
+    struct matarray arr = matarr_from_data(adata, 2, false);
     struct matarray ans = peak_sort(arr, n);
 
     // answer
@@ -132,7 +132,7 @@ test_peak_sort_simple()
     mat_free(peak1);
     mat_free(peak2);
     mat_free(peak3);
-    // no need to free arr because it's data is on the stack
+    matarr_free(arr);
     return b0 && b1 && b2 && b3;
 }
 

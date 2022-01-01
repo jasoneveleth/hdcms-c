@@ -18,11 +18,12 @@ vec_max(const struct vec v)
 }
 
 struct matarray
-matarr_from_data(struct matrix *data, size_t len)
+matarr_from_data(struct matrix *data, size_t len, const bool is_owner)
 {
     struct matarray arr;
     arr.length = len;
     arr.data = data;
+    arr.is_owner = is_owner;
     return arr;
 }
 
@@ -208,7 +209,8 @@ matarr_free(struct matarray arr)
     for (size_t i = 0; i < arr.length; i++) {
         mat_free(matarr_get(arr, i));
     }
-    free(arr.data);
+    if (arr.is_owner)
+        free(arr.data);
 }
 
 void

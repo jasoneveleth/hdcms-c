@@ -11,6 +11,7 @@ struct matarray
 {
     size_t length;
     struct matrix *data;
+    int is_owner;
 };
 
 struct vec
@@ -51,7 +52,7 @@ double vec_argmax(const struct vec v);
 struct matrix mat_from_data(double *data, size_t len1, size_t len2, size_t physlen, int is_owner);
 struct matrix mat_zeros(size_t len1, size_t len2);
 void mat_set(struct matrix m, const size_t i, const size_t j, const double x);
-struct matarray matarr_from_data(struct matrix *data, size_t len);
+struct matarray matarr_from_data(struct matrix *data, size_t len, const bool is_owner);
 void matarr_free(struct matarray arr);
 void mat_free(struct matrix m);
 void vec_free(struct vec v);
