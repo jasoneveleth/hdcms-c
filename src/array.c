@@ -23,6 +23,7 @@ matarr_from_data(struct matrix *data, size_t len, const bool is_owner)
     struct matarray arr;
     arr.length = len;
     arr.data = data;
+    printf("%p", arr.data);
     arr.is_owner = is_owner;
     return arr;
 }

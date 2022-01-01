@@ -83,6 +83,7 @@ peak_sort(const struct matarray matrices, size_t n)
 
     // reset n
     for (int i = 0; i < matrices.length; i++) {
+        printf("%d\n", i);
         n = min2(n, matarr_get(matrices, i).len1);
     }
 

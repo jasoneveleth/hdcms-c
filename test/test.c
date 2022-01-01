@@ -107,6 +107,7 @@ test_peak_sort_simple()
     struct matrix m2 = mat_from_data(m2data, 4, 2, 2, false);
 
     struct matrix adata[] = {m1, m2};
+    printf("%p\n", adata);
     struct matarray arr = matarr_from_data(adata, 2, false);
     struct matarray ans = peak_sort(arr, n);
 
