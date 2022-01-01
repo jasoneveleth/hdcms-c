@@ -120,8 +120,6 @@ peak_sort(const struct matarray matrices, size_t n)
             }
 
             // assign smallest point to peak mat
-            printf("%zd %zd %zd\n", peak.len1, peak.len2, peak.physlen);
-            printf("%zd %d\n", rowargmin, 0);
             mat_set(peak, j, 0, mat_get(mj, rowargmin, 0));
             mat_set(peak, j, 1, mat_get(mj, rowargmin, 1));
             // set the point to (-1, -1) so it doesn't become another max
