@@ -65,11 +65,15 @@ peak_sim_measure_L2(const struct matarray m1, const struct matarray m2, size_t n
     return 0;
 }
 
+// 5 matrices of spectra, and number of peaks -> nx4 matrix of peaks
 struct matrix
-peak_stat(const struct matarray matrices) 
+peak_stat(const struct matarray matrices, const size_t n) 
 {
-    // 5 matrices of spectra, and number of peaks -> nx4 matrix of peaks
-    // TODO
+    // reset n
+    for (size_t i = 0; i < matrices.length; i++) {
+        n = min2(n, matarr_get(matrices, i).len1);
+    }
+
     struct matrix A;
     return A;
 }
@@ -90,12 +94,11 @@ cos_sim_L2(const struct vec u, const struct vec v)
     return a * exp(-0.5 * (bx + by));
 }
 
+// 5 matrices of spectra, number of peaks -> n matrices s.t. ith matrix is 5
+// pts assoc. with ith largest peak
 struct matarray
-peak_sort(const struct matarray matrices, size_t n)
+peak_sort(const struct matarray matrices, const size_t n)
 {
-    // 5 matrices of spectra, number of peaks -> n matrices s.t. ith matrix is 5
-    // pts assoc. with ith largest peak
-
     // reset n
     for (size_t i = 0; i < matrices.length; i++) {
         n = min2(n, matarr_get(matrices, i).len1);
