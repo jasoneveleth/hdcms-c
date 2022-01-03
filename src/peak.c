@@ -74,8 +74,19 @@ peak_stat(const struct matarray matrices, size_t n)
         n = min2(n, matarr_get(matrices, i).len1);
     }
 
-    struct matrix A;
-    return A;
+    struct matrix B = mat_zeros(n, 4);
+    struct matarray P = peak_sort(matrices, n);
+    for (size_t i = 0; i < P.length; i++) {
+        struct matrix M = matarr_get(P, i);
+        struct vec x = vec_from_col(M, 0);
+        struct vec y = vec_from_col(M, 1);
+        mat_set(B, i, 0, vec_mean(x));
+        mat_set(B, i, 1, vec_mean(y));
+        mat_set(B, i, 2, vec_std(x));
+        mat_set(B, i, 3, vec_std(y));
+    }
+    matarr_free(P);
+    return B;
 }
 
 double
