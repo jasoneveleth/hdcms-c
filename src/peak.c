@@ -20,7 +20,7 @@ mat_equal(const struct matrix A, const struct matrix B)
         return false;
     }
     for (size_t i = 0; i < A.len1; i++) {
-        for (size_t j = 0; j < A.len1; j++) {
+        for (size_t j = 0; j < A.len2; j++) {
             if (!equals(mat_get(A, i, j), mat_get(B, i, j))) {
                 return false;
             }
