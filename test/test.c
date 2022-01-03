@@ -199,6 +199,55 @@ test_peak_sort_zeros()
     return b0 && b1 && b2 && b3;
 }
 
+bool test_peak_sort_real2()
+{
+    printf("test_peak_sort_real");
+    size_t n = 15;
+    // from data.c
+    double *m1data = m13_1_2_data;
+    double *m2data = m13_2_2_data;
+    double *m3data = m13_3_2_data;
+    double *m4data = m13_4_2_data;
+    double *m5data = m13_5_2_data;
+    struct matrix m1 = mat_from_data(m1data, 15, 2, 2, false);
+    struct matrix m2 = mat_from_data(m2data, 22, 2, 2, false);
+    struct matrix m3 = mat_from_data(m3data, 13, 2, 2, false);
+    struct matrix m4 = mat_from_data(m4data, 18, 2, 2, false);
+    struct matrix m5 = mat_from_data(m5data, 18, 2, 2, false);
+
+    struct matrix adata[] = {m1, m2, m3, m4, m5};
+    struct matarray arr = matarr_from_data(adata, 5, false);
+    struct matarray ans = peak_sort(arr, n);
+
+    // answer
+
+    double peak0data[] = {
+        91.0567,    1.0000,
+        91.0566,    1.0000,
+        91.0566,    1.0000,
+        91.0567,    1.0000,
+        91.0568,    1.0000};
+    double peak1data[] = {
+        119.0894,    0.1575,
+        119.0891,    0.1037,
+        119.0892,    0.0922,
+        119.0892,    0.0978,
+        119.0895,    0.0885};
+    struct matrix peak0 = mat_from_data(peak0data, 5, 2, 2, false);
+    struct matrix peak1 = mat_from_data(peak1data, 5, 2, 2, false);
+
+    // each is equal
+    bool b0 = mat_equal(peak0, matarr_get(ans, 0));
+    bool b1 = mat_equal(peak1, matarr_get(ans, 1));
+
+    mat_free(m1);
+    mat_free(m2);
+    mat_free(peak0);
+    mat_free(peak1);
+    matarr_free(arr);
+    matarr_free(ans);
+    return b0 && b1;
+}
 
 bool
 simple() 
@@ -218,6 +267,7 @@ int main()
         test_argmax,
         test_peak_sort_simple,
         test_peak_sort_zeros,
+        test_peak_sort_real2,
     };
     const size_t len = sizeof(tests)/sizeof(tests[0]);
     for (size_t i = 0; i < len; i++) {
