@@ -58,5 +58,10 @@ void mat_free(struct matrix m);
 void vec_free(struct vec v);
 void mat_printf(const struct matrix m);
 void matarr_printf(const struct matarray arr);
+void vec_add_const(struct vec v, const double a);
+void vec_square(struct vec v);
+struct vec vec_copy(const struct vec v);
+double vec_mean(const struct vec v);
+double vec_std(const struct vec v);
 
 #endif // ARRAY_H

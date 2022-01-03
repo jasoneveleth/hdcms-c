@@ -40,6 +40,56 @@ mat_zeros(size_t len1, size_t len2)
 }
 
 double
+vec_mean(const struct vec v) 
+{
+    double sum = vec_sum(v);
+    return sum/v.length;
+}
+
+void
+vec_square(struct vec v) 
+{
+    for (size_t i = 0; i < v.length; i++) {
+        const double ele = vec_get(v, i);
+        vec_set(v, i, ele * ele);
+    }
+}
+
+struct vec
+vec_copy(const struct vec v)
+{
+    struct vec vcopy;
+    vcopy.data = calloc(v.length, sizeof(double));
+    vcopy.is_owner = true;
+    vcopy.length = v.length;
+    vcopy.stride = 1;
+    for (size_t i = 0; i < v.length; i++) {
+        vec_set(vcopy, i, vec_get(v, i));
+    }
+    return vcopy;
+}
+
+double
+vec_std(const struct vec v) 
+{
+    struct vec vcopy = vec_copy(v);
+    double mean = vec_mean(vcopy);
+    vec_add_const(vcopy, -mean);
+    vec_square(vcopy);
+    double sum = vec_sum(vcopy);
+    vec_free(vcopy);
+    return sqrt(sum/v.length);
+}
+
+void
+vec_add_const(struct vec v, const double a)
+{
+    for (size_t i = 0; i < v.length; i++) {
+        vec_set(v, i, vec_get(v, i) - a);
+    }
+}
+
+double
 vec_argmax(const struct vec v)
 {
     double max = -INFINITY;
