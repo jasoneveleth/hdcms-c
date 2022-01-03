@@ -201,7 +201,7 @@ test_peak_sort_zeros()
 
 bool test_peak_sort_real2()
 {
-    printf("test_peak_sort_real");
+    printf("test_peak_sort_real2");
     size_t n = 15;
     // from data.c
     double *m1data = m13_1_2_data;
