@@ -6,7 +6,7 @@
 bool
 test_cos_sim_L2()
 {
-    printf("test_cos_sim_L2");
+    printf(__FUNCTION__);
     double udata[] = {91, 0.9, 0.1, 0.08};
     double vdata[] = {90, 1, 0.09, 0.11};
     struct vec u = vec_from_data(udata, 4, false);
@@ -32,7 +32,7 @@ test_cos_sim_L2()
 bool
 test_cos_sim_3rd_highest_of_12_11_30V()
 {
-    printf("test_cos_sim_3rd_highest_of_12_11_30V");
+    printf(__FUNCTION__);
     double udata[] = {3.882976388000000, 0.002553558503045, 0.000017707525801, 0.000093945978461};
     double vdata[] = {3.882982086000000, 0.002463295137625, 0.000007833634533, 0.000323634722072};
     struct vec u = vec_from_data(udata, 4, false);
@@ -60,7 +60,7 @@ test_cos_sim_3rd_highest_of_12_11_30V()
 bool
 test_cos_sim_11th_highest_of_12_11_30V() 
 {
-    printf("test_cos_sim_11th_highest_of_12_11_30V");
+    printf(__FUNCTION__);
     double udata2[] = {3.893009976000000, 0.000527014227888, 0.000015185034738, 0.000069406478369};
     double vdata2[] = {3.893016630000000, 0.000479664131948, 0.000006732993391, 0.000109354061818};
     struct vec u = vec_from_data(udata2, 4, false);
@@ -76,7 +76,7 @@ test_cos_sim_11th_highest_of_12_11_30V()
 bool
 test_argmax()
 {
-    printf("test_argmax");
+    printf(__FUNCTION__);
     double m2data[] = {83, 0.23,
         92, 0.47,
         79, 0.61,
@@ -93,7 +93,7 @@ test_argmax()
 bool
 test_peak_sort_simple()
 {
-    printf("test_peak_sort_simple");
+    printf(__FUNCTION__);
     size_t n = 20;
     double m1data[] = {72, 0.68,
         97, 0.43,
@@ -140,7 +140,7 @@ test_peak_sort_simple()
 bool
 test_peak_sort_zeros()
 {
-    printf("test_peak_sort_zeros");
+    printf(__FUNCTION__);
     size_t n = 20;
     double m1data[] = {72, 0.68,
         97, 0.43,
@@ -201,7 +201,7 @@ test_peak_sort_zeros()
 
 bool test_peak_sort_real2()
 {
-    printf("test_peak_sort_real2");
+    printf(__FUNCTION__);
     size_t n = 15;
     // from data.c
     double *m1data = m13_1_2_data;
@@ -252,7 +252,7 @@ bool test_peak_sort_real2()
 bool
 simple() 
 {
-    printf("simple test");
+    printf(__FUNCTION__);
     return 0 == 0;
 }
 
