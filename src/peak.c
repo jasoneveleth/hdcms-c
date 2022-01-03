@@ -138,8 +138,8 @@ peak_sort(const struct matarray matrices, size_t n)
             // assign smallest point to peak mat
             mat_set(peak, j, 0, mat_get(mj, rowargmin, 0));
             mat_set(peak, j, 1, mat_get(mj, rowargmin, 1));
-            // set the point to (-1, -1) so it doesn't become another max
-            mat_set(mj, rowargmin, 0, -INFINITY);
+
+            // set y value of the point to -inf so it never matches or is a max
             mat_set(mj, rowargmin, 1, -INFINITY);
         }
 
