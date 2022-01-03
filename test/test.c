@@ -137,6 +137,68 @@ test_peak_sort_simple()
     return b0 && b1 && b2 && b3;
 }
 
+bool
+test_peak_sort_zeros()
+{
+    printf("test_peak_sort_zeros");
+    size_t n = 20;
+    double m1data[] = {72, 0.68,
+        97, 0.43,
+        89, 0.27,
+        100, 0.1};
+    double m2data[] = {83, 0.23,
+        92, 0.47,
+        79, 0.61,
+        110, 0.5};
+    double m3data[] = {0, 0,
+        0, 0,
+        0, 0,
+        0, 0};
+    double m4data[] = {0, 0,
+        0, 0,
+        0, 0,
+        0, 0};
+    double m5data[] = {0, 0,
+        0, 0,
+        0, 0,
+        0, 0};
+    struct matrix m1 = mat_from_data(m1data, 4, 2, 2, false);
+    struct matrix m2 = mat_from_data(m2data, 4, 2, 2, false);
+    struct matrix m3 = mat_from_data(m3data, 4, 2, 2, false);
+    struct matrix m4 = mat_from_data(m4data, 4, 2, 2, false);
+    struct matrix m5 = mat_from_data(m5data, 4, 2, 2, false);
+
+    struct matrix adata[] = {m1, m2, m3, m4, m5};
+    struct matarray arr = matarr_from_data(adata, 5, false);
+    struct matarray ans = peak_sort(arr, n);
+
+    // answer
+    double peak0data[] = {72, 0.68, 79, 0.61, 0, 0, 0, 0, 0, 0};
+    double peak1data[] = {100, 0.1, 110, 0.5, 0, 0, 0, 0, 0, 0};
+    double peak2data[] = {89, 0.27, 92, 0.47, 0, 0, 0, 0, 0, 0};
+    double peak3data[] = {97, 0.43, 83, 0.23, 0, 0, 0, 0, 0, 0};
+    struct matrix peak0 = mat_from_data(peak0data, 5, 2, 2, false);
+    struct matrix peak1 = mat_from_data(peak1data, 5, 2, 2, false);
+    struct matrix peak2 = mat_from_data(peak2data, 5, 2, 2, false);
+    struct matrix peak3 = mat_from_data(peak3data, 5, 2, 2, false);
+
+    // each is equal
+    bool b0 = mat_equal(peak0, matarr_get(ans, 0));
+    bool b1 = mat_equal(peak1, matarr_get(ans, 1));
+    bool b2 = mat_equal(peak2, matarr_get(ans, 2));
+    bool b3 = mat_equal(peak3, matarr_get(ans, 3));
+
+    mat_free(m1);
+    mat_free(m2);
+    mat_free(peak0);
+    mat_free(peak1);
+    mat_free(peak2);
+    mat_free(peak3);
+    matarr_free(arr);
+    matarr_free(ans);
+    return b0 && b1 && b2 && b3;
+}
+
 
 bool
 simple() 
@@ -155,6 +217,7 @@ int main()
         test_cos_sim_11th_highest_of_12_11_30V, 
         test_argmax,
         test_peak_sort_simple,
+        test_peak_sort_zeros,
     };
     const size_t len = sizeof(tests)/sizeof(tests[0]);
     for (size_t i = 0; i < len; i++) {
