@@ -183,10 +183,9 @@ test_peak_sort_zeros()
     struct matrix peak3 = mat_from_data(peak3data, 5, 2, 2, false);
 
     // each is equal
-    bool b0 = mat_equal(peak0, matarr_get(ans, 0));
-    bool b1 = mat_equal(peak1, matarr_get(ans, 1));
-    bool b2 = mat_equal(peak2, matarr_get(ans, 2));
-    bool b3 = mat_equal(peak3, matarr_get(ans, 3));
+    struct matrix solutiondata[] = {peak0, peak1, peak2, peak3};
+    struct matarray solution = matarr_from_data(solutiondata, 4, false);
+    bool ret = matarr_equal(solution, ans);
 
     mat_free(m1);
     mat_free(m2);
@@ -196,13 +195,14 @@ test_peak_sort_zeros()
     mat_free(peak3);
     matarr_free(arr);
     matarr_free(ans);
-    return b0 && b1 && b2 && b3;
+    matarr_free(solution);
+    return ret;
 }
 
 bool test_peak_sort_real2()
 {
     printf(__FUNCTION__);
-    size_t n = 15;
+    size_t n = 2;
     // from data.c
     double *m1data = m13_1_2_data;
     double *m2data = m13_2_2_data;
@@ -236,17 +236,85 @@ bool test_peak_sort_real2()
     struct matrix peak0 = mat_from_data(peak0data, 5, 2, 2, false);
     struct matrix peak1 = mat_from_data(peak1data, 5, 2, 2, false);
 
-    // each is equal
-    bool b0 = mat_equal(peak0, matarr_get(ans, 0));
-    bool b1 = mat_equal(peak1, matarr_get(ans, 1));
+    struct matrix solutiondata[] = {peak0, peak1};
+    struct matarray solution = matarr_from_data(solutiondata, 2, false);
+    bool ret = matarr_equal(solution, ans);
 
     mat_free(m1);
     mat_free(m2);
+    mat_free(m3);
+    mat_free(m4);
+    mat_free(m5);
     mat_free(peak0);
     mat_free(peak1);
     matarr_free(arr);
     matarr_free(ans);
-    return b0 && b1;
+    matarr_free(solution);
+    return ret;
+}
+
+bool
+test_peak_sort_real15()
+{
+    printf(__FUNCTION__);
+    size_t n = 15;
+    // from data.c
+    double *m1data = m13_1_2_data;
+    double *m2data = m13_2_2_data;
+    double *m3data = m13_3_2_data;
+    double *m4data = m13_4_2_data;
+    double *m5data = m13_5_2_data;
+
+    struct matrix m1 = mat_from_data(m1data, 15, 2, 2, false);
+    struct matrix m2 = mat_from_data(m2data, 22, 2, 2, false);
+    struct matrix m3 = mat_from_data(m3data, 13, 2, 2, false);
+    struct matrix m4 = mat_from_data(m4data, 18, 2, 2, false);
+    struct matrix m5 = mat_from_data(m5data, 18, 2, 2, false);
+
+    struct matrix adata[] = {m1, m2, m3, m4, m5};
+    struct matarray arr = matarr_from_data(adata, 5, false);
+    struct matarray ans = peak_sort(arr, n);
+
+    // answer
+    struct matrix peak0 = mat_from_data(p_m13_2__0_data, 5, 2, 2, false);
+    struct matrix peak1 = mat_from_data(p_m13_2__1_data, 5, 2, 2, false);
+    struct matrix peak2 = mat_from_data(p_m13_2__2_data, 5, 2, 2, false);
+    struct matrix peak3 = mat_from_data(p_m13_2__3_data, 5, 2, 2, false);
+    struct matrix peak4 = mat_from_data(p_m13_2__4_data, 5, 2, 2, false);
+    struct matrix peak5 = mat_from_data(p_m13_2__5_data, 5, 2, 2, false);
+    struct matrix peak6 = mat_from_data(p_m13_2__6_data, 5, 2, 2, false);
+    struct matrix peak7 = mat_from_data(p_m13_2__7_data, 5, 2, 2, false);
+    struct matrix peak8 = mat_from_data(p_m13_2__8_data, 5, 2, 2, false);
+    struct matrix peak9 = mat_from_data(p_m13_2__9_data, 5, 2, 2, false);
+    struct matrix peak10 = mat_from_data(p_m13_2__10_data, 5, 2, 2, false);
+    struct matrix peak11 = mat_from_data(p_m13_2__11_data, 5, 2, 2, false);
+    struct matrix peak12 = mat_from_data(p_m13_2__12_data, 5, 2, 2, false);
+    struct matrix solutiondata[] = {peak0, peak1, peak2, peak3, peak4, peak5, peak6, peak7, peak8, peak9, peak10, peak11, peak12};
+    struct matarray solution = matarr_from_data(solutiondata, 13, false);
+    bool ret = matarr_equal(solution, ans);
+
+    mat_free(m1);
+    mat_free(m2);
+    mat_free(m3);
+    mat_free(m4);
+    mat_free(m5);
+    mat_free(peak0);
+    mat_free(peak1);
+    mat_free(peak2);
+    mat_free(peak3);
+    mat_free(peak4);
+    mat_free(peak5);
+    mat_free(peak6);
+    mat_free(peak7);
+    mat_free(peak8);
+    mat_free(peak9);
+    mat_free(peak10);
+    mat_free(peak11);
+    mat_free(peak12);
+    matarr_free(arr);
+    matarr_free(ans);
+    matarr_free(solution);
+    return ret;
 }
 
 bool
@@ -268,6 +336,7 @@ int main()
         test_peak_sort_simple,
         test_peak_sort_zeros,
         test_peak_sort_real2,
+        test_peak_sort_real15,
     };
     const size_t len = sizeof(tests)/sizeof(tests[0]);
     for (size_t i = 0; i < len; i++) {

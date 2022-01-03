@@ -10,6 +10,7 @@
 
 bool equals(const double a, const double b);
 bool mat_equal(const struct matrix A, const struct matrix B);
+bool matarr_equal(const struct matarray arr, const struct matarray arr2);
 size_t min2(const size_t x, const size_t y);
 size_t min3(const size_t x, const size_t y, const size_t z);
 

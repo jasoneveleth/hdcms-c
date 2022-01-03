@@ -13,6 +13,21 @@ equals(const double a, const double b)
 }
 
 bool
+matarr_equal(const struct matarray arr, const struct matarray arr2)
+{
+    if (arr.length != arr2.length) {
+        WARNING("incompatible matrix arrays\n\tmat_equal %zd vs %zd\n", arr.length, arr2.length);
+        return false;
+    }
+    for (size_t i = 0; i < arr.length; i++) {
+        if (!mat_equal(matarr_get(arr, i), matarr_get(arr2, i))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool
 mat_equal(const struct matrix A, const struct matrix B)
 {
     if (A.len1 != B.len1 || A.len2 != B.len2) {
@@ -82,7 +97,7 @@ peak_sort(const struct matarray matrices, size_t n)
     // pts assoc. with ith largest peak
 
     // reset n
-    for (int i = 0; i < matrices.length; i++) {
+    for (size_t i = 0; i < matrices.length; i++) {
         n = min2(n, matarr_get(matrices, i).len1);
     }
 
