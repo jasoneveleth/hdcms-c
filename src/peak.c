@@ -56,11 +56,10 @@ min3(const size_t x, const size_t y, const size_t z)
     return min2(min2(x, y), z);
 }
 
+// 2 4xn matrices (output of `peak_stat`), number of peaks -> similarity of them btwn 0 and 1
 double
 peak_sim_measure_L2(const struct matarray m1, const struct matarray m2, size_t n) 
 {
-    // 2 4xn matrices (output of `peak_stat`), number of peaks -> similarity of them btwn
-    // 0 and 1
     // TODO
     return 0;
 }
