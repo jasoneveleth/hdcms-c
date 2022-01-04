@@ -7,6 +7,8 @@
 #define GREEN "\033[32m"
 #define RESET "\033[0m"
 
+#define BUFLEN (1024)
+
 #define WARNING(fmt, ...) fprintf(stderr, "%s:%d: " RED "WARNING: " RESET fmt, __FILE__, __LINE__, __VA_ARGS__)
 
 // tolerance ratio
@@ -54,8 +56,7 @@ struct vec vec_copy(const struct vec v);
 double vec_mean(const struct vec v);
 double vec_std(const struct vec v);
 bool vec_equal(const struct vec v1, const struct vec v2);
-// TODO
-struct vec vec_fread(FILE *file, const char *const format);
+struct vec vec_read(FILE *file, const char *const format);
 void vec_write(FILE *file, const struct vec v);
 
 /* vec mat */
@@ -81,5 +82,8 @@ void mat_printf(const struct matrix m);
 bool equals(const double a, const double b);
 bool mat_equal(const struct matrix A, const struct matrix B);
 
+void *safe_calloc(size_t num, size_t size);
+void *safe_realloc(void *ptr, size_t size);
+FILE *safe_fopen(const char *path, const char *mode);
 
 #endif // ARRAY_H

@@ -2,7 +2,41 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include "array.h"
+
+void *
+safe_calloc(size_t num, size_t size)
+{
+    void *ret = calloc(num, size);
+    if (ret == NULL) {
+        perror("calloc");
+        abort();
+    }
+    return ret;
+}
+
+void *
+safe_realloc(void *ptr, size_t size)
+{
+    void *ret = realloc(ptr, size);
+    if (ret == NULL) {
+        perror("realloc");
+        abort();
+    }
+    return ret;
+}
+
+FILE *
+safe_fopen(const char * restrict path, const char * restrict mode)
+{
+    FILE *ret = fopen(path, mode);
+    if (ret == NULL) {
+        perror("fopen");
+        abort();
+    }
+    return ret;
+}
 
 bool
 equals(const double a, const double b)
@@ -50,7 +84,7 @@ bool
 vec_equal(const struct vec v1, const struct vec v2)
 {
     if (v1.length != v2.length) {
-        WARNING("incompatible vectors\n\tvec_equal %zdvs%zd", v1.length, v2.length);
+        WARNING("incompatible vectors\n\tvec_equal %zdvs%zd\n", v1.length, v2.length);
         return false;
     }
     bool ret = true;
@@ -95,7 +129,7 @@ mat_set(struct matrix m, const size_t i, const size_t j, const double x)
 struct matrix
 mat_zeros(size_t len1, size_t len2)
 {
-    return mat_from_data(calloc(len1 * len2, sizeof(double)), len1, len2, len2, true);
+    return mat_from_data(safe_calloc(len1 * len2, sizeof(double)), len1, len2, len2, true);
 }
 
 double
@@ -118,7 +152,7 @@ struct vec
 vec_copy(const struct vec v)
 {
     struct vec vcopy;
-    vcopy.data = calloc(v.length, sizeof(double));
+    vcopy.data = safe_calloc(v.length, sizeof(double));
     vcopy.is_owner = true;
     vcopy.length = v.length;
     vcopy.stride = 1;
@@ -228,8 +262,35 @@ vec_scale(struct vec v, const double c)
 struct vec
 vec_read(FILE *file, const char *const format)
 {
-    // TODO
     struct vec v;
+    char buf[BUFLEN];
+    size_t len_of_vec = 0;
+    size_t allocd = 1;
+    double *data = safe_calloc(allocd, sizeof(double));
+
+    while (fgets(buf, BUFLEN, file)) {
+        size_t bytes_read = strlen(buf);
+        if (bytes_read > BUFLEN - 2) {
+            WARNING("line is too long, may be missing %s\n", "data");
+        }
+        // remove trailing newline
+        buf[bytes_read] = '\0';
+
+        double ele = 0;
+        int num_matches = sscanf(buf, format, &ele);
+        if (num_matches == 0) {
+            WARNING("line didn't match\n\t%s\n\tsetting ele to 0.0\n", buf);
+        }
+        if (len_of_vec == allocd) {
+            allocd = len_of_vec * 2;
+            data = safe_realloc(data, allocd * sizeof(double));
+        }
+        data[len_of_vec++] = ele;
+    }
+    v.data = data;
+    v.is_owner = true;
+    v.length = len_of_vec;
+    v.stride = 1;
     return v;
 }
 
@@ -248,7 +309,7 @@ vec_get(const struct vec v, size_t i)
 struct vec
 vec_zeros(size_t len)
 {
-    double *data = calloc(len, sizeof(double));
+    double *data = safe_calloc(len, sizeof(double));
     return vec_from_data(data, len, true);
 }
 
@@ -273,7 +334,7 @@ mat_from_data(double *data, size_t len1, size_t len2, size_t physlen, int is_own
 struct matrix
 mat_copy(struct matrix m)
 {
-    double *newdata = calloc(m.len1 * m.len2, sizeof(double));
+    double *newdata = safe_calloc(m.len1 * m.len2, sizeof(double));
     for (size_t i = 0; i < m.len1; i++) {
         for (size_t j = 0; j < m.len2; j++) {
             newdata[i * m.len2 + j] = mat_get(m, i, j);
@@ -287,7 +348,7 @@ matarr_copy(const struct matarray old)
 {
     struct matarray new;
     new.length = old.length;
-    new.data = calloc(old.length, sizeof(struct matrix));
+    new.data = safe_calloc(old.length, sizeof(struct matrix));
     new.is_owner = true;
     for (size_t i = 0; i < old.length; i++)
     {
@@ -310,7 +371,7 @@ vec_from_col(struct matrix m, size_t col)
 struct matarray
 matarr_zeros(size_t len)
 {
-    return matarr_from_data(calloc(len, sizeof(struct matrix)), len, true);
+    return matarr_from_data(safe_calloc(len, sizeof(struct matrix)), len, true);
 }
 
 void

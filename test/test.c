@@ -302,6 +302,47 @@ test_peak_stat_real()
 }
 
 bool
+test_vec_read_simple()
+{
+    printf(__FUNCTION__);
+    FILE *fptr = safe_fopen("test/vec_read_simple.txt", "r");
+    struct vec output = vec_read(fptr, "%lg");
+    double data[] = {728, 283910, 812931, 72891};
+    struct vec sol = vec_from_data(data, 4, false);
+    bool ret = vec_equal(output, sol);
+    vec_free(output);
+    vec_free(sol);
+    return ret;
+}
+
+bool
+test_vec_read_real()
+{
+    printf(__FUNCTION__);
+    FILE *fptr = safe_fopen("test/vec_read_real.txt", "r");
+    struct vec output = vec_read(fptr, "%lg");
+    double data[] = {
+        9.192224975486361e-05,
+        1.600568648962115e-04,
+        8.915716460218152e-05,
+        1.864599152657470e-04,
+        1.665837996925374e-02,
+        6.442454361497599e-03,
+        2.005903786313059e-04,
+        8.257818095599679e-03,
+        1.517282306016281e-01,
+        7.761167437959599e-04,
+        4.627274746573855e-01,
+        1.106639055873704e-04,
+        7.421074649294409e-01};
+    struct vec sol = vec_from_data(data, 13, false);
+    bool ret = vec_equal(output, sol);
+    vec_free(output);
+    vec_free(sol);
+    return ret;
+}
+
+bool
 simple() 
 {
     printf(__FUNCTION__);
@@ -323,6 +364,8 @@ int main()
         test_peak_sort_real2,
         test_peak_sort_real15,
         test_peak_stat_real,
+        test_vec_read_simple,
+        test_vec_read_real,
     };
     const size_t len = sizeof(tests)/sizeof(tests[0]);
     for (size_t i = 0; i < len; i++) {
