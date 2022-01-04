@@ -16,7 +16,7 @@ bool
 matarr_equal(const struct matarray arr, const struct matarray arr2)
 {
     if (arr.length != arr2.length) {
-        WARNING("incompatible matrix arrays\n\tmat_equal %zd vs %zd\n", arr.length, arr2.length);
+        WARNING("incompatible matrix arrays\n\tmatarr_equal %zd vs %zd\n", arr.length, arr2.length);
         return false;
     }
     for (size_t i = 0; i < arr.length; i++) {
