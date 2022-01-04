@@ -307,6 +307,7 @@ test_vec_read_simple()
     printf(__FUNCTION__);
     FILE *fptr = safe_fopen("test/vec_read_simple.txt", "r");
     struct vec output = vec_read(fptr, "%lg");
+    fclose(fptr);
     double data[] = {728, 283910, 812931, 72891};
     struct vec sol = vec_from_data(data, 4, false);
     bool ret = vec_equal(output, sol);
@@ -321,6 +322,7 @@ test_vec_read_real()
     printf(__FUNCTION__);
     FILE *fptr = safe_fopen("test/vec_read_real.txt", "r");
     struct vec output = vec_read(fptr, "%lg");
+    fclose(fptr);
     double data[] = {
         9.192224975486361e-05,
         1.600568648962115e-04,
