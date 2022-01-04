@@ -25,4 +25,6 @@ extern double p_m13_2__10_data[];
 extern double p_m13_2__11_data[];
 extern double p_m13_2__12_data[];
 
+extern double stat_m13_i_2[];
+
 #endif // TEST_H

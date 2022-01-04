@@ -4,13 +4,7 @@
 #include "array.h"
 
 #define E (2.718281828459045235360287471352)
-// tolerance ratio
-#define TOLRAT (0.0001)
-#define WARNING(fmt, ...) fprintf(stderr, "%s:%d: " RED "WARNING: " RESET fmt, __FILE__, __LINE__, __VA_ARGS__)
 
-bool equals(const double a, const double b);
-bool mat_equal(const struct matrix A, const struct matrix B);
-bool matarr_equal(const struct matarray arr, const struct matarray arr2);
 size_t min2(const size_t x, const size_t y);
 size_t min3(const size_t x, const size_t y, const size_t z);
 

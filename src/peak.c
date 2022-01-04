@@ -2,48 +2,6 @@
 #include <math.h>
 #include "peak.h"
 
-bool
-equals(const double a, const double b)
-{
-    if (b == 0) {
-        return fabs(a) < TOLRAT;
-    }
-    double ratio = a / b;
-    return fabs(ratio - 1) < TOLRAT;
-}
-
-bool
-matarr_equal(const struct matarray arr, const struct matarray arr2)
-{
-    if (arr.length != arr2.length) {
-        WARNING("incompatible matrix arrays\n\tmatarr_equal %zd vs %zd\n", arr.length, arr2.length);
-        return false;
-    }
-    for (size_t i = 0; i < arr.length; i++) {
-        if (!mat_equal(matarr_get(arr, i), matarr_get(arr2, i))) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool
-mat_equal(const struct matrix A, const struct matrix B)
-{
-    if (A.len1 != B.len1 || A.len2 != B.len2) {
-        WARNING("incompatible matrices\n\tmat_equal %zdx%zd vs %zdx%zd\n", A.len1, A.len2, B.len1, B.len2);
-        return false;
-    }
-    for (size_t i = 0; i < A.len1; i++) {
-        for (size_t j = 0; j < A.len2; j++) {
-            if (!equals(mat_get(A, i, j), mat_get(B, i, j))) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
 size_t
 min2(const size_t x, const size_t y) 
 {

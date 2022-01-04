@@ -4,6 +4,65 @@
 #include <stdbool.h>
 #include "array.h"
 
+bool
+equals(const double a, const double b)
+{
+    if (b == 0) {
+        return fabs(a) < TOLRAT;
+    }
+    double ratio = a / b;
+    return fabs(ratio - 1) < TOLRAT;
+}
+
+bool
+matarr_equal(const struct matarray arr, const struct matarray arr2)
+{
+    if (arr.length != arr2.length) {
+        WARNING("incompatible matrix arrays\n\tmatarr_equal %zd vs %zd\n", arr.length, arr2.length);
+        return false;
+    }
+    for (size_t i = 0; i < arr.length; i++) {
+        if (!mat_equal(matarr_get(arr, i), matarr_get(arr2, i))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool
+mat_equal(const struct matrix A, const struct matrix B)
+{
+    if (A.len1 != B.len1 || A.len2 != B.len2) {
+        WARNING("incompatible matrices\n\tmat_equal %zdx%zd vs %zdx%zd\n", A.len1, A.len2, B.len1, B.len2);
+        return false;
+    }
+    for (size_t i = 0; i < A.len1; i++) {
+        for (size_t j = 0; j < A.len2; j++) {
+            if (!equals(mat_get(A, i, j), mat_get(B, i, j))) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool
+vec_equal(const struct vec v1, const struct vec v2)
+{
+    if (v1.length != v2.length) {
+        WARNING("incompatible vectors\n\tvec_equal %zdvs%zd", v1.length, v2.length);
+        return false;
+    }
+    bool ret = true;
+    for (size_t i = 0; i < v1.length; i++) {
+        if (!equals(vec_get(v1, i), vec_get(v2, i))) {
+            printf("%zd: %14e %14e\n", i, vec_get(v1, i), vec_get(v2, i));
+            ret = false;
+        }
+    }
+    return ret;
+}
+
 double
 vec_max(const struct vec v)
 {
@@ -72,20 +131,23 @@ vec_copy(const struct vec v)
 double
 vec_std(const struct vec v) 
 {
+    if (v.length < 2) {
+            return 0;
+    }
     struct vec vcopy = vec_copy(v);
     double mean = vec_mean(vcopy);
     vec_add_const(vcopy, -mean);
     vec_square(vcopy);
-    double sum = vec_sum(vcopy);
+    double variance = vec_sum(vcopy)/(v.length - 1);
     vec_free(vcopy);
-    return sqrt(sum/v.length);
+    return sqrt(variance);
 }
 
 void
 vec_add_const(struct vec v, const double a)
 {
     for (size_t i = 0; i < v.length; i++) {
-        vec_set(v, i, vec_get(v, i) - a);
+        vec_set(v, i, vec_get(v, i) + a);
     }
 }
 
@@ -148,7 +210,7 @@ vec_printf(const struct vec v)
 {
     printf("[");
     for (size_t i = 0; i < v.length; i++) {
-        printf("%6g", vec_get(v, i));
+        printf("%6e", vec_get(v, i));
         if (i != v.length - 1)
             printf(", ");
     }
@@ -278,7 +340,7 @@ mat_printf(const struct matrix m)
         if (i != 0) printf(" ");
         printf("[");
         for (size_t j = 0; j < m.len2; j++) {
-            printf("%6g, ", mat_get(m, i, j));
+            printf("%6e, ", mat_get(m, i, j));
         }
         printf("]");
         if (i != m.len1 - 1) printf("\n");

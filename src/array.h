@@ -7,6 +7,11 @@
 #define GREEN "\033[32m"
 #define RESET "\033[0m"
 
+#define WARNING(fmt, ...) fprintf(stderr, "%s:%d: " RED "WARNING: " RESET fmt, __FILE__, __LINE__, __VA_ARGS__)
+
+// tolerance ratio
+#define TOLRAT (0.0001)
+
 struct matarray
 {
     size_t length;
@@ -63,5 +68,10 @@ void vec_square(struct vec v);
 struct vec vec_copy(const struct vec v);
 double vec_mean(const struct vec v);
 double vec_std(const struct vec v);
+bool equals(const double a, const double b);
+bool mat_equal(const struct matrix A, const struct matrix B);
+bool matarr_equal(const struct matarray arr, const struct matarray arr2);
+bool vec_equal(const struct vec v1, const struct vec v2);
+
 
 #endif // ARRAY_H
