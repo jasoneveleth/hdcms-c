@@ -107,8 +107,8 @@ test_peak_sort_simple()
     struct matrix m2 = mat_from_data(m2data, 4, 2, 2, false);
 
     struct matrix adata[] = {m1, m2};
-    struct matarray arr = matarr_from_data(adata, 2, false);
-    struct matarray ans = peak_sort(arr, n);
+    struct matarray input = matarr_from_data(adata, 2, false);
+    struct matarray output = peak_sort(input, n);
 
     // answer
     double peak0data[] = {72, 0.68, 79, 0.61};
@@ -121,17 +121,17 @@ test_peak_sort_simple()
     struct matrix peak3 = mat_from_data(peak3data, 2, 2, 2, false);
 
     // each is equal
-    bool b0 = mat_equal(peak0, matarr_get(ans, 0));
-    bool b1 = mat_equal(peak1, matarr_get(ans, 1));
-    bool b2 = mat_equal(peak2, matarr_get(ans, 2));
-    bool b3 = mat_equal(peak3, matarr_get(ans, 3));
+    bool b0 = mat_equal(peak0, matarr_get(output, 0));
+    bool b1 = mat_equal(peak1, matarr_get(output, 1));
+    bool b2 = mat_equal(peak2, matarr_get(output, 2));
+    bool b3 = mat_equal(peak3, matarr_get(output, 3));
 
     mat_free(peak0);
     mat_free(peak1);
     mat_free(peak2);
     mat_free(peak3);
-    matarr_free(arr);
-    matarr_free(ans);
+    matarr_free(input);
+    matarr_free(output);
     return b0 && b1 && b2 && b3;
 }
 
@@ -167,8 +167,8 @@ test_peak_sort_zeros()
     struct matrix m5 = mat_from_data(m5data, 4, 2, 2, false);
 
     struct matrix adata[] = {m1, m2, m3, m4, m5};
-    struct matarray arr = matarr_from_data(adata, 5, false);
-    struct matarray ans = peak_sort(arr, n);
+    struct matarray input = matarr_from_data(adata, 5, false);
+    struct matarray output = peak_sort(input, n);
 
     // answer
     double peak0data[] = {72, 0.68, 79, 0.61, 0, 0, 0, 0, 0, 0};
@@ -183,10 +183,10 @@ test_peak_sort_zeros()
     // each is equal
     struct matrix solutiondata[] = {peak0, peak1, peak2, peak3};
     struct matarray solution = matarr_from_data(solutiondata, 4, false);
-    bool ret = matarr_equal(solution, ans);
+    bool ret = matarr_equal(solution, output);
 
-    matarr_free(arr);
-    matarr_free(ans);
+    matarr_free(input);
+    matarr_free(output);
     matarr_free(solution);
     return ret;
 }
@@ -208,8 +208,8 @@ bool test_peak_sort_real2()
     struct matrix m5 = mat_from_data(m5data, 18, 2, 2, false);
 
     struct matrix adata[] = {m1, m2, m3, m4, m5};
-    struct matarray arr = matarr_from_data(adata, 5, false);
-    struct matarray ans = peak_sort(arr, n);
+    struct matarray input = matarr_from_data(adata, 5, false);
+    struct matarray output = peak_sort(input, n);
 
     // answer
     struct matrix peak0 = mat_from_data(p_m13_2__0_data, 5, 2, 2, false);
@@ -217,10 +217,10 @@ bool test_peak_sort_real2()
 
     struct matrix solutiondata[] = {peak0, peak1};
     struct matarray solution = matarr_from_data(solutiondata, 2, false);
-    bool ret = matarr_equal(solution, ans);
+    bool ret = matarr_equal(solution, output);
 
-    matarr_free(arr);
-    matarr_free(ans);
+    matarr_free(input);
+    matarr_free(output);
     matarr_free(solution);
     return ret;
 }
@@ -244,8 +244,8 @@ test_peak_sort_real15()
     struct matrix m5 = mat_from_data(m5data, 18, 2, 2, false);
 
     struct matrix adata[] = {m1, m2, m3, m4, m5};
-    struct matarray arr = matarr_from_data(adata, 5, false);
-    struct matarray ans = peak_sort(arr, n);
+    struct matarray input = matarr_from_data(adata, 5, false);
+    struct matarray output = peak_sort(input, n);
 
     // answer
     struct matrix peak0 = mat_from_data(p_m13_2__0_data, 5, 2, 2, false);
@@ -263,10 +263,10 @@ test_peak_sort_real15()
     struct matrix peak12 = mat_from_data(p_m13_2__12_data, 5, 2, 2, false);
     struct matrix solutiondata[] = {peak0, peak1, peak2, peak3, peak4, peak5, peak6, peak7, peak8, peak9, peak10, peak11, peak12};
     struct matarray solution = matarr_from_data(solutiondata, 13, false);
-    bool ret = matarr_equal(solution, ans);
+    bool ret = matarr_equal(solution, output);
 
-    matarr_free(arr);
-    matarr_free(ans);
+    matarr_free(input);
+    matarr_free(output);
     matarr_free(solution);
     return ret;
 }
@@ -290,14 +290,14 @@ test_peak_stat_real()
     struct matrix m5 = mat_from_data(m5data, 18, 2, 2, false);
 
     struct matrix adata[] = {m1, m2, m3, m4, m5};
-    struct matarray arr = matarr_from_data(adata, 5, false);
-    struct matrix ans = peak_stat(arr, n);
+    struct matarray input = matarr_from_data(adata, 5, false);
+    struct matrix output = peak_stat(input, n);
 
     struct matrix sol = mat_from_data(stat_m13_i_2, 13, 4, 4, false);
-    bool ret = mat_equal(ans, sol);
-    mat_free(ans);
+    bool ret = mat_equal(output, sol);
+    mat_free(output);
     mat_free(sol);
-    matarr_free(arr);
+    matarr_free(input);
     return ret;
 }
 
