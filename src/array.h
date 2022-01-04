@@ -10,7 +10,7 @@
 #define WARNING(fmt, ...) fprintf(stderr, "%s:%d: " RED "WARNING: " RESET fmt, __FILE__, __LINE__, __VA_ARGS__)
 
 // tolerance ratio
-#define TOLRAT (0.0001)
+#define TOLRAT (1e-5)
 
 struct matarray
 {
