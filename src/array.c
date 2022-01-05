@@ -300,6 +300,20 @@ vec_write(FILE *file, const struct vec v)
     // TODO
 }
 
+struct matrix
+mat_read(FILE *fp)
+{
+    // TODO
+    struct matrix m;
+    return m;
+}
+
+void
+mat_write(FILE *fp)
+{
+    // TODO
+}
+
 double
 vec_get(const struct vec v, size_t i)
 {
@@ -357,14 +371,33 @@ matarr_copy(const struct matarray old)
     return new;
 }
 
+void
+vec_set_all(struct vec v, const double d)
+{
+    for (size_t i = 0; i < v.length; i++) {
+        vec_set(v, i, d);
+    }
+}
+
 struct vec
-vec_from_col(struct matrix m, size_t col)
+vec_from_col(const struct matrix m, const size_t col)
 {
     struct vec v;
     v.data = m.data + col;
     v.is_owner = false;
     v.length = m.len1;
     v.stride = m.physlen;
+    return v;
+}
+
+struct vec
+vec_from_row(const struct matrix m, const size_t row)
+{
+    struct vec v;
+    v.data = m.data + m.physlen * row;
+    v.is_owner = false;
+    v.length = m.len2;
+    v.stride = 1;
     return v;
 }
 

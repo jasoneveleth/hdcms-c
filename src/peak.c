@@ -16,10 +16,54 @@ min3(const size_t x, const size_t y, const size_t z)
 
 // 2 4xn matrices (output of `peak_stat`), number of peaks -> similarity of them btwn 0 and 1
 double
-peak_sim_measure_L2(const struct matarray m1, const struct matarray m2, size_t n) 
+peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n) 
 {
-    // TODO
-    return 0;
+    n = min3(m1.len1, m2.len1, n);
+    struct matrix m1_copy = mat_copy(m1);
+    struct matrix m2_copy = mat_copy(m2);
+    struct vec values = vec_zeros(n);
+    struct vec weights = vec_zeros(n);
+
+    for (size_t i = 0; i < n; i++) {
+        struct vec m1_ys = vec_from_col(m1_copy, 1);
+        struct vec m2_ys = vec_from_col(m1_copy, 1);
+        size_t m1_argmax = vec_argmax(m1_ys);
+        size_t m2_argmax = vec_argmax(m2_ys);
+
+        struct matrix *matrix_without_max_peak_p;
+        struct vec u; // peak with max y value
+        bool m1_has_larger_peak = mat_get(m1_copy, m1_argmax, 1) >= mat_get(m2_copy, m2_argmax, 1);
+        matrix_without_max_peak_p = m1_has_larger_peak ? &m2_copy : &m1_copy;
+        u = m1_has_larger_peak
+            ? vec_from_row(m1_copy, m1_argmax)
+            : vec_from_row(m2_copy, m2_argmax);
+
+        struct vec sim_scores = vec_zeros(n);
+        for (size_t j = 0; j < n; j++) {
+            struct vec v = vec_from_row(*matrix_without_max_peak_p, j);
+            vec_set(sim_scores, j, cos_sim_L2(u, v));
+        }
+        size_t score_argmax = vec_argmax(sim_scores);
+        struct vec v = vec_from_row(*matrix_without_max_peak_p, score_argmax);
+        vec_set(values, i, vec_get(u, 1) * vec_get(v, 1) * vec_max(sim_scores));
+        vec_set(weights, i, vec_get(u, 1) * vec_get(v, 1));
+
+        // cause peaks to never appear again
+        // vec_set_all(u, -INFINITY);
+        // vec_set_all(v, -INFINITY);
+        vec_set(u, 0, -INFINITY);
+        vec_set(u, 1, -INFINITY);
+        vec_set(v, 0, -INFINITY);
+        vec_set(v, 1, -INFINITY);
+
+        vec_free(sim_scores);
+    }
+    double ret = vec_sum(values)/vec_sum(weights);
+    mat_free(m1_copy);
+    mat_free(m2_copy);
+    vec_free(values);
+    vec_free(weights);
+    return ret;
 }
 
 // 5 matrices of spectra, and number of peaks -> nx4 matrix of peaks

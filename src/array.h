@@ -58,9 +58,11 @@ double vec_std(const struct vec v);
 bool vec_equal(const struct vec v1, const struct vec v2);
 struct vec vec_read(FILE *file, const char *const format);
 void vec_write(FILE *file, const struct vec v);
+void vec_set_all(struct vec v, const double d);
 
 /* vec mat */
-struct vec vec_from_col(struct matrix m, size_t col);
+struct vec vec_from_col(const struct matrix m, const size_t col);
+struct vec vec_from_row(const struct matrix m, const size_t row);
 
 /* matarr */
 struct matrix matarr_get(const struct matarray arr, size_t i);
@@ -81,6 +83,7 @@ void mat_free(struct matrix m);
 void mat_printf(const struct matrix m);
 bool equals(const double a, const double b);
 bool mat_equal(const struct matrix A, const struct matrix B);
+struct matrix mat_copy(struct matrix m);
 
 void *safe_calloc(size_t num, size_t size);
 void *safe_realloc(void *ptr, size_t size);

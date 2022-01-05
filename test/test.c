@@ -317,6 +317,59 @@ test_vec_read_simple()
 }
 
 bool
+test_cos_sim_extra1()
+{
+    printf(__FUNCTION__);
+    double adata[] = {90, 0.5, 0.001, 0.02};
+    double bdata[] = {100.001, 0.908, 0.004, 0.01};
+    struct vec u = vec_from_data(adata, 4, false);
+    struct vec v = vec_from_data(bdata, 4, false);
+    return equals(cos_sim_L2(u, v), 0);
+}
+
+bool
+test_cos_sim_extra2()
+{
+    printf(__FUNCTION__);
+    double adata[] = {100, 0.9, 0.003, 0.008};
+    double bdata[] = {100.001, 0.908, 0.004, 0.01};
+    struct vec u = vec_from_data(adata, 4, false);
+    struct vec v = vec_from_data(bdata, 4, false);
+    return equals(cos_sim_L2(u, v), 7.856829001024321e-01);
+}
+
+bool
+test_peak_sim_measure_simple()
+{
+    printf(__FUNCTION__);
+    double adata[] = {90, 0.5, 0.001, 0.02,
+        100, 0.9, 0.003, 0.008};
+    double bdata[] = {90.001, 0.497, 0.002, 0.015,
+        100.001, 0.908, 0.004, 0.01};
+    struct matrix A = mat_from_data(adata, 2, 4, 4, false);
+    struct matrix B = mat_from_data(bdata, 2, 4, 4, false);
+    double sim = peak_sim_measure_L2(A, B, 2);
+    bool ret = equals(sim, 7.906904116230999e-01);
+    mat_free(A);
+    mat_free(B);
+    return ret;
+}
+
+bool
+test_peak_sim_measure_real()
+{
+    printf(__FUNCTION__);
+    struct matrix A = mat_from_data(stat_m13_i_2, 13, 4, 4, false);
+    struct matrix B = mat_from_data(stat_m12_i_3, 25, 4, 4, false);
+    double sim = peak_sim_measure_L2(A, B, 20);
+    printf("%g\n", sim);
+    bool ret = equals(sim, 0); // NAN?
+    mat_free(A);
+    mat_free(B);
+    return ret;
+}
+
+bool
 test_vec_read_real()
 {
     printf(__FUNCTION__);
@@ -368,7 +421,12 @@ int main()
         test_peak_stat_real,
         test_vec_read_simple,
         test_vec_read_real,
+        test_peak_sim_measure_simple,
+        test_cos_sim_extra1,
+        test_cos_sim_extra2,
+        test_peak_sim_measure_real,
     };
+
     const size_t len = sizeof(tests)/sizeof(tests[0]);
     for (size_t i = 0; i < len; i++) {
         bool passed = tests[i]();
