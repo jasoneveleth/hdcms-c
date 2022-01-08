@@ -1,4 +1,5 @@
-2 big functions
+<!-- FIXME TODO -->
+CHANGE `double` to `size_t` in `vec_argmax`
 
 `peak_sim_measure_L2`
 2 4xn matrices (output of `peak_stat`), number of peaks -> similarity of them btwn
@@ -36,3 +37,14 @@ peaks the same distance away, I think this can be solved by the line `i_min
 = i_min(1);`. The second behavior is when you set the peak height to 0, it
 seems like you don't want to match the same peak multiple times, but that
 is what happens now.
+
+* using `n` rather than the lenght of the array (which isn't the max) causes
+  you to ignore some elements
+
+## Possible matching algorithms
+
+- https://cs.stanford.edu/~amirz/index_files/PAMI_Amir%20Zamir.pdf
+- https://www.sciencedirect.com/science/article/pii/S0031320398000867
+- https://reader.elsevier.com/reader/sd/pii/S0031320398000867?token=8E1C5F0F262998D51E6F8C5F8350FD3DFF47B7582B67064482E9420ED8F31FF8161F240EA9434F8369FF812C383BCC28&originRegion=us-east-1&originCreation=20220105183901
+
+
