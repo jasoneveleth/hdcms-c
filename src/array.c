@@ -185,7 +185,7 @@ vec_add_const(struct vec v, const double a)
     }
 }
 
-double
+size_t
 vec_argmax(const struct vec v)
 {
     double max = -INFINITY;

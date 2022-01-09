@@ -48,7 +48,7 @@ struct vec vec_from_data(double *data, size_t len, int is_owner);
 void vec_printf(const struct vec v);
 void vec_scale(struct vec v, const double c);
 struct vec vec_zeros(size_t len);
-double vec_argmax(const struct vec v);
+size_t vec_argmax(const struct vec v);
 void vec_free(struct vec v);
 void vec_add_const(struct vec v, const double a);
 void vec_square(struct vec v);
