@@ -20,7 +20,8 @@ pts assoc. with ith largest peak
 
 ### Questions:
 
-* How does integration work for `<f1,f2>/(|f1| |f2|)`
+* How does integration work for `<f1,f2>/(|f1| |f2|)`, also how did you
+  figure it out?
 * Why do we add 1e-4 to all std?
 * what happens when:
 
@@ -40,6 +41,8 @@ is what happens now.
 
 * using `n` rather than the lenght of the array (which isn't the max) causes
   you to ignore some elements
+* How does data entry work
+* How to compile on windows
 
 ## Possible matching algorithms
 

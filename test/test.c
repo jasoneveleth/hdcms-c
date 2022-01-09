@@ -356,14 +356,83 @@ test_peak_sim_measure_simple()
 }
 
 bool
+test_peak_sim_measure_complex()
+{
+    printf(__FUNCTION__);
+    double adata[] = {78.946, 0.961, 0.5, 0.02,  
+        79.854,  0.286, 0.5, 0.02,  
+        101.909, 0.259, 0.5, 0.02, 
+        90.903,  0.649, 0.5, 0.02,  
+        85.208,  0.556, 0.5, 0.02,  
+        96.322,  0.615, 0.5, 0.02,  
+        61.448,  0.846, 0.5, 0.02,  
+        82.000,  0.959, 0.5, 0.02,  
+        82.683,  0.169, 0.5, 0.02,  
+        111.682, 0.261, 0.5, 0.02};
+    double bdata[] = {77.293, 0.168, 0.5, 0.02,
+        78.210,  0.852, 0.5, 0.02,
+        100.486, 0.629, 0.5, 0.02,
+        89.976,  0.380, 0.5, 0.02,
+        84.043,  0.490, 0.5, 0.02,
+        95.330,  0.855, 0.5, 0.02,
+        60.852,  0.589, 0.5, 0.02,
+        81.939,  0.715, 0.5, 0.02,
+        81.005,  0.837, 0.5, 0.02,
+        110.329, 0.322, 0.5, 0.02};
+    struct matrix A = mat_from_data(adata, 10, 4, 4, false);
+    struct matrix B = mat_from_data(bdata, 10, 4, 4, false);
+    double sim = peak_sim_measure_L2(A, B, 10);
+    bool ret = equals(sim, 0.00045443404003044953);
+    mat_free(A);
+    mat_free(B);
+    return ret;
+}
+
+bool
+test_peak_sim_measure_complex2()
+{
+    printf(__FUNCTION__);
+    double adata[] = {
+        85.208,  0.556, 0.5, 0.02,  
+        61.448,  0.846, 0.5, 0.02,  
+        111.682, 0.261, 0.5, 0.02,
+        78.946,  0.961, 0.5, 0.02,  
+        96.322,  0.615, 0.5, 0.02,  
+        101.909, 0.259, 0.5, 0.02, 
+        82.000,  0.959, 0.5, 0.02,  
+        82.683,  0.169, 0.5, 0.02,  
+        90.903,  0.649, 0.5, 0.02,  
+        79.854,  0.286, 0.5, 0.02,  
+    };
+    double bdata[] = {
+        110.329, 0.322, 0.5, 0.02,
+        81.005,  0.837, 0.5, 0.02,
+        84.043,  0.490, 0.5, 0.02,
+        81.939,  0.715, 0.5, 0.02,
+        60.852,  0.589, 0.5, 0.02,
+        95.330,  0.855, 0.5, 0.02,
+        100.486, 0.629, 0.5, 0.02,
+        89.976,  0.380, 0.5, 0.02,
+        78.210,  0.852, 0.5, 0.02,
+        77.293,  0.168, 0.5, 0.02,
+    };
+    struct matrix A = mat_from_data(adata, 10, 4, 4, false);
+    struct matrix B = mat_from_data(bdata, 10, 4, 4, false);
+    double sim = peak_sim_measure_L2(A, B, 10);
+    bool ret = equals(sim, 0.00045443404003044953);
+    mat_free(A);
+    mat_free(B);
+    return ret;
+}
+
+bool
 test_peak_sim_measure_real()
 {
     printf(__FUNCTION__);
     struct matrix A = mat_from_data(stat_m13_i_2, 13, 4, 4, false);
     struct matrix B = mat_from_data(stat_m12_i_3, 25, 4, 4, false);
     double sim = peak_sim_measure_L2(A, B, 20);
-    printf("%g\n", sim);
-    bool ret = equals(sim, 0); // NAN?
+    bool ret = equals(sim, 0);
     mat_free(A);
     mat_free(B);
     return ret;
@@ -424,6 +493,8 @@ int main()
         test_peak_sim_measure_simple,
         test_cos_sim_extra1,
         test_cos_sim_extra2,
+        test_peak_sim_measure_complex,
+        test_peak_sim_measure_complex2,
         test_peak_sim_measure_real,
     };
 

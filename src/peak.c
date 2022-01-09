@@ -26,7 +26,7 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
 
     for (size_t i = 0; i < n; i++) {
         struct vec m1_ys = vec_from_col(m1_copy, 1);
-        struct vec m2_ys = vec_from_col(m1_copy, 1);
+        struct vec m2_ys = vec_from_col(m2_copy, 1);
         size_t m1_argmax = vec_argmax(m1_ys);
         size_t m2_argmax = vec_argmax(m2_ys);
 
@@ -38,19 +38,31 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
             ? vec_from_row(m1_copy, m1_argmax)
             : vec_from_row(m2_copy, m2_argmax);
 
-        struct vec sim_scores = vec_zeros(n);
-        for (size_t j = 0; j < n; j++) {
+        struct vec sim_scores = vec_zeros(matrix_without_max_peak_p->len1);
+        for (size_t j = 0; j < matrix_without_max_peak_p->len1; j++) {
             struct vec v = vec_from_row(*matrix_without_max_peak_p, j);
             vec_set(sim_scores, j, cos_sim_L2(u, v));
         }
-        size_t score_argmax = vec_argmax(sim_scores);
+
+        // argmax from values that aren't -inf
+        double max = -INFINITY;
+        size_t score_argmax = 0;
+        for (size_t j = 0; j < matrix_without_max_peak_p->len1; j++) {
+            double y = mat_get(*matrix_without_max_peak_p, j, 1);
+            double sim = vec_get(sim_scores, j);
+            if (y != -INFINITY && max < sim) {
+                max = sim;
+                score_argmax = j;
+            }
+        }
+
         struct vec v = vec_from_row(*matrix_without_max_peak_p, score_argmax);
-        vec_set(values, i, vec_get(u, 1) * vec_get(v, 1) * vec_max(sim_scores));
+        // -inf * -inf * 0
+        double sim = vec_get(sim_scores, score_argmax);
+        vec_set(values, i, vec_get(u, 1) * vec_get(v, 1) * sim);
         vec_set(weights, i, vec_get(u, 1) * vec_get(v, 1));
 
         // cause peaks to never appear again
-        // vec_set_all(u, -INFINITY);
-        // vec_set_all(v, -INFINITY);
         vec_set(u, 0, -INFINITY);
         vec_set(u, 1, -INFINITY);
         vec_set(v, 0, -INFINITY);
