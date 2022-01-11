@@ -50,4 +50,9 @@ is what happens now.
 - https://www.sciencedirect.com/science/article/pii/S0031320398000867
 - https://reader.elsevier.com/reader/sd/pii/S0031320398000867?token=8E1C5F0F262998D51E6F8C5F8350FD3DFF47B7582B67064482E9420ED8F31FF8161F240EA9434F8369FF812C383BCC28&originRegion=us-east-1&originCreation=20220105183901
 
+## Increasing performance
+
+* http://math-atlas.sourceforge.net/atlas_install/
+* http://math-atlas.sourceforge.net/faq.html
+* https://stackoverflow.com/questions/1303182/how-does-blas-get-such-extreme-performance
 
