@@ -105,6 +105,19 @@ peak_stat(const struct matarray matrices, size_t n)
 double
 cos_sim_L2(const struct vec u, const struct vec v)
 {
+    // assert input correct
+    if (u.length != 4) {
+        WARNING("%s vec size incorrect", __FUNCTION__);
+        printf("\t");
+        vec_printf(u);
+
+    }
+    if (v.length != 4) {
+        WARNING("%s vec size incorrect", __FUNCTION__);
+        printf("\t");
+        vec_printf(v);
+    }
+
     // add 1e-4 to all std
     double v0 = vec_get(v, 0),        v1 = vec_get(v, 1),
            v2 = vec_get(v, 2) + 1e-4, v3 = vec_get(v, 3) + 1e-4,
