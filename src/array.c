@@ -42,7 +42,7 @@ bool
 equals(const double a, const double b)
 {
     if (b == 0) {
-        return fabs(a) < TOLRAT;
+        return fabs(a) < TOLABS;
     }
     double ratio = a / b;
     return fabs(ratio - 1) < TOLRAT;

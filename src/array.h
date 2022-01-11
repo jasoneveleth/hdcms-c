@@ -13,6 +13,7 @@
 
 // tolerance ratio
 #define TOLRAT (1e-5)
+#define TOLABS (1e-6)
 
 struct matarray
 {
