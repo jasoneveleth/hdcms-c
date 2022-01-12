@@ -56,3 +56,10 @@ is what happens now.
 * http://math-atlas.sourceforge.net/faq.html
 * https://stackoverflow.com/questions/1303182/how-does-blas-get-such-extreme-performance
 
+## Install for windows
+
+Run this before `setup.ps1`:
+```powershell
+Set-ExecutionPolicy RemoteSigned
+```
+And make sure you run it as administrator
