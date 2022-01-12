@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "test.h"
-#include "../src/peak.h"
+#include "../util/peak.h"
+#include "../util/array.h"
+
+// path from current working directory of shell running the test executable
+#define TESTDIR "../src/test/"
 
 bool
 test_cos_sim_L2()
@@ -305,7 +309,7 @@ bool
 test_vec_read_simple()
 {
     printf(__FUNCTION__);
-    FILE *fptr = safe_fopen("test/vec_read_simple.txt", "r");
+    FILE *fptr = safe_fopen(TESTDIR "vec_read_simple.txt", "r");
     struct vec output = vec_read(fptr, "%lg");
     fclose(fptr);
     double data[] = {728, 283910, 812931, 72891};
@@ -479,7 +483,7 @@ bool
 test_vec_read_real()
 {
     printf(__FUNCTION__);
-    FILE *fptr = safe_fopen("test/vec_read_real.txt", "r");
+    FILE *fptr = safe_fopen(TESTDIR "vec_read_real.txt", "r");
     struct vec output = vec_read(fptr, "%lg");
     fclose(fptr);
     double data[] = {

@@ -32,7 +32,8 @@ safe_fopen(const char * restrict path, const char * restrict mode)
 {
     FILE *ret = fopen(path, mode);
     if (ret == NULL) {
-        perror("fopen");
+        fprintf(stderr, "%s: ", path);
+        perror("");
         abort();
     }
     return ret;
