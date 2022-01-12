@@ -11,10 +11,12 @@ file(GLOB SRC_TEST "src/test/*.c")
 file(GLOB SRC_MAIN "src/main/*.c")
 
 add_executable(${TEST} ${SRC_UTIL} ${SRC_TEST})
-# link with math library
-target_link_libraries(${TEST} PUBLIC m)
-
 add_executable(${PROJECT_NAME} ${SRC_UTIL} ${SRC_MAIN})
+
 # link with math library
-target_link_libraries(${PROJECT_NAME} PUBLIC m)
+find_library(MATHLIB m)
+if(MATHLIB)
+    target_link_libraries(${TEST} PUBLIC m)
+    target_link_libraries(${PROJECT_NAME} PUBLIC m)
+endif()
 
