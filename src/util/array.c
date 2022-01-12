@@ -241,15 +241,21 @@ vec_from_data(double *data, size_t len, int is_owner)
 }
 
 void
+vec_fprintf(FILE *fp, const struct vec v)
+{
+    fprintf(fp, "[");
+    for (size_t i = 0; i < v.length; i++) {
+        fprintf(fp, "%6e", vec_get(v, i));
+        if (i != v.length - 1)
+            fprintf(fp, ", ");
+    }
+    fprintf(fp, "]\n");
+}
+
+void
 vec_printf(const struct vec v)
 {
-    printf("[");
-    for (size_t i = 0; i < v.length; i++) {
-        printf("%6e", vec_get(v, i));
-        if (i != v.length - 1)
-            printf(", ");
-    }
-    printf("]\n");
+    vec_fprintf(stdout, v);
 }
 
 void
@@ -421,6 +427,9 @@ matarr_free(struct matarray arr)
 void
 matarr_printf(const struct matarray arr)
 {
+    if (arr.length == 0) {
+        printf("empty array");
+    }
     for (size_t j = 0; j < arr.length; j++) {
         printf("%zd:\n", j);
         mat_printf(matarr_get(arr, j));

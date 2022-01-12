@@ -508,6 +508,129 @@ test_vec_read_real()
 }
 
 bool
+test_edgecase_contains_0_peak_sort()
+{
+    printf(__FUNCTION__);
+    struct matrix m = mat_zeros(0, 0);
+    struct matrix adata[] = {m};
+    struct matarray arr = matarr_from_data(adata, 1, false);
+    struct matarray output = peak_sort(arr, 5);
+    bool ret = output.length == 0;
+    return ret;
+}
+
+bool
+test_edgecase_0_peak_sort()
+{
+    printf(__FUNCTION__);
+    struct matarray m = matarr_zeros(0);
+    struct matarray output = peak_sort(m, 5);
+    bool ret = output.length == 5;
+    return ret;
+}
+
+bool
+test_edgecase_1_peak_sort()
+{
+    printf(__FUNCTION__);
+    double mdata[] = {83, 0.23,
+        92, 0.47,
+        79, 0.61,
+        110, 0.5};
+    struct matrix m = mat_from_data(mdata, 4, 2, 2, false);
+    struct matarray arr = matarr_zeros(1);
+    matarr_set(arr, 0, m);
+    struct matarray output = peak_sort(arr, 5);
+    // output should be 4 matrices each of which is 1 pt
+    double sol1data[] = {79, 0.61};
+    double sol2data[] = {110, 0.5};
+    double sol3data[] = {92, 0.47};
+    double sol4data[] = {83, 0.23};
+    struct matrix sol1 = mat_from_data(sol1data, 1, 2, 2, false);
+    struct matrix sol2 = mat_from_data(sol2data, 1, 2, 2, false);
+    struct matrix sol3 = mat_from_data(sol3data, 1, 2, 2, false);
+    struct matrix sol4 = mat_from_data(sol4data, 1, 2, 2, false);
+    struct matarray solarr = matarr_zeros(4);
+    matarr_set(solarr, 0, sol1);
+    matarr_set(solarr, 1, sol2);
+    matarr_set(solarr, 2, sol3);
+    matarr_set(solarr, 3, sol4);
+    
+    return matarr_equal(solarr, output);
+}
+
+bool
+test_edge_case_1_peak_stat()
+{
+    printf(__FUNCTION__);
+    double mdata[] = {83, 0.23,
+        92, 0.47,
+        79, 0.61,
+        110, 0.5};
+    struct matrix m = mat_from_data(mdata, 4, 2, 2, false);
+    struct matarray arr = matarr_zeros(1);
+    matarr_set(arr, 0, m);
+    struct matrix output = peak_stat(arr, 5);
+    double soldata[] = {
+        79, 0.61, 0, 0,
+        110, 0.5, 0, 0,
+        92, 0.47, 0, 0,
+        83, 0.23, 0, 0,
+    };
+    struct matrix sol = mat_from_data(soldata, 4, 4, 4, false);
+    return mat_equal(sol, output);
+}
+
+bool
+test_edgecase_contains_0_peak_stat()
+{
+    printf(__FUNCTION__);
+    struct matrix m = mat_zeros(0, 0);
+    struct matrix adata[] = {m};
+    struct matarray arr = matarr_from_data(adata, 1, false);
+    struct matrix output = peak_stat(arr, 5);
+    bool ret = output.len1 == 0;
+    return ret;
+}
+
+bool
+test_edgecase_0_peak_stat()
+{
+    printf(__FUNCTION__);
+    struct matarray m = matarr_zeros(0);
+    freopen(NULL_DEVICE, "w", stderr);
+    struct matrix output = peak_stat(m, 5);
+    freopen(CONSOLE, "w", stderr);
+    bool ret = output.len1 == 0 && output.len2 == 0;
+    return ret;
+}
+
+bool
+test_edge_case_0_peak_sim()
+{
+    printf(__FUNCTION__);
+    struct matrix m = {0, 0, 0, NULL, false};
+    double ndata[] = {420, 69, 0, 0};
+    struct matrix n = {1, 4, 4, ndata, false};
+    freopen(NULL_DEVICE, "w", stderr);
+    double d = peak_sim_measure_L2(m, n, 5);
+    freopen(CONSOLE, "w", stderr);
+    return equals(d, 0);
+}
+
+bool
+test_edge_case_0_cos_sim()
+{
+    printf(__FUNCTION__);
+    struct vec v = {0, 0, NULL, false};
+    struct vec u = {0, 0, NULL, false};
+    freopen(NULL_DEVICE, "w", stderr);
+    double d = cos_sim_L2(u, v);
+    freopen(CONSOLE, "w", stderr);
+    return equals(d, 0);
+}
+
+bool
 simple() 
 {
     printf(__FUNCTION__);
@@ -538,6 +661,14 @@ int main()
         test_peak_sim_measure_complex2,
         test_peak_sim_measure_real,
         test_peak_sim_measure_n_less_than_both,
+        test_edgecase_0_peak_sort,
+        test_edgecase_1_peak_sort,
+        test_edgecase_contains_0_peak_sort,
+        test_edge_case_1_peak_stat,
+        test_edgecase_contains_0_peak_stat,
+        test_edgecase_0_peak_stat,
+        test_edge_case_0_peak_sim,
+        test_edge_case_0_cos_sim,
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);

@@ -19,6 +19,10 @@ double
 peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n) 
 {
     n = min3(m1.len1, m2.len1, n);
+    if (n == 0) {
+        WARNING("peak_sim_measure_L2 one of the matrices has %d length\n", 0);
+        return 0;
+    }
     struct matrix m1_copy = mat_copy(m1);
     struct matrix m2_copy = mat_copy(m2);
     struct vec values = vec_zeros(n);
@@ -82,6 +86,12 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
 struct matrix
 peak_stat(const struct matarray matrices, size_t n) 
 {
+    if (matrices.length <= 0) {
+        WARNING("peak_stat got %zd length array\n", matrices.length);
+        struct matrix m = {0, 0, 0, NULL, false};
+        return m;
+    }
+
     // reset n
     for (size_t i = 0; i < matrices.length; i++) {
         n = min2(n, matarr_get(matrices, i).len1);
@@ -107,15 +117,16 @@ cos_sim_L2(const struct vec u, const struct vec v)
 {
     // assert input correct
     if (u.length != 4) {
-        WARNING("%s vec size incorrect", __FUNCTION__);
-        printf("\t");
-        vec_printf(u);
-
+        WARNING("%s vec size not equal to 4\n", __FUNCTION__);
+        fprintf(stderr, "vec:\t");
+        vec_fprintf(stderr, u);
+        return 0;
     }
     if (v.length != 4) {
-        WARNING("%s vec size incorrect", __FUNCTION__);
-        printf("\t");
-        vec_printf(v);
+        WARNING("%s vec size not equal to 4\n", __FUNCTION__);
+        fprintf(stderr, "vec:\t");
+        vec_fprintf(stderr, v);
+        return 0;
     }
 
     // add 1e-4 to all std
