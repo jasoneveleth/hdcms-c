@@ -516,16 +516,21 @@ test_edgecase_contains_0_peak_sort()
     struct matarray arr = matarr_from_data(adata, 1, false);
     struct matarray output = peak_sort(arr, 5);
     bool ret = output.length == 0;
+    mat_free(m);
+    matarr_free(output);
     return ret;
 }
 
 bool
 test_edgecase_0_peak_sort()
 {
-    printf(__FUNCTION__);
+    // printf(__FUNCTION__);
     struct matarray m = matarr_zeros(0);
     struct matarray output = peak_sort(m, 5);
+    printf("%p\n", output.data);
     bool ret = output.length == 5;
+    matarr_free(m);
+    matarr_free(output);
     return ret;
 }
 
@@ -555,8 +560,11 @@ test_edgecase_1_peak_sort()
     matarr_set(solarr, 1, sol2);
     matarr_set(solarr, 2, sol3);
     matarr_set(solarr, 3, sol4);
-    
-    return matarr_equal(solarr, output);
+    bool ret = matarr_equal(solarr, output);
+    matarr_free(solarr);
+    matarr_free(arr);
+    matarr_free(output);
+    return ret;
 }
 
 bool
@@ -578,7 +586,10 @@ test_edge_case_1_peak_stat()
         83, 0.23, 0, 0,
     };
     struct matrix sol = mat_from_data(soldata, 4, 4, 4, false);
-    return mat_equal(sol, output);
+    bool ret = mat_equal(sol, output);
+    matarr_free(arr);
+    mat_free(output);
+    return ret;
 }
 
 bool
@@ -590,6 +601,8 @@ test_edgecase_contains_0_peak_stat()
     struct matarray arr = matarr_from_data(adata, 1, false);
     struct matrix output = peak_stat(arr, 5);
     bool ret = output.len1 == 0;
+    mat_free(output);
+    mat_free(m);
     return ret;
 }
 
