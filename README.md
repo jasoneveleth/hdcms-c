@@ -11,7 +11,7 @@ $ ./test_runner
 $ ./pmcs
 ```
 
-For windows:
+For windows (windows terminal; so not cmd, nor powershell):
 
 ```powershell
 > mkdir build
