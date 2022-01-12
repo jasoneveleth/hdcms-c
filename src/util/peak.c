@@ -153,7 +153,6 @@ peak_sort(const struct matarray matrices, size_t n)
     }
 
     struct matarray P = matarr_zeros(n);
-    printf("%p\n", P.data);
     struct matarray matrices_copy = matarr_copy(matrices);
     for (size_t i = 0; i < n; i++) {
         // find largest point left in all replicates

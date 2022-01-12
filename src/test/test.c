@@ -524,10 +524,9 @@ test_edgecase_contains_0_peak_sort()
 bool
 test_edgecase_0_peak_sort()
 {
-    // printf(__FUNCTION__);
+    printf(__FUNCTION__);
     struct matarray m = matarr_zeros(0);
     struct matarray output = peak_sort(m, 5);
-    printf("%p\n", output.data);
     bool ret = output.length == 5;
     matarr_free(m);
     matarr_free(output);
@@ -615,6 +614,7 @@ test_edgecase_0_peak_stat()
     struct matrix output = peak_stat(m, 5);
     freopen(CONSOLE, "w", stderr);
     bool ret = output.len1 == 0 && output.len2 == 0;
+    matarr_free(m);
     return ret;
 }
 
