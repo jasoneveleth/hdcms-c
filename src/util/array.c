@@ -301,7 +301,7 @@ vec_read(FILE *file, const char *const argformat)
 }
 
 double
-strtod_err_handle(const char *const token)
+safe_strtod(const char *const token)
 {
     if (token == NULL) {
         WARNING("no token recieved, setting ele to %g\n", 0.);
@@ -315,57 +315,74 @@ strtod_err_handle(const char *const token)
     return ele;
 }
 
+char *
+find_token(char **resumer, const char *const sep)
+{
+    if ((*resumer) == NULL) {
+        return NULL;
+    }
+
+    char *ret = &((*resumer)[strspn(*resumer, sep)]);
+    char *next = &ret[strcspn(ret, sep)];
+    if (next[0] == '\0') {
+        *resumer = NULL;
+    } else {
+        next[0] = '\0';
+        *resumer = &next[1];
+    }
+    return ret;
+}
+
 struct matrix
 mat_read(FILE *file)
 {
-    struct matrix m;
-    size_t num_rows = 0;
     size_t num_cols = 0;
     size_t allocd = 1;
     double *data = safe_calloc(allocd, sizeof(double));
-    char *first_line = read_line(file);
     char *sep = " \t,";
-    char *token = strtok(first_line, sep);
+
     // handle first line, get # of columns
-    do {
-        double ele = strtod_err_handle(token);
+    char *first_line = read_line(file);
+    char *resumer = first_line;
+    char *token;
+    while ((token = find_token(&resumer, sep))) {
         if (allocd <= num_cols) {
             allocd *= 2;
             data = safe_realloc(data, allocd * sizeof(double));
         }
+        double ele = safe_strtod(token);
         data[num_cols++] = ele;
-    } while ((token = strtok(NULL, sep)));
-
+    }
     free(first_line);
-    // assume the # of columns never changes
-    m.len2 = num_cols;
-    m.physlen = num_cols;
 
-    // handle th rest of the rows
-    size_t col_zero = 0; // ptr offset to col_zero of this row
-    num_rows = 1; // we read in the first row already
+    // handle the rest of the rows, assume the # of columns never changes
+    size_t col_zero = num_cols; // ptr offset to col_zero of this row
+    size_t num_rows = 1; // we read in the first row already
     while (!feof(file)) {
         char *line = read_line(file);
-        if (line[0] == '\0') {
-            // skip empty lines
+        if (line[0] == '\0') { // skip empty lines
+            free(line);
             continue;
         }
-        col_zero += num_cols;
         if (col_zero + num_cols >= allocd) {
             allocd *= 2;
             data = safe_realloc(data, allocd * sizeof(double));
         }
-        char *strtok_ptr = line;
+        char *resumer = line;
         for (int i = 0; i < num_cols; i++) {
-            char *token = strtok(strtok_ptr, sep);
-            strtok_ptr = NULL;
-            data[col_zero + i] = strtod_err_handle(token);
+            char *token = find_token(&resumer, sep);
+            data[col_zero + i] = safe_strtod(token);
         }
+        col_zero += num_cols;
         num_rows++;
+        free(line);
     }
 
+    struct matrix m;
     m.data = data;
     m.len1 = num_rows;
+    m.len2 = num_cols;
+    m.physlen = num_cols;
     m.is_owner = true;
     return m;
 }
@@ -374,25 +391,30 @@ char *
 read_line(FILE *fp)
 {
     size_t allocd = 2;
-    size_t to_read = allocd;
-    char *p = safe_calloc(allocd, sizeof(char));
-    char *head = p;
-    for (;;) {
-        if (fgets(head, to_read, fp) == NULL)
-            break;
-        size_t bytes_read = strlen(head);
-        if (head[bytes_read - 1] == '\n') {
-            // remove trailing new line
-            head[bytes_read - 1] = '\0';
-            break;
+    char *line = safe_calloc(allocd, sizeof(char));
+    size_t len = 0;
+    int c = getc(fp);
+    while (c != EOF && c != '\n') {
+        if (len >= allocd) {
+            allocd *= 2;
+            line = safe_realloc(line, allocd);
         }
-
-        to_read = allocd + 1; // +1 to overwrite the NUL byte
-        allocd *= 2;
-        p = safe_realloc(p, allocd);
-        head = p + to_read - 2; // -2 because we want to start at prev NUL byte
+        line[len++] = (char)c;
+        c = getc(fp);
     }
-    return p;
+
+    // handle possible error
+    if (ferror(fp)) {
+        perror("getc");
+        abort();
+    }
+
+    // handle ending
+    if (len > 0 && line[len - 1] == '\r') { // handle CRLF delimiter
+        line[len - 1] = '\0';
+    }
+    line[len] = '\0';
+    return line;
 }
 
 void

@@ -685,10 +685,46 @@ test_read_vec_no_eof_eol()
 }
 
 bool
-mat_no_extra_newln_ints()
+mat_read_no_extra_newln_ints()
 {
     printf(__FUNCTION__);
     FILE *file = safe_fopen(TESTDATADIR "mat_no_extra_newln_ints.txt", "r");
+    struct matrix m = mat_read(file);
+    double ndata[] = {
+        7, 62, 40, 1,
+        75, 92, 31, 12,
+        56, 7, 43, 97,
+        38, 11, 20, 13,
+    };
+    struct matrix n = mat_from_data(ndata, 4, 4, 4, false);
+    bool ret = mat_equal(m, n);
+    mat_free(m);
+    return ret;
+}
+
+bool
+mat_read_blank_lines_ints()
+{
+    printf(__FUNCTION__);
+    FILE *file = safe_fopen(TESTDATADIR "mat_blank_line_ints.txt", "r");
+    struct matrix m = mat_read(file);
+    double ndata[] = {
+        7, 62, 40, 1,
+        75, 92, 31, 12,
+        56, 7, 43, 97,
+        38, 11, 20, 13,
+    };
+    struct matrix n = mat_from_data(ndata, 4, 4, 4, false);
+    bool ret = mat_equal(m, n);
+    mat_free(m);
+    return ret;
+}
+
+bool
+mat_read_ints()
+{
+    printf(__FUNCTION__);
+    FILE *file = safe_fopen(TESTDATADIR "mat_ints.txt", "r");
     struct matrix m = mat_read(file);
     double ndata[] = {
         7, 62, 40, 1,
@@ -744,7 +780,9 @@ int main()
         test_vec_read_simple,
         test_vec_read_real,
         test_read_vec_no_eof_eol,
-        mat_no_extra_newln_ints,
+        mat_read_no_extra_newln_ints,
+        mat_read_blank_lines_ints,
+        mat_read_ints,
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);
