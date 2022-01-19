@@ -281,6 +281,7 @@ vec_read(FILE *file, const char *const argformat)
         double ele = 0;
         int num_matches = sscanf(line, format, &ele);
         if (num_matches == EOF) { // empty line
+            free(line);
             continue;
         }
         if (num_matches == 0) { // invalid input
