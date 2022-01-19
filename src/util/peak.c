@@ -45,21 +45,14 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
         struct vec sim_scores = vec_zeros(matrix_without_max_peak_p->len1);
         for (size_t j = 0; j < matrix_without_max_peak_p->len1; j++) {
             struct vec v = vec_from_row(*matrix_without_max_peak_p, j);
-            vec_set(sim_scores, j, cos_sim_L2(u, v));
-        }
-
-        // argmax from values that aren't -inf
-        double max = -inf;
-        size_t score_argmax = 0;
-        for (size_t j = 0; j < matrix_without_max_peak_p->len1; j++) {
-            double y = mat_get(*matrix_without_max_peak_p, j, 1);
-            double sim = vec_get(sim_scores, j);
-            if (y != -inf && max < sim) {
-                max = sim;
-                score_argmax = j;
+            if (vec_get(v, 1) == -inf) {
+                vec_set(sim_scores, j, -inf);
+            } else {
+                vec_set(sim_scores, j, cos_sim_L2(u, v));
             }
         }
 
+        size_t score_argmax = vec_argmax(sim_scores);
         struct vec v = vec_from_row(*matrix_without_max_peak_p, score_argmax);
         // -inf * -inf * 0
         double sim = vec_get(sim_scores, score_argmax);
