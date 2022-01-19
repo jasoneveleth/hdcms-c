@@ -650,6 +650,7 @@ test_read_line_w_newline()
     printf(__FUNCTION__);
     FILE *file = safe_fopen(TESTDATADIR "vec_read_simple.txt", "r");
     char *line = read_line(file);
+    fclose(file);
     char *correct = "728";
     bool ret = strcmp(correct, line) == 0;
     free(line);
@@ -662,6 +663,7 @@ test_read_line_wo_newline()
     printf(__FUNCTION__);
     FILE *file = safe_fopen(TESTDATADIR "oneline.txt", "r");
     char *line = read_line(file);
+    fclose(file);
     char *correct = "23.324872 378.3247832";
     bool ret = strcmp(correct, line) == 0;
     free(line);
@@ -674,6 +676,7 @@ test_read_vec_no_eof_eol()
     printf(__FUNCTION__);
     FILE *file = safe_fopen(TESTDATADIR "no_newline.txt", "r");
     struct vec v = vec_read(file, NULL);
+    fclose(file);
     double vdata[] = {
         34832749324832,
         32874789327894,
@@ -690,6 +693,7 @@ mat_read_no_extra_newln_ints()
     printf(__FUNCTION__);
     FILE *file = safe_fopen(TESTDATADIR "mat_no_extra_newln_ints.txt", "r");
     struct matrix m = mat_read(file);
+    fclose(file);
     double ndata[] = {
         7, 62, 40, 1,
         75, 92, 31, 12,
@@ -708,6 +712,7 @@ mat_read_blank_lines_ints()
     printf(__FUNCTION__);
     FILE *file = safe_fopen(TESTDATADIR "mat_blank_line_ints.txt", "r");
     struct matrix m = mat_read(file);
+    fclose(file);
     double ndata[] = {
         7, 62, 40, 1,
         75, 92, 31, 12,
@@ -726,6 +731,7 @@ mat_read_ints()
     printf(__FUNCTION__);
     FILE *file = safe_fopen(TESTDATADIR "mat_ints.txt", "r");
     struct matrix m = mat_read(file);
+    fclose(file);
     double ndata[] = {
         7, 62, 40, 1,
         75, 92, 31, 12,
