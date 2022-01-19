@@ -54,15 +54,12 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
 
         size_t score_argmax = vec_argmax(sim_scores);
         struct vec v = vec_from_row(*matrix_without_max_peak_p, score_argmax);
-        // -inf * -inf * 0
         double sim = vec_get(sim_scores, score_argmax);
         vec_set(values, i, vec_get(u, 1) * vec_get(v, 1) * sim);
         vec_set(weights, i, vec_get(u, 1) * vec_get(v, 1));
 
         // cause peaks to never appear again
-        vec_set(u, 0, -inf);
         vec_set(u, 1, -inf);
-        vec_set(v, 0, -inf);
         vec_set(v, 1, -inf);
 
         vec_free(sim_scores);
