@@ -43,10 +43,6 @@ pts assoc. with ith largest peak
 
 # Questions:
 
-* using `n` rather than the lenght of the array (which isn't the max) causes
-  you to ignore some elements
-* setting to -1 doesn't eliminate the peak
-
 # Increasing performance
 
 * http://math-atlas.sourceforge.net/atlas_install/
