@@ -689,7 +689,7 @@ test_read_vec_no_eof_eol()
 }
 
 static bool
-mat_read_no_extra_newln_ints()
+test_mat_read_no_extra_newln_ints()
 {
     printf(__FUNCTION__);
     FILE *file = safe_fopen(TESTDATADIR "mat_no_extra_newln_ints.txt", "r");
@@ -708,7 +708,7 @@ mat_read_no_extra_newln_ints()
 }
 
 static bool
-mat_read_blank_lines_ints()
+test_mat_read_blank_lines_ints()
 {
     printf(__FUNCTION__);
     FILE *file = safe_fopen(TESTDATADIR "mat_blank_line_ints.txt", "r");
@@ -727,7 +727,7 @@ mat_read_blank_lines_ints()
 }
 
 static bool
-mat_read_ints()
+test_mat_read_ints()
 {
     printf(__FUNCTION__);
     FILE *file = safe_fopen(TESTDATADIR "mat_ints.txt", "r");
@@ -787,9 +787,10 @@ int main()
         test_vec_read_simple,
         test_vec_read_real,
         test_read_vec_no_eof_eol,
-        mat_read_no_extra_newln_ints,
-        mat_read_blank_lines_ints,
-        mat_read_ints,
+        test_mat_read_no_extra_newln_ints,
+        test_mat_read_blank_lines_ints,
+        test_mat_read_ints,
+        test_analytes_normal_1_1_1,
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);
