@@ -267,32 +267,31 @@ vec_scale(struct vec v, const double c)
 }
 
 struct vec
-vec_read(FILE *file, const char *const format)
+vec_read(FILE *file, const char *const argformat)
 {
+    const char *const format = (argformat == NULL) ? "%lg" : argformat;
     struct vec v;
-    char buf[BUFLEN];
     size_t len_of_vec = 0;
     size_t allocd = 1;
     double *data = safe_calloc(allocd, sizeof(double));
 
-    while (fgets(buf, BUFLEN, file)) {
-        size_t bytes_read = strlen(buf);
-        if (bytes_read > BUFLEN - 2) {
-            WARNING("line is too long, may be missing %s\n", "data");
-        }
-        // remove trailing newline
-        buf[bytes_read] = '\0';
+    while (!feof(file)) {
+        char *line = read_line(file);
 
         double ele = 0;
-        int num_matches = sscanf(buf, format, &ele);
-        if (num_matches == 0) {
-            WARNING("line didn't match\n\t%s\n\tsetting ele to 0.0\n", buf);
+        int num_matches = sscanf(line, format, &ele);
+        if (num_matches == EOF) { // empty line
+            continue;
+        }
+        if (num_matches == 0) { // invalid input
+            WARNING("vec_read: line didn't match\n\t`%s`\n\tsetting ele to 0.0\n", line);
         }
         if (len_of_vec == allocd) {
             allocd = len_of_vec * 2;
             data = safe_realloc(data, allocd * sizeof(double));
         }
         data[len_of_vec++] = ele;
+        free(line);
     }
     v.data = data;
     v.is_owner = true;
@@ -301,18 +300,105 @@ vec_read(FILE *file, const char *const format)
     return v;
 }
 
+double
+strtod_err_handle(const char *const token)
+{
+    if (token == NULL) {
+        WARNING("no token recieved, setting ele to %g\n", 0.);
+        return 0;
+    }
+    char *endptr;
+    double ele = strtod(token, &endptr);
+    if (token == endptr) {
+        WARNING("unknown token\n\t\"%s\"\n\tsetting ele to 0.0\n", token);
+    }
+    return ele;
+}
+
+struct matrix
+mat_read(FILE *file)
+{
+    struct matrix m;
+    size_t num_rows = 0;
+    size_t num_cols = 0;
+    size_t allocd = 1;
+    double *data = safe_calloc(allocd, sizeof(double));
+    char *first_line = read_line(file);
+    char *sep = " \t,";
+    char *token = strtok(first_line, sep);
+    // handle first line, get # of columns
+    do {
+        double ele = strtod_err_handle(token);
+        if (allocd <= num_cols) {
+            allocd *= 2;
+            data = safe_realloc(data, allocd * sizeof(double));
+        }
+        data[num_cols++] = ele;
+    } while ((token = strtok(NULL, sep)));
+
+    free(first_line);
+    // assume the # of columns never changes
+    m.len2 = num_cols;
+    m.physlen = num_cols;
+
+    // handle th rest of the rows
+    size_t col_zero = 0; // ptr offset to col_zero of this row
+    num_rows = 1; // we read in the first row already
+    while (!feof(file)) {
+        char *line = read_line(file);
+        if (line[0] == '\0') {
+            // skip empty lines
+            continue;
+        }
+        col_zero += num_cols;
+        if (col_zero + num_cols >= allocd) {
+            allocd *= 2;
+            data = safe_realloc(data, allocd * sizeof(double));
+        }
+        char *strtok_ptr = line;
+        for (int i = 0; i < num_cols; i++) {
+            char *token = strtok(strtok_ptr, sep);
+            strtok_ptr = NULL;
+            data[col_zero + i] = strtod_err_handle(token);
+        }
+        num_rows++;
+    }
+
+    m.data = data;
+    m.len1 = num_rows;
+    m.is_owner = true;
+    return m;
+}
+
+char *
+read_line(FILE *fp)
+{
+    size_t allocd = 2;
+    size_t to_read = allocd;
+    char *p = safe_calloc(allocd, sizeof(char));
+    char *head = p;
+    for (;;) {
+        if (fgets(head, to_read, fp) == NULL)
+            break;
+        size_t bytes_read = strlen(head);
+        if (head[bytes_read - 1] == '\n') {
+            // remove trailing new line
+            head[bytes_read - 1] = '\0';
+            break;
+        }
+
+        to_read = allocd + 1; // +1 to overwrite the NUL byte
+        allocd *= 2;
+        p = safe_realloc(p, allocd);
+        head = p + to_read - 2; // -2 because we want to start at prev NUL byte
+    }
+    return p;
+}
+
 void
 vec_write(FILE *file, const struct vec v)
 {
     // TODO
-}
-
-struct matrix
-mat_read(FILE *fp)
-{
-    // TODO
-    struct matrix m;
-    return m;
 }
 
 void

@@ -7,8 +7,6 @@
 #define GREEN "\033[32m"
 #define RESET "\033[0m"
 
-#define BUFLEN (1024)
-
 #define WARNING(fmt, ...) fprintf(stderr, "%s:%d: " RED "WARNING: " RESET fmt, __FILE__, __LINE__, __VA_ARGS__)
 
 // tolerance ratio
@@ -86,9 +84,11 @@ void mat_printf(const struct matrix m);
 bool equals(const double a, const double b);
 bool mat_equal(const struct matrix A, const struct matrix B);
 struct matrix mat_copy(struct matrix m);
+struct matrix mat_read(FILE *file);
 
 void *safe_calloc(size_t num, size_t size);
 void *safe_realloc(void *ptr, size_t size);
 FILE *safe_fopen(const char *path, const char *mode);
+char *read_line(FILE *fp);
 
 #endif // ARRAY_H

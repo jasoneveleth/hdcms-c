@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include "test.h"
 #include "../util/peak.h"
 #include "../util/array.h"
 
 // path from current working directory of shell running the test executable
-#define TESTDIR "../src/test/"
+#define TESTDATADIR "../src/test/data/"
 
 bool
 test_cos_sim_L2()
@@ -309,7 +310,7 @@ bool
 test_vec_read_simple()
 {
     printf(__FUNCTION__);
-    FILE *fptr = safe_fopen(TESTDIR "vec_read_simple.txt", "r");
+    FILE *fptr = safe_fopen(TESTDATADIR "vec_read_simple.txt", "r");
     struct vec output = vec_read(fptr, "%lg");
     fclose(fptr);
     double data[] = {728, 283910, 812931, 72891};
@@ -483,7 +484,7 @@ bool
 test_vec_read_real()
 {
     printf(__FUNCTION__);
-    FILE *fptr = safe_fopen(TESTDIR "vec_read_real.txt", "r");
+    FILE *fptr = safe_fopen(TESTDATADIR "vec_read_real.txt", "r");
     struct vec output = vec_read(fptr, "%lg");
     fclose(fptr);
     double data[] = {
@@ -644,6 +645,64 @@ test_edge_case_0_cos_sim()
 }
 
 bool
+test_read_line_w_newline() 
+{
+    printf(__FUNCTION__);
+    FILE *file = safe_fopen(TESTDATADIR "vec_read_simple.txt", "r");
+    char *line = read_line(file);
+    char *correct = "728";
+    bool ret = strcmp(correct, line) == 0;
+    free(line);
+    return ret;
+}
+
+bool
+test_read_line_wo_newline() 
+{
+    printf(__FUNCTION__);
+    FILE *file = safe_fopen(TESTDATADIR "oneline.txt", "r");
+    char *line = read_line(file);
+    char *correct = "23.324872 378.3247832";
+    bool ret = strcmp(correct, line) == 0;
+    free(line);
+    return ret;
+}
+
+bool
+test_read_vec_no_eof_eol()
+{
+    printf(__FUNCTION__);
+    FILE *file = safe_fopen(TESTDATADIR "no_newline.txt", "r");
+    struct vec v = vec_read(file, NULL);
+    double vdata[] = {
+        34832749324832,
+        32874789327894,
+    };
+    struct vec w = vec_from_data(vdata, 2, false);
+    bool ret = vec_equal(v, w);
+    vec_free(v);
+    return ret;
+}
+
+bool
+mat_no_extra_newln_ints()
+{
+    printf(__FUNCTION__);
+    FILE *file = safe_fopen(TESTDATADIR "mat_no_extra_newln_ints.txt", "r");
+    struct matrix m = mat_read(file);
+    double ndata[] = {
+        7, 62, 40, 1,
+        75, 92, 31, 12,
+        56, 7, 43, 97,
+        38, 11, 20, 13,
+    };
+    struct matrix n = mat_from_data(ndata, 4, 4, 4, false);
+    bool ret = mat_equal(m, n);
+    mat_free(m);
+    return ret;
+}
+
+bool
 simple() 
 {
     printf(__FUNCTION__);
@@ -665,8 +724,6 @@ int main()
         test_peak_sort_real2,
         test_peak_sort_real15,
         test_peak_stat_real,
-        test_vec_read_simple,
-        test_vec_read_real,
         test_peak_sim_measure_simple,
         test_cos_sim_extra1,
         test_cos_sim_extra2,
@@ -682,6 +739,12 @@ int main()
         test_edgecase_0_peak_stat,
         test_edge_case_0_peak_sim,
         test_edge_case_0_cos_sim,
+        test_read_line_w_newline,
+        test_read_line_wo_newline,
+        test_vec_read_simple,
+        test_vec_read_real,
+        test_read_vec_no_eof_eol,
+        mat_no_extra_newln_ints,
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);
