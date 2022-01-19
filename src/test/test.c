@@ -8,7 +8,7 @@
 // path from current working directory of shell running the test executable
 #define TESTDATADIR "../src/test/data/"
 
-bool
+static bool
 test_cos_sim_L2()
 {
     printf(__FUNCTION__);
@@ -34,7 +34,7 @@ test_cos_sim_L2()
  *
  *      sim: 0.5993
  */
-bool
+static bool
 test_cos_sim_3rd_highest_of_12_11_30V()
 {
     printf(__FUNCTION__);
@@ -62,7 +62,7 @@ test_cos_sim_3rd_highest_of_12_11_30V()
  *
  *      sim: 0.7344
  */
-bool
+static bool
 test_cos_sim_11th_highest_of_12_11_30V() 
 {
     printf(__FUNCTION__);
@@ -78,7 +78,7 @@ test_cos_sim_11th_highest_of_12_11_30V()
     return equals(sim2, 0.734449667053694);
 }
 
-bool
+static bool
 test_argmax()
 {
     printf(__FUNCTION__);
@@ -89,13 +89,13 @@ test_argmax()
     struct matrix m = mat_from_data(m2data, 4, 2, 2, false);
     struct vec ys = vec_from_col(m, 1);
     size_t argmax = vec_argmax(ys);
-    double x = mat_get(m, argmax, 0);
+    // double x = mat_get(m, argmax, 0);
     double y = mat_get(m, argmax, 1);
     mat_free(m);
     return equals(y, 0.61);
 }
 
-bool
+static bool
 test_peak_sort_simple()
 {
     printf(__FUNCTION__);
@@ -140,7 +140,7 @@ test_peak_sort_simple()
     return b0 && b1 && b2 && b3;
 }
 
-bool
+static bool
 test_peak_sort_zeros()
 {
     printf(__FUNCTION__);
@@ -196,7 +196,8 @@ test_peak_sort_zeros()
     return ret;
 }
 
-bool test_peak_sort_real2()
+static bool 
+test_peak_sort_real2()
 {
     printf(__FUNCTION__);
     size_t n = 2;
@@ -230,7 +231,7 @@ bool test_peak_sort_real2()
     return ret;
 }
 
-bool
+static bool
 test_peak_sort_real15()
 {
     printf(__FUNCTION__);
@@ -276,7 +277,7 @@ test_peak_sort_real15()
     return ret;
 }
 
-bool
+static bool
 test_peak_stat_real()
 {
     printf(__FUNCTION__);
@@ -306,7 +307,7 @@ test_peak_stat_real()
     return ret;
 }
 
-bool
+static bool
 test_vec_read_simple()
 {
     printf(__FUNCTION__);
@@ -321,7 +322,7 @@ test_vec_read_simple()
     return ret;
 }
 
-bool
+static bool
 test_cos_sim_extra1()
 {
     printf(__FUNCTION__);
@@ -332,7 +333,7 @@ test_cos_sim_extra1()
     return equals(cos_sim_L2(u, v), 0);
 }
 
-bool
+static bool
 test_cos_sim_extra2()
 {
     printf(__FUNCTION__);
@@ -343,7 +344,7 @@ test_cos_sim_extra2()
     return equals(cos_sim_L2(u, v), 7.856829001024321e-01);
 }
 
-bool
+static bool
 test_peak_sim_measure_simple()
 {
     printf(__FUNCTION__);
@@ -360,7 +361,7 @@ test_peak_sim_measure_simple()
     return ret;
 }
 
-bool
+static bool
 test_peak_sim_measure_complex()
 {
     printf(__FUNCTION__);
@@ -393,7 +394,7 @@ test_peak_sim_measure_complex()
     return ret;
 }
 
-bool
+static bool
 test_peak_sim_measure_complex2()
 {
     printf(__FUNCTION__);
@@ -430,7 +431,7 @@ test_peak_sim_measure_complex2()
     return ret;
 }
 
-bool
+static bool
 test_peak_sim_measure_n_less_than_both()
 {
     printf(__FUNCTION__);
@@ -467,7 +468,7 @@ test_peak_sim_measure_n_less_than_both()
     return ret;
 }
 
-bool
+static bool
 test_peak_sim_measure_real()
 {
     printf(__FUNCTION__);
@@ -480,7 +481,7 @@ test_peak_sim_measure_real()
     return ret;
 }
 
-bool
+static bool
 test_vec_read_real()
 {
     printf(__FUNCTION__);
@@ -508,7 +509,7 @@ test_vec_read_real()
     return ret;
 }
 
-bool
+static bool
 test_edgecase_contains_0_peak_sort()
 {
     printf(__FUNCTION__);
@@ -522,7 +523,7 @@ test_edgecase_contains_0_peak_sort()
     return ret;
 }
 
-bool
+static bool
 test_edgecase_0_peak_sort()
 {
     printf(__FUNCTION__);
@@ -534,7 +535,7 @@ test_edgecase_0_peak_sort()
     return ret;
 }
 
-bool
+static bool
 test_edgecase_1_peak_sort()
 {
     printf(__FUNCTION__);
@@ -567,7 +568,7 @@ test_edgecase_1_peak_sort()
     return ret;
 }
 
-bool
+static bool
 test_edge_case_1_peak_stat()
 {
     printf(__FUNCTION__);
@@ -592,7 +593,7 @@ test_edge_case_1_peak_stat()
     return ret;
 }
 
-bool
+static bool
 test_edgecase_contains_0_peak_stat()
 {
     printf(__FUNCTION__);
@@ -606,7 +607,7 @@ test_edgecase_contains_0_peak_stat()
     return ret;
 }
 
-bool
+static bool
 test_edgecase_0_peak_stat()
 {
     printf(__FUNCTION__);
@@ -619,7 +620,7 @@ test_edgecase_0_peak_stat()
     return ret;
 }
 
-bool
+static bool
 test_edge_case_0_peak_sim()
 {
     printf(__FUNCTION__);
@@ -632,7 +633,7 @@ test_edge_case_0_peak_sim()
     return equals(d, 0);
 }
 
-bool
+static bool
 test_edge_case_0_cos_sim()
 {
     printf(__FUNCTION__);
@@ -644,7 +645,7 @@ test_edge_case_0_cos_sim()
     return equals(d, 0);
 }
 
-bool
+static bool
 test_read_line_w_newline() 
 {
     printf(__FUNCTION__);
@@ -657,7 +658,7 @@ test_read_line_w_newline()
     return ret;
 }
 
-bool
+static bool
 test_read_line_wo_newline() 
 {
     printf(__FUNCTION__);
@@ -670,7 +671,7 @@ test_read_line_wo_newline()
     return ret;
 }
 
-bool
+static bool
 test_read_vec_no_eof_eol()
 {
     printf(__FUNCTION__);
@@ -687,7 +688,7 @@ test_read_vec_no_eof_eol()
     return ret;
 }
 
-bool
+static bool
 mat_read_no_extra_newln_ints()
 {
     printf(__FUNCTION__);
@@ -706,7 +707,7 @@ mat_read_no_extra_newln_ints()
     return ret;
 }
 
-bool
+static bool
 mat_read_blank_lines_ints()
 {
     printf(__FUNCTION__);
@@ -725,7 +726,7 @@ mat_read_blank_lines_ints()
     return ret;
 }
 
-bool
+static bool
 mat_read_ints()
 {
     printf(__FUNCTION__);
@@ -744,7 +745,7 @@ mat_read_ints()
     return ret;
 }
 
-bool
+static bool
 simple() 
 {
     printf(__FUNCTION__);

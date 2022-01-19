@@ -39,6 +39,69 @@ safe_fopen(const char * restrict path, const char * restrict mode)
     return ret;
 }
 
+char *
+read_line(FILE *fp)
+{
+    size_t allocd = 2;
+    char *line = safe_calloc(allocd, sizeof(char));
+    size_t len = 0;
+    int c = getc(fp);
+    while (c != EOF && c != '\n') {
+        if (len >= allocd) {
+            allocd *= 2;
+            line = safe_realloc(line, allocd);
+        }
+        line[len++] = (char)c;
+        c = getc(fp);
+    }
+
+    // handle possible error
+    if (ferror(fp)) {
+        perror("getc");
+        abort();
+    }
+
+    // handle ending
+    if (len > 0 && line[len - 1] == '\r') { // handle crlf delimiter
+        line[len - 1] = '\0';
+    }
+    line[len] = '\0';
+    return line;
+}
+
+static double
+safe_strtod(const char *const token)
+{
+    if (token == NULL) {
+        WARNING("no token recieved, setting ele to %g\n", 0.);
+        return 0;
+    }
+    char *endptr;
+    double ele = strtod(token, &endptr);
+    if (token == endptr) {
+        WARNING("unknown token\n\t\"%s\"\n\tsetting ele to 0.0\n", token);
+    }
+    return ele;
+}
+
+static char *
+find_token(char **resumer, const char *const sep)
+{
+    if ((*resumer) == NULL) {
+        return NULL;
+    }
+
+    char *ret = &((*resumer)[strspn(*resumer, sep)]);
+    char *next = &ret[strcspn(ret, sep)];
+    if (next[0] == '\0') {
+        *resumer = NULL;
+    } else {
+        next[0] = '\0';
+        *resumer = &next[1];
+    }
+    return ret;
+}
+
 bool
 equals(const double a, const double b)
 {
@@ -101,7 +164,7 @@ vec_equal(const struct vec v1, const struct vec v2)
 double
 vec_max(const struct vec v)
 {
-    double max = -INFINITY;
+    double max = -inf;
     for (size_t i = 0; i < v.length; i++) {
         double ith = vec_get(v, i);
         if (ith > max) {
@@ -189,7 +252,7 @@ vec_add_const(struct vec v, const double a)
 size_t
 vec_argmax(const struct vec v)
 {
-    double max = -INFINITY;
+    double max = -inf;
     size_t argmax = 0;
     for (size_t i = 0; i < v.length; i++) {
         double ith = vec_get(v, i);
@@ -204,7 +267,7 @@ vec_argmax(const struct vec v)
 double
 vec_min(const struct vec v)
 {
-    double min = INFINITY;
+    double min = inf;
     for (size_t i = 0; i < v.length; i++) {
         double ith = vec_get(v, i);
         if (ith < min) {
@@ -301,39 +364,6 @@ vec_read(FILE *file, const char *const argformat)
     return v;
 }
 
-double
-safe_strtod(const char *const token)
-{
-    if (token == NULL) {
-        WARNING("no token recieved, setting ele to %g\n", 0.);
-        return 0;
-    }
-    char *endptr;
-    double ele = strtod(token, &endptr);
-    if (token == endptr) {
-        WARNING("unknown token\n\t\"%s\"\n\tsetting ele to 0.0\n", token);
-    }
-    return ele;
-}
-
-char *
-find_token(char **resumer, const char *const sep)
-{
-    if ((*resumer) == NULL) {
-        return NULL;
-    }
-
-    char *ret = &((*resumer)[strspn(*resumer, sep)]);
-    char *next = &ret[strcspn(ret, sep)];
-    if (next[0] == '\0') {
-        *resumer = NULL;
-    } else {
-        next[0] = '\0';
-        *resumer = &next[1];
-    }
-    return ret;
-}
-
 struct matrix
 mat_read(FILE *file)
 {
@@ -369,9 +399,9 @@ mat_read(FILE *file)
             allocd *= 2;
             data = safe_realloc(data, allocd * sizeof(double));
         }
-        char *resumer = line;
-        for (int i = 0; i < num_cols; i++) {
-            char *token = find_token(&resumer, sep);
+        resumer = line;
+        for (size_t i = 0; i < num_cols; i++) {
+            token = find_token(&resumer, sep);
             data[col_zero + i] = safe_strtod(token);
         }
         col_zero += num_cols;
@@ -388,47 +418,17 @@ mat_read(FILE *file)
     return m;
 }
 
-char *
-read_line(FILE *fp)
-{
-    size_t allocd = 2;
-    char *line = safe_calloc(allocd, sizeof(char));
-    size_t len = 0;
-    int c = getc(fp);
-    while (c != EOF && c != '\n') {
-        if (len >= allocd) {
-            allocd *= 2;
-            line = safe_realloc(line, allocd);
-        }
-        line[len++] = (char)c;
-        c = getc(fp);
-    }
+// void
+// vec_write(FILE *file, const struct vec v)
+// {
+//     // TODO
+// }
 
-    // handle possible error
-    if (ferror(fp)) {
-        perror("getc");
-        abort();
-    }
-
-    // handle ending
-    if (len > 0 && line[len - 1] == '\r') { // handle CRLF delimiter
-        line[len - 1] = '\0';
-    }
-    line[len] = '\0';
-    return line;
-}
-
-void
-vec_write(FILE *file, const struct vec v)
-{
-    // TODO
-}
-
-void
-mat_write(FILE *fp)
-{
-    // TODO
-}
+// void
+// mat_write(FILE *fp)
+// {
+//     // TODO
+// }
 
 double
 vec_get(const struct vec v, size_t i)

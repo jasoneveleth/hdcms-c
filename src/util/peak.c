@@ -49,12 +49,12 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
         }
 
         // argmax from values that aren't -inf
-        double max = -INFINITY;
+        double max = -inf;
         size_t score_argmax = 0;
         for (size_t j = 0; j < matrix_without_max_peak_p->len1; j++) {
             double y = mat_get(*matrix_without_max_peak_p, j, 1);
             double sim = vec_get(sim_scores, j);
-            if (y != -INFINITY && max < sim) {
+            if (y != -inf && max < sim) {
                 max = sim;
                 score_argmax = j;
             }
@@ -67,10 +67,10 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
         vec_set(weights, i, vec_get(u, 1) * vec_get(v, 1));
 
         // cause peaks to never appear again
-        vec_set(u, 0, -INFINITY);
-        vec_set(u, 1, -INFINITY);
-        vec_set(v, 0, -INFINITY);
-        vec_set(v, 1, -INFINITY);
+        vec_set(u, 0, -inf);
+        vec_set(u, 1, -inf);
+        vec_set(v, 0, -inf);
+        vec_set(v, 1, -inf);
 
         vec_free(sim_scores);
     }
@@ -156,7 +156,7 @@ peak_sort(const struct matarray matrices, size_t n)
     struct matarray matrices_copy = matarr_copy(matrices);
     for (size_t i = 0; i < n; i++) {
         // find largest point left in all replicates
-        double maxy = -INFINITY;
+        double maxy = -inf;
         double maxx = 0;
         for (size_t j = 0; j < matrices_copy.length; j++) {
             struct matrix mj = matarr_get(matrices_copy, j);
@@ -172,7 +172,7 @@ peak_sort(const struct matarray matrices, size_t n)
         struct matrix peak = mat_zeros(matrices_copy.length, 2);
         for (size_t j = 0; j < matrices_copy.length; j++) {
             struct matrix mj = matarr_get(matrices_copy, j);
-            double mindist = INFINITY;
+            double mindist = inf;
             
             // get closest pt in mj matrix
             size_t rowargmin = 0;
@@ -191,7 +191,7 @@ peak_sort(const struct matarray matrices, size_t n)
             mat_set(peak, j, 1, mat_get(mj, rowargmin, 1));
 
             // set y value of the point to -inf so it never matches or is a max
-            mat_set(mj, rowargmin, 1, -INFINITY);
+            mat_set(mj, rowargmin, 1, -inf);
         }
 
         // make the next peak a new matrix in P

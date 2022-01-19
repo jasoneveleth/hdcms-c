@@ -13,6 +13,8 @@
 #define TOLRAT (1e-5)
 #define TOLABS (1e-6)
 
+#define inf ((double)INFINITY)
+
 struct matarray
 {
     size_t length;
@@ -81,7 +83,6 @@ struct matrix mat_zeros(size_t len1, size_t len2);
 void mat_set(struct matrix m, const size_t i, const size_t j, const double x);
 void mat_free(struct matrix m);
 void mat_printf(const struct matrix m);
-bool equals(const double a, const double b);
 bool mat_equal(const struct matrix A, const struct matrix B);
 struct matrix mat_copy(struct matrix m);
 struct matrix mat_read(FILE *file);
@@ -89,6 +90,8 @@ struct matrix mat_read(FILE *file);
 void *safe_calloc(size_t num, size_t size);
 void *safe_realloc(void *ptr, size_t size);
 FILE *safe_fopen(const char *path, const char *mode);
+
 char *read_line(FILE *fp);
+bool equals(const double a, const double b);
 
 #endif // ARRAY_H

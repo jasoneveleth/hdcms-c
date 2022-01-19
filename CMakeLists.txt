@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.13.4)
 # this is required for cross compilation for some reason
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
+# compiler
+# set(CMAKE_C_COMPILER /usr/bin/clang)
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -Werror -fsanitize=address -O2 -fno-omit-frame-pointer -g")
+
 project(pmcs)
 set(TEST "test_runner")
 
