@@ -129,7 +129,7 @@ cos_sim_L2(const struct vec u, const struct vec v)
         return 0;
     }
 
-    // add 1e-4 to all std
+    // add 1e-4 to all std, to avoid the 0 std div 0 error
     double v0 = vec_get(v, 0),        v1 = vec_get(v, 1),
            v2 = vec_get(v, 2) + 1e-4, v3 = vec_get(v, 3) + 1e-4,
            u0 = vec_get(u, 0),        u1 = vec_get(u, 1),
