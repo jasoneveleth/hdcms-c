@@ -49,3 +49,5 @@ pts assoc. with ith largest peak
 * http://math-atlas.sourceforge.net/faq.html
 * https://stackoverflow.com/questions/1303182/how-does-blas-get-such-extreme-performance
 
+* set all `allocd`s to 128 or something, so the expandable memory
+  starts larger
