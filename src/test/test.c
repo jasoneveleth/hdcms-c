@@ -853,8 +853,8 @@ test_similarity_analysis()
     struct matrix similarity_measures = mat_zeros(7, 3);
     for (size_t i = 0; i < 7; i++) {
         for (size_t j = 0; j < 3; j++) {
-            struct matrix A = matarr_get(analyte_peak_stats, (2*i - 1) * 3 + j);
-            struct matrix B = matarr_get(analyte_peak_stats, (2*i) * 3 + j);
+            struct matrix A = matarr_get(analyte_peak_stats, (2*i) * 3 + j);
+            struct matrix B = matarr_get(analyte_peak_stats, (2*i + 1) * 3 + j);
             mat_set(similarity_measures, i, j, peak_sim_measure_L2(A, B, 25));
         }
     }
