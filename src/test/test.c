@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdarg.h>
 #include "test.h"
 #include "../util/peak.h"
 #include "../util/array.h"
 
 // path from current working directory of shell running the test executable
+// CANNOT INCLUDE '%' CHARACTER BECAUSE USED IN snprintf()
 #define TESTDATADIR "../src/test/data/"
 
 static bool
@@ -790,6 +792,80 @@ test_analytes_normal_1_1_1()
     return ret;
 }
 
+static int 
+safe_snprintf(char *restrict str, size_t size, const char *restrict format, ...)
+{
+    int result;
+    va_list args;
+
+    va_start(args, format);
+    result = vsnprintf(str, size, format, args);
+    if (result < 0) {
+        fprintf(stderr, "%s:%d: snprintf error\n", __FILE__, __LINE__);
+        perror("snprintf");
+        abort();
+    }
+    va_end(args);
+
+    return result;
+}
+
+static bool
+test_similarity_analysis()
+{
+    double soldata[] = {
+        2.714820552749603e-11,     3.133250698158485e-03,     3.624474914739576e-08,
+        1.274166485409238e-07,     6.966236433131534e-06,     8.158015509877866e-13,
+        2.200872268233036e-02,                         0,     2.204101096985747e-04,
+        8.963423883881168e-01,     4.810626370915526e-16,     5.518881843724404e-19,
+        2.459234783200257e-04,     4.308393317187379e-06,     1.266741377548182e-03,
+        6.570605538696780e-02,     1.212102981190234e-05,     1.963276486504726e-10,
+        9.445490457064037e-03,     9.054240490062887e-01,     8.650218111500563e-01,
+    };
+    struct matrix sol = mat_from_data(soldata, 7, 3, 3, false);
+
+    printf("1111111111111111111111\n");
+    // these loops initialize analyte_peak_stats to the 14 compounds at each
+    // energy level (30V, 60V, 90V), we store the 2D mat array as a flat matarray
+    struct matarray analyte_peak_stats = matarr_zeros(14 * 3);
+    for (size_t i = 0; i < 14; i++) {
+        for (size_t j = 0; j < 3; j++) {
+            struct matarray replicates = matarr_zeros(5);
+            // this loop reads the 5 replicates into `replicates`
+            for (size_t k = 0; k < 5; k++) {
+                // calling with NULL returns the length of the string
+                int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
+                char *buf = safe_calloc(bufsz + 1, sizeof(char));
+
+                safe_snprintf(buf, bufsz + 1, TESTDATADIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
+                FILE *file = safe_fopen(buf, "r");
+                free(buf);
+
+                struct matrix m = mat_read(file);
+                matarr_set(replicates, k, m);
+                fclose(file);
+            }
+            struct matrix p = peak_stat(replicates, 15);
+            matarr_free(replicates);
+            matarr_set(analyte_peak_stats, i * 14 + j, p);
+            mat_free(p);
+        }
+    }
+    printf("2222222222222222222222\n");
+    struct matrix similarity_measures = mat_zeros(7, 3);
+    for (size_t i = 0; i < 7; i++) {
+        for (size_t j = 0; j < 3; j++) {
+            struct matrix A = matarr_get(analyte_peak_stats, (2*i - 1) * 14 + j);
+            struct matrix B = matarr_get(analyte_peak_stats, (2*i) * 14 + j);
+            mat_set(similarity_measures, i, j, peak_sim_measure_L2(A, B, 25));
+        }
+    }
+    matarr_free(analyte_peak_stats);
+    bool ret = mat_equal(similarity_measures, sol);
+    mat_free(similarity_measures);
+    return false;
+}
+
 static bool
 simple() 
 {
@@ -836,6 +912,7 @@ int main()
         test_mat_read_blank_lines_ints,
         test_mat_read_ints,
         test_analytes_normal_1_1_1,
+        test_similarity_analysis,
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);
