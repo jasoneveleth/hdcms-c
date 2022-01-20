@@ -813,6 +813,7 @@ safe_snprintf(char *restrict str, size_t size, const char *restrict format, ...)
 static bool
 test_similarity_analysis()
 {
+    printf(__FUNCTION__);
     double soldata[] = {
         2.714820552749603e-11,     3.133250698158485e-03,     3.624474914739576e-08,
         1.274166485409238e-07,     6.966236433131534e-06,     8.158015509877866e-13,
@@ -847,7 +848,6 @@ test_similarity_analysis()
             struct matrix p = peak_stat(replicates, 15);
             matarr_free(replicates);
             matarr_set(analyte_peak_stats, i * 3 + j, p);
-            mat_free(p);
         }
     }
     struct matrix similarity_measures = mat_zeros(7, 3);
@@ -861,7 +861,7 @@ test_similarity_analysis()
     matarr_free(analyte_peak_stats);
     bool ret = mat_equal(similarity_measures, sol);
     mat_free(similarity_measures);
-    return false;
+    return ret;
 }
 
 static bool
