@@ -51,3 +51,7 @@ pts assoc. with ith largest peak
 
 * set all `allocd`s to 128 or something, so the expandable memory
   starts larger
+
+# Future test
+* equivalence partitioning and boundary testing
+  https://www.guru99.com/equivalence-partitioning-boundary-value-analysis.html
