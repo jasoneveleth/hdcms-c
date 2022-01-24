@@ -40,6 +40,9 @@ helpers:
 5 matrices of spectra, number of peaks -> n matrices s.t. ith matrix is 5
 pts assoc. with ith largest peak
 
+# Misc
+
+[gnu scientific lib](https://www.gnu.org/software/gsl/doc/html/vectors.html#c.gsl_vector_view)
 
 # Questions:
 
