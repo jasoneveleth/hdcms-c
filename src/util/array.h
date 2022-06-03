@@ -2,6 +2,7 @@
 #define ARRAY_H
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #define RED "\033[31m"
 #define GREEN "\033[32m"
