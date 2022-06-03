@@ -1,3 +1,23 @@
+# Note on stability
+
+One of the issues with the 1D case is the fact that we are
+binning. It isn't a problem in teh way you expect: that there is
+something you miss by having important stuff between bins (also
+the fact that our algorithm doesn't select the max, but rather
+the last number in the bin). The problem is the `linspace()`
+function. If you don't have bit perfect doubles coming out of
+your `linspace` function you get very different results. For
+example, MATLAB uses a different `linspace` than the one you
+would expect (multiplying the step function), or the one that you
+would next expect (addition of stepsize), or the next (symmetric
+subtraction of multiples of stepsize). So if the library used one
+linspace and you're using another to decide bins (even with the
+same spacing and stuff) produces very different `spec_vec`s.
+
+The problem was I was calculating elements of the linspace using
+`i * ((end - start) / (n - 1))`, MATLAB was using 
+`(i * (end - start)) / (n - 1)`.
+
 # Install
 
 For mac and linux:
@@ -54,6 +74,7 @@ pts assoc. with ith largest peak
 
 * set all `allocd`s to 128 or something, so the expandable memory
   starts larger
+* make `vec_std` use a for loop
 
 # Future test
 * equivalence partitioning and boundary testing
