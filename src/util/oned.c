@@ -12,6 +12,7 @@ bin_stat_1D(const struct matarray A, double width)
         struct matrix spectra = matarr_get(A, i);
         struct vec bin_heights = spec_vec(spectra, width);
         vec_to_row(M, bin_heights, i);
+        vec_free(bin_heights);
     }
 
     struct matrix B = mat_zeros(num_bins, 2);
@@ -101,6 +102,9 @@ prob_dot_prod(const struct matrix u, const struct matrix v)
 
     vec_multiply(weights, v_mean);
     double denom = sqrt(vec_dot(u_mean, u_mean)) * sqrt(vec_dot(v_mean, v_mean));
-    return vec_dot(weights, u_mean) / (sqrt(vec_dot(u_mean, u_mean)) * sqrt(vec_dot(v_mean, v_mean)));
+    double ans = vec_dot(weights, u_mean) / (sqrt(vec_dot(u_mean, u_mean)) * sqrt(vec_dot(v_mean, v_mean)));
+
+    vec_free(weights);
+    return ans;
 }
 

@@ -978,8 +978,8 @@ test_spec_vec_all_matarr()
         ret = ret && vec_equal(v, sol);
         vec_free(v);
         vec_free(sol);
-        mat_free(m);
     }
+    matarr_free(A);
     return ret;
 }
 
