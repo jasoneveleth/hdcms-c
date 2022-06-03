@@ -2,8 +2,23 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <assert.h>
 #include <string.h>
 #include "array.h"
+
+uint64_t
+d2z(const double a)
+{
+    union {double d; uint64_t z;} mem = {.d = a};
+    return mem.z;
+}
+
+double
+z2d(const uint64_t a)
+{
+    union {double d; uint64_t z;} mem = {.z = a};
+    return mem.d;
+}
 
 void *
 safe_calloc(size_t num, size_t size)
@@ -187,6 +202,8 @@ matarr_from_data(struct matrix *data, size_t len, const bool is_owner)
 void
 mat_set(struct matrix m, const size_t i, const size_t j, const double x)
 {
+    assert(i < m.len1 && "trying to set an index outside num_rows in matrix");
+    assert(j < m.len2 && "trying to set an index outside num_cols in matrix");
     m.data[i * m.physlen + j] = x;
 }
 
@@ -241,6 +258,85 @@ vec_std(const struct vec v)
     return sqrt(variance);
 }
 
+void 
+vec_multiply(struct vec v, struct vec u)
+{
+    if (v.length != u.length) {
+        WARNING("vec_multiply: incorrect dims\n\t%ld > %ld\n", v.length, u.length);
+        exit(EXIT_FAILURE);
+    }
+    for (size_t i = 0; i < v.length; i++) {
+        vec_set(v, i, vec_get(v, i) * vec_get(u, i));
+    }
+}
+
+double
+vec_dot(struct vec v, struct vec u)
+{
+    if (v.length != u.length) {
+        WARNING("vec_dot: incorrect dims\n\t%ld > %ld\n", v.length, u.length);
+        exit(EXIT_FAILURE);
+    }
+
+    double sum = 0;
+    for (size_t i = 0; i < v.length; i++) {
+        sum = fma(vec_get(v, i), vec_get(u, i), sum);
+    }
+    return sum;
+}
+
+void 
+vec_divide(struct vec v, struct vec u)
+{
+    if (v.length != u.length) {
+        WARNING("vec_divide: incorrect dims\n\t%ld > %ld\n", v.length, u.length);
+        exit(EXIT_FAILURE);
+    }
+    for (size_t i = 0; i < v.length; i++) {
+        vec_set(v, i, vec_get(v, i) / vec_get(u, i));
+    }
+}
+
+void 
+vec_add(struct vec v, struct vec u)
+{
+    if (v.length != u.length) {
+        WARNING("vec_add: incorrect dims\n\t%ld > %ld\n", v.length, u.length);
+        exit(EXIT_FAILURE);
+    }
+    for (size_t i = 0; i < v.length; i++) {
+        vec_set(v, i, vec_get(v, i) + vec_get(u, i));
+    }
+}
+
+void
+vec_sub(struct vec v, struct vec u)
+{
+    if (v.length != u.length) {
+        WARNING("vec_sub: incorrect dims\n\t%ld > %ld\n", v.length, u.length);
+        exit(EXIT_FAILURE);
+    }
+    for (size_t i = 0; i < v.length; i++) {
+        vec_set(v, i, vec_get(v, i) - vec_get(u, i));
+    }
+}
+
+void
+vec_sqrt(struct vec v)
+{
+    for (size_t i = 0; i < v.length; i++) {
+        vec_set(v, i, sqrt(vec_get(v,i)));
+    }
+}
+
+void
+vec_exp(struct vec v)
+{
+    for (size_t i = 0; i < v.length; i++) {
+        vec_set(v, i, exp(vec_get(v,i)));
+    }
+}
+
 void
 vec_add_const(struct vec v, const double a)
 {
@@ -292,6 +388,18 @@ vec_sum(const struct vec v)
     return sum;
 }
 
+void 
+vec_to_row(const struct matrix m, const struct vec v, const size_t row)
+{
+    if (m.len2 != v.length) {
+        WARNING("vec_to_row: incorrect dims\n\t%ld > %ld\n", m.len2, v.length);
+        exit(EXIT_FAILURE);
+    }
+    for (size_t i = 0; i < m.len2; i++) {
+        mat_set(m, row, i, vec_get(v, i));
+    }
+}
+
 struct vec
 vec_from_data(double *data, size_t len, int is_owner)
 {
@@ -310,7 +418,7 @@ vec_fprintf(FILE *fp, const struct vec v)
     for (size_t i = 0; i < v.length; i++) {
         fprintf(fp, "%6e", vec_get(v, i));
         if (i != v.length - 1)
-            fprintf(fp, ", ");
+            fprintf(fp, ",\n");
     }
     fprintf(fp, "]\n");
 }
@@ -327,6 +435,47 @@ vec_scale(struct vec v, const double c)
     for (size_t i = 0; i < v.length; i++) {
         vec_set(v, i, vec_get(v, i) * c);
     }
+}
+
+void
+vec_invscale(struct vec v, const double c)
+{
+    for (size_t i = 0; i < v.length; i++) {
+        vec_set(v, i, vec_get(v, i) / c);
+    }
+}
+
+struct vec
+vec_arange(size_t n)
+{
+    if (n <= 0) {
+        WARNING("vec_arange: %ld <= 0\n", n);
+        return vec_zeros(1);
+    }
+
+    struct vec v = vec_zeros(n);
+    for (size_t i = 0; i < n; i++) {
+        vec_set(v, i, i);
+    }
+    return v;
+}
+
+struct vec 
+vec_linspace(double start, double end, double num_steps)
+{
+    if (start > end) {
+        WARNING("linspace: start > end\n\t%g > %g\n", start, end);
+    }
+    num_steps = floor(num_steps);
+    struct vec v = vec_arange(num_steps);
+
+    vec_scale(v, end - start);
+    vec_invscale(v, num_steps - 1);
+    vec_add_const(v, start);
+
+    vec_set(v, 0, start); // in case the first term didn't round correctly
+    vec_set(v, num_steps - 1, end); // in case the last term didn't round correctly
+    return v;
 }
 
 struct vec
@@ -433,6 +582,7 @@ mat_read(FILE *file)
 double
 vec_get(const struct vec v, size_t i)
 {
+    assert(i < v.length && "trying to get an index outside bounds in vector");
     return v.data[v.stride * i];
 }
 
@@ -446,6 +596,8 @@ vec_zeros(size_t len)
 double
 mat_get(const struct matrix m, size_t i, size_t j)
 {
+    assert(i < m.len1 && "trying to get an index outside num_rows in matrix");
+    assert(j < m.len2 && "trying to get an index outside num_cols in matrix");
     return m.data[i * m.physlen + j];
 }
 
@@ -546,20 +698,26 @@ matarr_printf(const struct matarray arr)
 }
 
 void
+mat_fprintf(FILE * restrict file, const struct matrix m)
+{
+    fprintf(file, "[");
+    for (size_t i = 0; i < m.len1; i++) {
+        if (i != 0) fprintf(file, " ");
+        fprintf(file, "[");
+        for (size_t j = 0; j < m.len2; j++) {
+            fprintf(file, "%6e, ", mat_get(m, i, j));
+        }
+        fprintf(file, "]");
+        if (i != m.len1 - 1) fprintf(file, "\n");
+    }
+    fprintf(file, "]");
+    fprintf(file, "\n");
+}
+
+void
 mat_printf(const struct matrix m)
 {
-    printf("[");
-    for (size_t i = 0; i < m.len1; i++) {
-        if (i != 0) printf(" ");
-        printf("[");
-        for (size_t j = 0; j < m.len2; j++) {
-            printf("%6e, ", mat_get(m, i, j));
-        }
-        printf("]");
-        if (i != m.len1 - 1) printf("\n");
-    }
-    printf("]");
-    printf("\n");
+    mat_fprintf(stdout, m);
 }
 
 void
@@ -579,17 +737,20 @@ vec_free(struct vec v)
 void
 matarr_set(const struct matarray arr, size_t i, struct matrix m)
 {
+    assert(i < arr.length && "trying to set an index outside bounds in matarray");
     arr.data[i] = m;
 }
 
 struct matrix
 matarr_get(const struct matarray arr, size_t i)
 {
+    assert(i < arr.length && "trying to get an index outside bounds in matarray");
     return arr.data[i];
 }
 
 void
 vec_set(struct vec v, size_t i, double a)
 {
+    assert(i < v.length && "trying to set an index outside bounds in vector");
     v.data[v.stride * i] = a;
 }

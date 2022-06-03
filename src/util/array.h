@@ -49,11 +49,19 @@ struct vec vec_from_data(double *data, size_t len, int is_owner);
 void vec_printf(const struct vec v);
 void vec_fprintf(FILE *fp, const struct vec v);
 void vec_scale(struct vec v, const double c);
+void vec_invscale(struct vec v, const double c);
 struct vec vec_zeros(size_t len);
 size_t vec_argmax(const struct vec v);
 void vec_free(struct vec v);
 void vec_add_const(struct vec v, const double a);
+void vec_sub(struct vec v, struct vec u);
 void vec_square(struct vec v);
+void vec_sqrt(struct vec v);
+void vec_multiply(struct vec v, struct vec u);
+void vec_divide(struct vec v, struct vec u);
+void vec_exp(struct vec v);
+double vec_dot(struct vec v, struct vec u);
+void vec_add(struct vec v, struct vec u);
 struct vec vec_copy(const struct vec v);
 double vec_mean(const struct vec v);
 double vec_std(const struct vec v);
@@ -61,10 +69,12 @@ bool vec_equal(const struct vec v1, const struct vec v2);
 struct vec vec_read(FILE *file, const char *const format);
 void vec_write(FILE *file, const struct vec v);
 void vec_set_all(struct vec v, const double d);
+struct vec vec_linspace(double start, double end, double num_steps);
 
 /* vec mat */
 struct vec vec_from_col(const struct matrix m, const size_t col);
 struct vec vec_from_row(const struct matrix m, const size_t row);
+void vec_to_row(const struct matrix m, const struct vec v, const size_t row);
 
 /* matarr */
 struct matrix matarr_get(const struct matarray arr, size_t i);
@@ -93,5 +103,7 @@ FILE *safe_fopen(const char *path, const char *mode);
 
 char *read_line(FILE *fp);
 bool equals(const double a, const double b);
+double z2d(const uint64_t a);
+uint64_t d2z(const double a);
 
 #endif // ARRAY_H
