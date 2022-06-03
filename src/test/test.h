@@ -35,4 +35,7 @@ extern double p_m13_2__12_data[];
 extern double stat_m13_i_2[];
 extern double stat_m12_i_3[];
 
+extern double cm1_1_4[];
+extern double cm1_1_4_scaled[];
+
 #endif // TEST_H
