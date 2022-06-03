@@ -877,6 +877,8 @@ int main()
     puts("================");
     testfunc tests[] = {
         simple, 
+
+        // 2D
         test_cos_sim_L2,
         test_cos_sim_3rd_highest_of_12_11_30V,
         test_cos_sim_11th_highest_of_12_11_30V, 
