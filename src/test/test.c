@@ -314,9 +314,7 @@ static bool
 test_vec_read_simple()
 {
     printf(__FUNCTION__);
-    FILE *fptr = safe_fopen(TESTDATADIR "vec_read_simple.txt", "r");
-    struct vec output = vec_read(fptr, "%lg");
-    fclose(fptr);
+    struct vec output = vec_from_file(TESTDATADIR "vec_read_simple.txt");
     double data[] = {728, 283910, 812931, 72891};
     struct vec sol = vec_from_data(data, 4, false);
     bool ret = vec_equal(output, sol);
@@ -488,9 +486,7 @@ static bool
 test_vec_read_real()
 {
     printf(__FUNCTION__);
-    FILE *fptr = safe_fopen(TESTDATADIR "vec_read_real.txt", "r");
-    struct vec output = vec_read(fptr, "%lg");
-    fclose(fptr);
+    struct vec output = vec_from_file(TESTDATADIR "vec_read_real.txt");
     double data[] = {
         9.192224975486361e-05,
         1.600568648962115e-04,
@@ -678,9 +674,7 @@ static bool
 test_read_vec_no_eof_eol()
 {
     printf(__FUNCTION__);
-    FILE *file = safe_fopen(TESTDATADIR "no_newline.txt", "r");
-    struct vec v = vec_read(file, NULL);
-    fclose(file);
+    struct vec v = vec_from_file(TESTDATADIR "no_newline.txt");
     double vdata[] = {
         34832749324832,
         32874789327894,
@@ -695,9 +689,7 @@ static bool
 test_mat_read_no_extra_newln_ints()
 {
     printf(__FUNCTION__);
-    FILE *file = safe_fopen(TESTDATADIR "mat_no_extra_newln_ints.txt", "r");
-    struct matrix m = mat_read(file);
-    fclose(file);
+    struct matrix m = mat_from_file(TESTDATADIR "mat_no_extra_newln_ints.txt");
     double ndata[] = {
         7, 62, 40, 1,
         75, 92, 31, 12,
@@ -714,9 +706,7 @@ static bool
 test_mat_read_blank_lines_ints()
 {
     printf(__FUNCTION__);
-    FILE *file = safe_fopen(TESTDATADIR "mat_blank_line_ints.txt", "r");
-    struct matrix m = mat_read(file);
-    fclose(file);
+    struct matrix m = mat_from_file(TESTDATADIR "mat_blank_line_ints.txt");
     double ndata[] = {
         7, 62, 40, 1,
         75, 92, 31, 12,
@@ -733,9 +723,7 @@ static bool
 test_mat_read_ints()
 {
     printf(__FUNCTION__);
-    FILE *file = safe_fopen(TESTDATADIR "mat_ints.txt", "r");
-    struct matrix m = mat_read(file);
-    fclose(file);
+    struct matrix m = mat_from_file(TESTDATADIR "mat_ints.txt");
     double ndata[] = {
         7, 62, 40, 1,
         75, 92, 31, 12,
@@ -752,9 +740,7 @@ static bool
 test_analytes_normal_1_1_1()
 {
     printf(__FUNCTION__);
-    FILE *file = safe_fopen(TESTDATADIR "analytes_normal_1_1_1.txt", "r");
-    struct matrix m = mat_read(file);
-    fclose(file);
+    struct matrix m = mat_from_file(TESTDATADIR "analytes_normal_1_1_1.txt");
     double ndata[] = {
         9.806176300000000e+01, 3.145928075948926e-03,
         1.460602040000000e+02, 2.329312500803309e-03,
@@ -839,12 +825,10 @@ test_similarity_analysis()
                 char *buf = safe_calloc(bufsz + 1, sizeof(char));
 
                 safe_snprintf(buf, bufsz + 1, TESTDATADIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
-                FILE *file = safe_fopen(buf, "r");
+                struct matrix m = mat_from_file(buf);
                 free(buf);
 
-                struct matrix m = mat_read(file);
                 matarr_set(replicates, k, m);
-                fclose(file);
             }
             struct matrix p = peak_stat(replicates, 15);
             matarr_free(replicates);
@@ -870,9 +854,7 @@ test_mat_read_cm_data()
 {
     printf(__FUNCTION__);
     struct matrix m = mat_from_data(cm1_1_4, 231, 2, 2, 0);
-    FILE *file = safe_fopen(TESTDATADIR "CM1_1_4.txt", "r");
-    struct matrix k = mat_read(file);
-    fclose(file);
+    struct matrix k = mat_from_file(TESTDATADIR "CM1_1_4.txt");
     bool ret = mat_equal(k, m);
     mat_free(k);
     mat_free(m);
@@ -883,9 +865,7 @@ static bool
 test_scaled_data()
 {
     printf(__FUNCTION__);
-    FILE *file = safe_fopen(TESTDATADIR "CM1_1_4.txt", "r");
-    struct matrix m = mat_read(file);
-    fclose(file);
+    struct matrix m = mat_from_file(TESTDATADIR "CM1_1_4.txt");
     struct matrix sol = mat_from_data(cm1_1_4_scaled, 231, 2, 2, 0);
     scaled_data(m);
     bool ret = mat_equal(m, sol);
@@ -898,13 +878,9 @@ test_spec_vec()
 {
     printf(__FUNCTION__);
 
-    FILE *file = safe_fopen(TESTDATADIR "spec_vec_CM1_1_4.txt", "r");
-    struct vec sol = vec_read(file, NULL);
-    fclose(file);
+    struct vec sol = vec_from_file(TESTDATADIR "spec_vec_CM1_1_4.txt");
 
-    file = safe_fopen(TESTDATADIR "CM1_1_4.txt", "r");
-    struct matrix m = mat_read(file);
-    fclose(file);
+    struct matrix m = mat_from_file(TESTDATADIR "CM1_1_4.txt");
 
     scaled_data(m);
     struct vec v = spec_vec(m, 0.1);
@@ -924,17 +900,13 @@ test_spec_vec_all()
         int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
-        FILE *file = safe_fopen(filename, "r");
-        struct vec sol = vec_read(file, NULL);
-        fclose(file);
+        struct vec sol = vec_from_file(filename);
         free(filename);
 
         bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
-        file = safe_fopen(filename, "r");
-        struct matrix m = mat_read(file);
-        fclose(file);
+        struct matrix m = mat_from_file(filename);
         free(filename);
 
         scaled_data(m);
@@ -956,9 +928,7 @@ test_spec_vec_all_matarr()
         int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
-        FILE *file = safe_fopen(filename, "r");
-        matarr_set(A, i, mat_read(file));
-        fclose(file);
+        matarr_set(A, i, mat_from_file(filename));
         free(filename);
     }
 
@@ -967,9 +937,7 @@ test_spec_vec_all_matarr()
         int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
-        FILE *file = safe_fopen(filename, "r");
-        struct vec sol = vec_read(file, NULL);
-        fclose(file);
+        struct vec sol = vec_from_file(filename);
         free(filename);
 
         struct matrix m = matarr_get(A, i);
@@ -988,9 +956,7 @@ test_bin_stat()
 {
     printf(__FUNCTION__);
 
-    FILE *file = safe_fopen(TESTDATADIR "bin_stats_CM1_1", "r");
-    struct matrix sol = mat_read(file);
-    fclose(file);
+    struct matrix sol = mat_from_file(TESTDATADIR "bin_stats_CM1_1.txt");
 
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -999,11 +965,9 @@ test_bin_stat()
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
-        FILE *file = safe_fopen(filename, "r");
-        struct matrix m = mat_read(file);
+        struct matrix m = mat_from_file(filename);
         scaled_data(m);
         matarr_set(A, i, m);
-        fclose(file);
         free(filename);
     }
     struct matrix bin_stats = bin_stat_1D(A, 0.1);
@@ -1028,11 +992,9 @@ test_prob_dot_prob_through()
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
-        FILE *file = safe_fopen(filename, "r");
-        struct matrix m = mat_read(file);
+        struct matrix m = mat_from_file(filename);
         scaled_data(m);
         matarr_set(A, i, m);
-        fclose(file);
         free(filename);
     }
     struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
@@ -1044,11 +1006,9 @@ test_prob_dot_prob_through()
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
-        FILE *file = safe_fopen(filename, "r");
-        struct matrix m = mat_read(file);
+        struct matrix m = mat_from_file(filename);
         scaled_data(m);
         matarr_set(B, i, m);
-        fclose(file);
         free(filename);
     }
     struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
@@ -1067,13 +1027,9 @@ test_prob_dot_prob()
     printf(__FUNCTION__);
     double sol = 0.034024882840827;
 
-    FILE *file = safe_fopen(TESTDATADIR "bin_stats_CM1_1", "r");
-    struct matrix bin_stats_1 = mat_read(file);
-    fclose(file);
+    struct matrix bin_stats_1 = mat_from_file(TESTDATADIR "bin_stats_CM1_1.txt");
 
-    file = safe_fopen(TESTDATADIR "bin_stats_CM1_3", "r");
-    struct matrix bin_stats_3 = mat_read(file);
-    fclose(file);
+    struct matrix bin_stats_3 = mat_from_file(TESTDATADIR "bin_stats_CM1_3.txt");
 
     double ans = prob_dot_prod(bin_stats_1, bin_stats_3);
     bool ret = equals(sol, ans);
@@ -1082,6 +1038,1983 @@ test_prob_dot_prob()
     return ret;
 }
 
+static bool
+test_CM1_25_and_CM1_28_prob_dot_prod()
+{
+    printf(__FUNCTION__);
+    double sol = 0.041264598345041;
+    struct matrix bin_stats_25 = mat_from_file(TESTDATADIR "bin_stats_CM1_25.txt");
+
+    struct matrix bin_stats_28 = mat_from_file(TESTDATADIR "bin_stats_CM1_28.txt");
+
+    bool ret = equals(sol, prob_dot_prod(bin_stats_25, bin_stats_28));
+    mat_free(bin_stats_25);
+    mat_free(bin_stats_28);
+    return ret;
+}
+
+static bool
+test_spec_vec_10_CM1_28()
+{
+    printf(__FUNCTION__);
+    struct matarray L = matarr_zeros(10);
+
+    struct matrix A_1 = mat_from_file(TESTDATADIR "CM1_28_1.txt");
+    struct matrix A_2 = mat_from_file(TESTDATADIR "CM1_28_2.txt");
+    struct matrix A_3 = mat_from_file(TESTDATADIR "CM1_28_3.txt");
+    struct matrix A_4 = mat_from_file(TESTDATADIR "CM1_28_4.txt");
+    struct matrix A_5 = mat_from_file(TESTDATADIR "CM1_28_5.txt");
+    struct matrix A_6 = mat_from_file(TESTDATADIR "CM1_28_6.txt");
+    struct matrix A_7 = mat_from_file(TESTDATADIR "CM1_28_7.txt");
+    struct matrix A_8 = mat_from_file(TESTDATADIR "CM1_28_8.txt");
+    struct matrix A_9 = mat_from_file(TESTDATADIR "CM1_28_9.txt");
+    struct matrix A_10 = mat_from_file(TESTDATADIR "CM1_28_10.txt");
+    scaled_data(A_1);
+    scaled_data(A_2);
+    scaled_data(A_3);
+    scaled_data(A_4);
+    scaled_data(A_5);
+    scaled_data(A_6);
+    scaled_data(A_7);
+    scaled_data(A_8);
+    scaled_data(A_9);
+    scaled_data(A_10);
+    struct vec A_1_spec = spec_vec(A_1, 0.1);
+    struct vec A_2_spec = spec_vec(A_2, 0.1);
+    struct vec A_3_spec = spec_vec(A_3, 0.1);
+    struct vec A_4_spec = spec_vec(A_4, 0.1);
+    struct vec A_5_spec = spec_vec(A_5, 0.1);
+    struct vec A_6_spec = spec_vec(A_6, 0.1);
+    struct vec A_7_spec = spec_vec(A_7, 0.1);
+    struct vec A_8_spec = spec_vec(A_8, 0.1);
+    struct vec A_9_spec = spec_vec(A_9, 0.1);
+    struct vec A_10_spec = spec_vec(A_10, 0.1);
+
+    struct vec sol_spec_vec_A_1 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_1.txt");
+    struct vec sol_spec_vec_A_2 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_2.txt");
+    struct vec sol_spec_vec_A_3 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_3.txt");
+    struct vec sol_spec_vec_A_4 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_4.txt");
+    struct vec sol_spec_vec_A_5 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_5.txt");
+    struct vec sol_spec_vec_A_6 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_6.txt");
+    struct vec sol_spec_vec_A_7 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_7.txt");
+    struct vec sol_spec_vec_A_8 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_8.txt");
+    struct vec sol_spec_vec_A_9 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_9.txt");
+    struct vec sol_spec_vec_A_10 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_10.txt");
+
+    bool ret = true;
+    ret = ret && vec_equal(A_1_spec, sol_spec_vec_A_1);
+    ret = ret && vec_equal(A_2_spec, sol_spec_vec_A_2);
+    ret = ret && vec_equal(A_3_spec, sol_spec_vec_A_3);
+    ret = ret && vec_equal(A_4_spec, sol_spec_vec_A_4);
+    ret = ret && vec_equal(A_5_spec, sol_spec_vec_A_5);
+    ret = ret && vec_equal(A_6_spec, sol_spec_vec_A_6);
+    ret = ret && vec_equal(A_7_spec, sol_spec_vec_A_7);
+    ret = ret && vec_equal(A_8_spec, sol_spec_vec_A_8);
+    ret = ret && vec_equal(A_9_spec, sol_spec_vec_A_9);
+    ret = ret && vec_equal(A_10_spec, sol_spec_vec_A_10);
+    return ret;
+}
+
+static bool
+test_bin_stats_CM1_28()
+{
+    printf(__FUNCTION__);
+    struct matarray L = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix A_i = mat_from_file(filename);
+        free(filename);
+        scaled_data(A_i);
+        matarr_set(L, i, A_i);
+    }
+    struct matrix sol = mat_from_file(TESTDATADIR "bin_stats_CM1_28.txt");
+    struct matrix bin_stats = bin_stat_1D(L, 0.1);
+    FILE *f = fopen("/tmp/matrix.txt", "w");
+    mat_fprintf(f, bin_stats);
+    fclose(f);
+    f = fopen("/tmp/sol.txt", "w");
+    mat_fprintf(f, sol);
+    fclose(f);
+    return mat_equal(sol, bin_stats);
+}
+
+static bool
+test_CM1_25_and_CM1_28()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.041264598345041, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+
+static bool
+test_CM1_25_and_CM1_10()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.072582556629134, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_27_and_CM1_4()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.021623181634144, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_1_and_CM1_11()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.04089280788519, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_24_and_CM1_21()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.12515913619196, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_25_and_CM1_21()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.066069968923634, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_23_and_CM1_8()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.001484153831093, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_10_and_CM1_21()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.06845171025487, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_10_and_CM1_22()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.036359745578049, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_10_and_CM1_7()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.029871109665094, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_11_and_CM1_12()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.084960498296299, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_11_and_CM1_3()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.093213135837302, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_12_and_CM1_18()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.016897263730676, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_12_and_CM1_23()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.056214831376217, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_13_and_CM1_12()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.004101523575941, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_14_and_CM1_3()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_14_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_14_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.057425859524548, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_15_and_CM1_12()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.055218397676643, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_15_and_CM1_13()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.013231966438739, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_18_and_CM1_5()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.012781966810721, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_20_and_CM1_11()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.072328503941529, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_20_and_CM1_12()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.07456522293608, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_20_and_CM1_17()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.094404829387605, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_20_and_CM1_20()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(1, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_22_and_CM1_17()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.03751249943288, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_23_and_CM1_22()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.022740246848618, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_24_and_CM1_11()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.051801154974774, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_26_and_CM1_1()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.022912835862035, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_26_and_CM1_11()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.040749418848459, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_26_and_CM1_12()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.110433675124284, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_26_and_CM1_2()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.023472628814994, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_27_and_CM1_16()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_16_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_16_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.057995289632189, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_27_and_CM1_28()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.035569551931446, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_28_and_CM1_1()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.022519129110172, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_28_and_CM1_20()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.281531338126355, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_1_and_CM1_8()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.010513748623968, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_2_and_CM1_2()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(1.0, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_2_and_CM1_26()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.023472628814994, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_2_and_CM1_6()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.021362257050611, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_3_and_CM1_18()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.004160752445243, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_3_and_CM1_20()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.102379914691872, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_3_and_CM1_6()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.028129541037335, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_4_and_CM1_6()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.018767371051262, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_5_and_CM1_12()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.063673316564264, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_5_and_CM1_20()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.084359053077657, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_7_and_CM1_9()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.105884314043279, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_8_and_CM1_19()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_19_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_19_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.009837382753993, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_9_and_CM1_3()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.109741556620843, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
+static bool
+test_CM1_9_and_CM1_6()
+{
+    printf(__FUNCTION__);
+    struct matarray A = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(A, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_A = bin_stat_1D(A, 0.1);
+
+    struct matarray B = matarr_zeros(10);
+    for (size_t i = 0; i < 10; i++) {
+        // filename
+        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        char *filename = safe_calloc(bufsz + 1, sizeof(char));
+        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+
+        struct matrix m = mat_from_file(filename);
+        scaled_data(m);
+        matarr_set(B, i, m);
+        free(filename);
+    }
+    struct matrix bin_stats_B = bin_stat_1D(B, 0.1);
+
+    bool ret = equals(0.012490393307203, prob_dot_prod(bin_stats_A, bin_stats_B));
+    mat_free(bin_stats_A);
+    mat_free(bin_stats_B);
+    matarr_free(A);
+    matarr_free(B);
+    return ret;
+}
 
 static bool
 simple() 
@@ -1139,9 +3072,60 @@ int main()
         test_spec_vec,
         test_spec_vec_all,
         test_spec_vec_all_matarr,
+        test_spec_vec_10_CM1_28,
         test_bin_stat,
+        test_bin_stats_CM1_28,
         test_prob_dot_prob,
         test_prob_dot_prob_through,
+        test_CM1_25_and_CM1_28_prob_dot_prod,
+        test_CM1_25_and_CM1_28,
+        test_CM1_25_and_CM1_10,
+        test_CM1_27_and_CM1_4,
+        test_CM1_1_and_CM1_11,
+        test_CM1_24_and_CM1_21,
+        test_CM1_25_and_CM1_21,
+        test_CM1_23_and_CM1_8,
+        test_CM1_10_and_CM1_21,
+        test_CM1_10_and_CM1_22,
+        test_CM1_10_and_CM1_7,
+        test_CM1_11_and_CM1_12,
+        test_CM1_11_and_CM1_3,
+        test_CM1_12_and_CM1_18,
+        test_CM1_12_and_CM1_23,
+        test_CM1_13_and_CM1_12,
+        test_CM1_14_and_CM1_3,
+        test_CM1_15_and_CM1_12,
+        test_CM1_15_and_CM1_13,
+        test_CM1_18_and_CM1_5,
+        test_CM1_20_and_CM1_11,
+        test_CM1_20_and_CM1_12,
+        test_CM1_20_and_CM1_17,
+        test_CM1_20_and_CM1_20,
+        test_CM1_22_and_CM1_17,
+        test_CM1_23_and_CM1_22,
+        test_CM1_24_and_CM1_11,
+        test_CM1_26_and_CM1_1,
+        test_CM1_26_and_CM1_11,
+        test_CM1_26_and_CM1_12,
+        test_CM1_26_and_CM1_2,
+        test_CM1_27_and_CM1_16,
+        test_CM1_27_and_CM1_28,
+        test_CM1_28_and_CM1_1,
+        test_CM1_28_and_CM1_20,
+        test_CM1_1_and_CM1_8,
+        test_CM1_2_and_CM1_2,
+        test_CM1_2_and_CM1_26,
+        test_CM1_2_and_CM1_6,
+        test_CM1_3_and_CM1_18,
+        test_CM1_3_and_CM1_20,
+        test_CM1_3_and_CM1_6,
+        test_CM1_4_and_CM1_6,
+        test_CM1_5_and_CM1_12,
+        test_CM1_5_and_CM1_20,
+        test_CM1_7_and_CM1_9,
+        test_CM1_8_and_CM1_19,
+        test_CM1_9_and_CM1_3,
+        test_CM1_9_and_CM1_6,
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);
