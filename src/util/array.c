@@ -479,7 +479,7 @@ vec_linspace(double start, double end, double num_steps)
 }
 
 struct vec
-vec_read(FILE *file, const char *const argformat)
+vec_fread(FILE *file, const char *const argformat)
 {
     const char *const format = (argformat == NULL) ? "%lg" : argformat;
     struct vec v;
@@ -513,8 +513,17 @@ vec_read(FILE *file, const char *const argformat)
     return v;
 }
 
+struct vec
+vec_from_file(const char *path)
+{
+    FILE *file = safe_fopen(path, "r");
+    struct vec v = vec_fread(file, NULL);
+    fclose(file);
+    return v;
+}
+
 struct matrix
-mat_read(FILE *file)
+mat_fread(FILE *file)
 {
     size_t num_cols = 0;
     size_t allocd = 1;
@@ -564,6 +573,15 @@ mat_read(FILE *file)
     m.len2 = num_cols;
     m.physlen = num_cols;
     m.is_owner = true;
+    return m;
+}
+
+struct matrix
+mat_from_file(const char *path)
+{
+    FILE *file = safe_fopen(path, "r");
+    struct matrix m = mat_fread(file);
+    fclose(file);
     return m;
 }
 
