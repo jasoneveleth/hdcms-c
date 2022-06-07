@@ -3,8 +3,6 @@
 #include <stdbool.h>
 #include "array.h"
 
-#define E (2.718281828459045235360287471352)
-
 size_t min2(const size_t x, const size_t y);
 size_t min3(const size_t x, const size_t y, const size_t z);
 
