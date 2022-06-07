@@ -10,7 +10,10 @@
 #define CONSOLE "/dev/tty"
 #endif
 
+// testfunc definition
 typedef bool (*testfunc)(void);
+
+// arrays from data.c:
 
 extern double m13_1_2_data[];
 extern double m13_2_2_data[];
