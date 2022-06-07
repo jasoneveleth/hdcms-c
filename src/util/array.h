@@ -131,13 +131,21 @@ struct vec vec_from_row(const struct matrix m, const size_t row);
 void vec_to_row(struct matrix m, const struct vec v, const size_t row);
 
 /* matarr */
+// retrives a value from array of matrices at index i
 struct matrix matarr_get(const struct matarray arr, size_t i);
+// *mutates* matrix array by setting index i to struct matrix
 void matarr_set(const struct matarray arr, size_t i, struct matrix m);
+// duplicates the data in the matrix array into a new array
 struct matarray matarr_copy(const struct matarray old);
+// initializes empty matrix array of the length len
 struct matarray matarr_zeros(size_t len);
+// initializes a matrix array with data from pointer
 struct matarray matarr_from_data(struct matrix *data, size_t len, const bool is_owner);
+// destructor for matrix array
 void matarr_free(struct matarray arr);
+// print the matrix array to stdout
 void matarr_printf(const struct matarray arr);
+// check for equality between matrix arrays
 bool matarr_equal(const struct matarray arr, const struct matarray arr2);
 
 /* mat */
