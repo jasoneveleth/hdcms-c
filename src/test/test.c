@@ -737,6 +737,36 @@ test_mat_read_ints()
 }
 
 static bool
+test_mat_read_trailing_white_space()
+{
+    printf(__FUNCTION__);
+    struct matrix m = mat_from_file(TESTDATADIR "mat_trailing_white_space.txt");
+    double ndata[] = {
+        5, 4, 10,
+        1, 3, 8
+    };
+    struct matrix n = mat_from_data(ndata, 2, 3, 3, false);
+    bool ret = mat_equal(m, n);
+    mat_free(m);
+    return ret;
+}
+
+static bool
+test_mat_read_leading_white_space()
+{
+    printf(__FUNCTION__);
+    struct matrix m = mat_from_file(TESTDATADIR "mat_leading_white_space.txt");
+    double ndata[] = {
+        5, 4, 10,
+        1, 3, 8
+    };
+    struct matrix n = mat_from_data(ndata, 2, 3, 3, false);
+    bool ret = mat_equal(m, n);
+    mat_free(m);
+    return ret;
+}
+
+static bool
 test_analytes_normal_1_1_1()
 {
     printf(__FUNCTION__);
@@ -3063,6 +3093,8 @@ int main()
         test_mat_read_no_extra_newln_ints,
         test_mat_read_blank_lines_ints,
         test_mat_read_ints,
+        test_mat_read_trailing_white_space,
+        test_mat_read_leading_white_space,
         test_analytes_normal_1_1_1,
         test_similarity_analysis,
 

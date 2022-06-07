@@ -172,10 +172,15 @@ struct matrix mat_fscanf(FILE *file);
 // takes pathname and reads file using mat_fscanf()
 struct matrix mat_from_file(const char *path);
 
+/* safely handle failures of system functions */
+// wrapper for calloc(), which requests memory, and returns a pointer to it
 void *safe_calloc(size_t num, size_t size);
+// wrapper for realloc(), which resizes the memory pointed to by ptr
 void *safe_realloc(void *ptr, size_t size);
+// wrapper for fopen() which opens a path and returns a file pointer.
 FILE *safe_fopen(const char *path, const char *mode);
 
+// reads one line from a file
 char *read_line(FILE *fp);
 
 // returns the bits of a float as unsigned 64 bit int

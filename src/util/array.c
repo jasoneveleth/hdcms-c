@@ -59,6 +59,12 @@ safe_fopen(const char * restrict path, const char * restrict mode)
     return ret;
 }
 
+/* 
+ * This function starts with a buffer size of 2, and reads characters into the
+ * buffer, properly avoiding buffer overflow. While there are more characters
+ * left in the line (no EOF or newline), then keep increasing buffer size. We
+ * only reallocate the buffer by doubling to make the reallocation amortized O(1).
+ */
 char *
 read_line(FILE *fp)
 {
@@ -89,6 +95,9 @@ read_line(FILE *fp)
     return line;
 }
 
+/*
+ * This function safely converts a string to a double.
+ */
 static double
 safe_strtod(const char *const token)
 {
@@ -104,6 +113,42 @@ safe_strtod(const char *const token)
     return ele;
 }
 
+/*
+ * This is a custom tokenizer to avoid using strtok (which uses global state).
+ * It takes a pointer to the string it is tokenizing `resumer`, and a string of
+ * the characters which are separators of tokens. It is built to run
+ * incrementally, each time returning a pointer to the next token, and
+ * incrementing the pointer to the string it is tokenizing.
+ *
+ * It uses strspn() to calculate the offset into the `resumer` pointer of a new
+ * token (so it will ignore leading separators), and assigns a pointer to that
+ * offset `tkn_begin`. Then, it calculates the location of the end of the token
+ * by calling strcspn(). 
+ *
+ * Then, we need to check if this is the last token. If the beginning of the
+ * next token is the NUL character, then our token is the last token. Note that
+ * this handles both the case where there is no trailing separators, and when
+ * there are trailing separators. If this token is the last token, we set the
+ * string we are tokenizing to NULL, otherwise  point the resumer to the
+ * character after the end of the token. We terminate the token with a NUL
+ * character, and return the beginning of the token.
+ *
+ * For example:
+
+    char buf[] = "   one    two,    three   ";
+    char *string = buf;
+    char *c1 = find_token(&string, " ,");
+    char *c2 = find_token(&string, " ,");
+    char *c3 = find_token(&string, " ,");
+    
+    assert(strcmp(c1, "one") == 0);
+    assert(strcmp(c2, "two") == 0);
+    assert(strcmp(c3, "three") == 0);
+    assert(string == NULL);
+    char res[] = "   one\0   two\0    three\0   ";
+    assert(memcmp(res, buf, sizeof(buf)));
+
+ */
 static char *
 find_token(char **resumer, const char *const sep)
 {
@@ -111,15 +156,20 @@ find_token(char **resumer, const char *const sep)
         return NULL;
     }
 
-    char *ret = &((*resumer)[strspn(*resumer, sep)]);
-    char *next = &ret[strcspn(ret, sep)];
-    if (next[0] == '\0') {
+    char *tkn_begin = &((*resumer)[strspn(*resumer, sep)]);
+    char *tkn_end = &tkn_begin[strcspn(tkn_begin, sep)];
+    char *next_tkn_begin = &tkn_end[strspn(tkn_end, sep)];
+
+    if (next_tkn_begin[0] == '\0') {
         *resumer = NULL;
     } else {
-        next[0] = '\0';
-        *resumer = &next[1];
+        *resumer = &tkn_end[1];
     }
-    return ret;
+    // this is redundant if we're on the last token and there are no trailing
+    // separators, but that's okay
+    tkn_end[0] = '\0';
+
+    return tkn_begin;
 }
 
 bool
@@ -450,7 +500,10 @@ vec_invscale(struct vec v, const double a)
     }
 }
 
-struct vec
+/*
+ * This function returns a vector of length n, of numbers 0 through n-1.
+ */
+static struct vec
 vec_arange(size_t n)
 {
     if (n <= 0) {
