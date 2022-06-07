@@ -122,10 +122,13 @@ void vec_set_all(struct vec v, const double a);
 // returns a vector of equally-spaced values of size num_steps from start to end
 struct vec vec_linspace(double start, double end, double num_steps);
 
-/* vec mat */
+/* vec and mat */
+// returns a vector which points to one of the matrix's columns
 struct vec vec_from_col(const struct matrix m, const size_t col);
+// returns a vector which points to one of the matrix's rows
 struct vec vec_from_row(const struct matrix m, const size_t row);
-void vec_to_row(const struct matrix m, const struct vec v, const size_t row);
+// *mutates* the matrix by setting one of its rows to be the contents of v
+void vec_to_row(struct matrix m, const struct vec v, const size_t row);
 
 /* matarr */
 struct matrix matarr_get(const struct matarray arr, size_t i);
@@ -155,8 +158,16 @@ void *safe_realloc(void *ptr, size_t size);
 FILE *safe_fopen(const char *path, const char *mode);
 
 char *read_line(FILE *fp);
-bool equals(const double a, const double b);
+
+/* 
+ * This function takes a double and returns it's bits as an unsigned 64 bit int,
+ * which is very useful when trying to generate bitwise identical floats to
+ * MATLAB
+ */
 double z2d(const uint64_t a);
+// this function takes 64 bits and interprets them as a double
 uint64_t d2z(const double a);
+// this function checks if two doubles are within a tolerance
+bool equals(const double a, const double b);
 
 #endif // ARRAY_H

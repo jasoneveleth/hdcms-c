@@ -389,7 +389,7 @@ vec_sum(const struct vec v)
 }
 
 void 
-vec_to_row(const struct matrix m, const struct vec v, const size_t row)
+vec_to_row(struct matrix m, const struct vec v, const size_t row)
 {
     if (m.len2 != v.length) {
         WARNING("vec_to_row: incorrect dims\n\t%ld > %ld\n", m.len2, v.length);
