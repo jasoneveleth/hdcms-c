@@ -271,7 +271,7 @@ vec_multiply(struct vec v, struct vec u)
 }
 
 double
-vec_dot(struct vec v, struct vec u)
+vec_dot(const struct vec v, const struct vec u)
 {
     if (v.length != u.length) {
         WARNING("vec_dot: incorrect dims\n\t%ld > %ld\n", v.length, u.length);
@@ -430,18 +430,18 @@ vec_printf(const struct vec v)
 }
 
 void
-vec_scale(struct vec v, const double c)
+vec_scale(struct vec v, const double a)
 {
     for (size_t i = 0; i < v.length; i++) {
-        vec_set(v, i, vec_get(v, i) * c);
+        vec_set(v, i, vec_get(v, i) * a);
     }
 }
 
 void
-vec_invscale(struct vec v, const double c)
+vec_invscale(struct vec v, const double a)
 {
     for (size_t i = 0; i < v.length; i++) {
-        vec_set(v, i, vec_get(v, i) / c);
+        vec_set(v, i, vec_get(v, i) / a);
     }
 }
 
@@ -479,7 +479,7 @@ vec_linspace(double start, double end, double num_steps)
 }
 
 struct vec
-vec_fread(FILE *file, const char *const argformat)
+vec_fscanf(FILE *file, const char *const argformat)
 {
     const char *const format = (argformat == NULL) ? "%lg" : argformat;
     struct vec v;
@@ -517,7 +517,7 @@ struct vec
 vec_from_file(const char *path)
 {
     FILE *file = safe_fopen(path, "r");
-    struct vec v = vec_fread(file, NULL);
+    struct vec v = vec_fscanf(file, NULL);
     fclose(file);
     return v;
 }
@@ -585,18 +585,6 @@ mat_from_file(const char *path)
     return m;
 }
 
-// void
-// vec_write(FILE *file, const struct vec v)
-// {
-//     // TODO
-// }
-
-// void
-// mat_write(FILE *fp)
-// {
-//     // TODO
-// }
-
 double
 vec_get(const struct vec v, size_t i)
 {
@@ -658,10 +646,10 @@ matarr_copy(const struct matarray old)
 }
 
 void
-vec_set_all(struct vec v, const double d)
+vec_set_all(struct vec v, const double a)
 {
     for (size_t i = 0; i < v.length; i++) {
-        vec_set(v, i, d);
+        vec_set(v, i, a);
     }
 }
 
