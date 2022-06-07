@@ -428,19 +428,37 @@ vec_min(const struct vec v)
     return min;
 }
 
-/* kahan summation */
+/*
+ * Kahan summation. If you think about it in terms of overlap of the significant
+ * figures of the doubles, our operations look something like this:
+
+   |========hi=========||=========low==========|
+              |========a=========|     = v[i] + low
+              |==a_hi==||==a_lo==|
+   |====(hi + a)=======|
+
+   Notice that:
+
+     hi + a
+   = hi + (a_hi + a_lo)
+   = hi + a_hi            // since a_lo bits are all lost
+ */
 double
 vec_sum(const struct vec v)
 {
-    double sum = 0;
-    double old_low_bits = 0;
+    double hi = 0;
+    double low = 0;
     for (size_t i = 0; i < v.length; i++) {
-        double y = vec_get(v, i) - old_low_bits; // = high - low - oldlow = newhigh - newlow
-        double t = sum + y;                      // = sum + newhigh
-        old_low_bits = (t - sum) - y;            // = (newhigh) - (newhigh - newlow)
-        sum = t;
+        double a = vec_get(v, i) + low;
+        double hi_plus_a = hi + a;
+
+        double a_hi = hi_plus_a - hi;
+        double a_lo = a - a_hi;
+
+        hi  = hi_plus_a;
+        low = a_lo;
     }
-    return sum;
+    return hi;
 }
 
 void 
