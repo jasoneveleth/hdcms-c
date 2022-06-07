@@ -149,16 +149,27 @@ void matarr_printf(const struct matarray arr);
 bool matarr_equal(const struct matarray arr, const struct matarray arr2);
 
 /* mat */
+// retrieve element at index (i,j)
 double mat_get(const struct matrix m, size_t i, size_t j);
+// *mutates* matrix by setting elemetn (i,j) to x
+void mat_set(struct matrix m, const size_t i, const size_t j, const double a);
+// initalizes matrix from pointer
 struct matrix mat_from_data(double *data, size_t len1, size_t len2, size_t physlen, int is_owner);
+// initalizes empty matrix of size (len1, len2)
 struct matrix mat_zeros(size_t len1, size_t len2);
-void mat_set(struct matrix m, const size_t i, const size_t j, const double x);
+// destructor for matrix
 void mat_free(struct matrix m);
+// print matrix in human readable form to stdout
 void mat_printf(const struct matrix m);
+// print matrix in human readable form to file
 void mat_fprintf(FILE * restrict file, const struct matrix m);
-bool mat_equal(const struct matrix A, const struct matrix B);
+// check for equality between 
+bool mat_equal(const struct matrix m1, const struct matrix m2);
+// duplicate the data in matrix and return struct with that data
 struct matrix mat_copy(struct matrix m);
-struct matrix mat_read(FILE *file);
+// reads from file pointer a human readable matrix, returns that matrix
+struct matrix mat_fscanf(FILE *file);
+// takes pathname and reads file using mat_fscanf()
 struct matrix mat_from_file(const char *path);
 
 void *safe_calloc(size_t num, size_t size);
@@ -167,14 +178,10 @@ FILE *safe_fopen(const char *path, const char *mode);
 
 char *read_line(FILE *fp);
 
-/* 
- * This function takes a double and returns it's bits as an unsigned 64 bit int,
- * which is very useful when trying to generate bitwise identical floats to
- * MATLAB
- */
-double z2d(const uint64_t a);
-// this function takes 64 bits and interprets them as a double
+// returns the bits of a float as unsigned 64 bit int
 uint64_t d2z(const double a);
+// takes 64 bits and interprets them as a double (and returns it)
+double z2d(const uint64_t a);
 // this function checks if two doubles are within a tolerance
 bool equals(const double a, const double b);
 

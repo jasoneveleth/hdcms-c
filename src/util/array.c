@@ -6,6 +6,11 @@
 #include <string.h>
 #include "array.h"
 
+/* 
+ * This function takes a double and returns it's bits as an unsigned 64 bit int,
+ * which is very useful when trying to generate bitwise identical floats to
+ * MATLAB
+ */
 uint64_t
 d2z(const double a)
 {
@@ -143,15 +148,15 @@ matarr_equal(const struct matarray arr, const struct matarray arr2)
 }
 
 bool
-mat_equal(const struct matrix A, const struct matrix B)
+mat_equal(const struct matrix m1, const struct matrix m2)
 {
-    if (A.len1 != B.len1 || A.len2 != B.len2) {
-        WARNING("incompatible matrices\n\tmat_equal %zdx%zd vs %zdx%zd\n", A.len1, A.len2, B.len1, B.len2);
+    if (m1.len1 != m2.len1 || m1.len2 != m2.len2) {
+        WARNING("incompatible matrices\n\tmat_equal %zdx%zd vs %zdx%zd\n", m1.len1, m1.len2, m2.len1, m2.len2);
         return false;
     }
-    for (size_t i = 0; i < A.len1; i++) {
-        for (size_t j = 0; j < A.len2; j++) {
-            if (!equals(mat_get(A, i, j), mat_get(B, i, j))) {
+    for (size_t i = 0; i < m1.len1; i++) {
+        for (size_t j = 0; j < m1.len2; j++) {
+            if (!equals(mat_get(m1, i, j), mat_get(m2, i, j))) {
                 return false;
             }
         }
@@ -200,11 +205,11 @@ matarr_from_data(struct matrix *data, size_t len, const bool is_owner)
 }
 
 void
-mat_set(struct matrix m, const size_t i, const size_t j, const double x)
+mat_set(struct matrix m, const size_t i, const size_t j, const double a)
 {
     assert(i < m.len1 && "trying to set an index outside num_rows in matrix");
     assert(j < m.len2 && "trying to set an index outside num_cols in matrix");
-    m.data[i * m.physlen + j] = x;
+    m.data[i * m.physlen + j] = a;
 }
 
 struct matrix
@@ -522,8 +527,13 @@ vec_from_file(const char *path)
     return v;
 }
 
+/*
+ * This function takes a file pointer and reads the first line to figure out how
+ * many values in each row. Then it assumes that number will be the same for
+ * the rest, and reads the rest of the lines as rows of a matrix.
+ */
 struct matrix
-mat_fread(FILE *file)
+mat_fscanf(FILE *file)
 {
     size_t num_cols = 0;
     size_t allocd = 1;
@@ -580,7 +590,7 @@ struct matrix
 mat_from_file(const char *path)
 {
     FILE *file = safe_fopen(path, "r");
-    struct matrix m = mat_fread(file);
+    struct matrix m = mat_fscanf(file);
     fclose(file);
     return m;
 }
