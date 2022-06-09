@@ -14,7 +14,7 @@ min3(const size_t x, const size_t y, const size_t z)
     return min2(min2(x, y), z);
 }
 
-// 2 4xn matrices (output of `peak_stat`), number of peaks -> similarity of them btwn 0 and 1
+// (2 4xn matrices (output of `peak_stat`), number of peaks) -> similarity of them btwn 0 and 1
 double
 peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n) 
 {
@@ -25,8 +25,8 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
     }
     struct matrix m1_copy = mat_copy(m1);
     struct matrix m2_copy = mat_copy(m2);
-    struct vec values = vec_zeros(n);
-    struct vec weights = vec_zeros(n);
+    struct vec weighted_sum = vec_zeros(n);
+    struct vec sum = vec_zeros(n);
 
     for (size_t i = 0; i < n; i++) {
         struct vec m1_ys = vec_from_col(m1_copy, 1);
@@ -45,7 +45,7 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
         struct vec sim_scores = vec_zeros(matrix_without_max_peak_p->len1);
         for (size_t j = 0; j < matrix_without_max_peak_p->len1; j++) {
             struct vec v = vec_from_row(*matrix_without_max_peak_p, j);
-            if (vec_get(v, 1) == -inf) {
+            if (vec_get(v, 1) == -inf) { // this peak has already been used
                 vec_set(sim_scores, j, -inf);
             } else {
                 vec_set(sim_scores, j, cos_sim_L2(u, v));
@@ -55,8 +55,8 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
         size_t score_argmax = vec_argmax(sim_scores);
         struct vec v = vec_from_row(*matrix_without_max_peak_p, score_argmax);
         double sim = vec_get(sim_scores, score_argmax);
-        vec_set(values, i, vec_get(u, 1) * vec_get(v, 1) * sim);
-        vec_set(weights, i, vec_get(u, 1) * vec_get(v, 1));
+        vec_set(weighted_sum, i, vec_get(u, 1) * vec_get(v, 1) * sim);
+        vec_set(sum, i, vec_get(u, 1) * vec_get(v, 1));
 
         // cause peaks to never appear again
         vec_set(u, 1, -inf);
@@ -64,31 +64,31 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
 
         vec_free(sim_scores);
     }
-    double ret = vec_sum(values)/vec_sum(weights);
+    double ret = vec_sum(weighted_sum)/vec_sum(sum);
     mat_free(m1_copy);
     mat_free(m2_copy);
-    vec_free(values);
-    vec_free(weights);
+    vec_free(weighted_sum);
+    vec_free(sum);
     return ret;
 }
 
-// 5 matrices of spectra, and number of peaks -> nx4 matrix of peaks
+// (matrices of spectra, number of peaks) -> nx4 matrix of peaks
 struct matrix
-peak_stat(const struct matarray matrices, size_t n) 
+peak_stat(const struct matarray replicates, size_t n) 
 {
-    if (matrices.length <= 0) {
-        WARNING("peak_stat got %zd length array\n", matrices.length);
+    if (replicates.length <= 0) {
+        WARNING("peak_stat got %zd length array\n", replicates.length);
         struct matrix m = {0, 0, 0, NULL, false};
         return m;
     }
 
     // reset n
-    for (size_t i = 0; i < matrices.length; i++) {
-        n = min2(n, matarr_get(matrices, i).len1);
+    for (size_t i = 0; i < replicates.length; i++) {
+        n = min2(n, matarr_get(replicates, i).len1);
     }
 
     struct matrix B = mat_zeros(n, 4);
-    struct matarray P = peak_sort(matrices, n);
+    struct matarray P = peak_sort(replicates, n);
     for (size_t i = 0; i < P.length; i++) {
         struct matrix M = matarr_get(P, i);
         struct vec x = vec_from_col(M, 0);
@@ -132,24 +132,24 @@ cos_sim_L2(const struct vec u, const struct vec v)
     return a * exp(-0.5 * (bx + by));
 }
 
-// 5 matrices of spectra, number of peaks -> n matrices s.t. ith matrix is 5
+// (matrices of spectra, number of peaks) -> n matrices s.t. ith matrix is the
 // pts assoc. with ith largest peak
 struct matarray
-peak_sort(const struct matarray matrices, size_t n)
+peak_sort(const struct matarray replicates, size_t n)
 {
     // reset n
-    for (size_t i = 0; i < matrices.length; i++) {
-        n = min2(n, matarr_get(matrices, i).len1);
+    for (size_t i = 0; i < replicates.length; i++) {
+        n = min2(n, matarr_get(replicates, i).len1);
     }
 
     struct matarray P = matarr_zeros(n);
-    struct matarray matrices_copy = matarr_copy(matrices);
+    struct matarray replicates_copy = matarr_copy(replicates);
     for (size_t i = 0; i < n; i++) {
         // find largest point left in all replicates
         double maxy = -inf;
         double maxx = 0;
-        for (size_t j = 0; j < matrices_copy.length; j++) {
-            struct matrix mj = matarr_get(matrices_copy, j);
+        for (size_t j = 0; j < replicates_copy.length; j++) {
+            struct matrix mj = matarr_get(replicates_copy, j);
             struct vec ys = vec_from_col(mj, 1);
             size_t argmax = vec_argmax(ys);
             if (vec_get(ys, argmax) > maxy) {
@@ -159,9 +159,9 @@ peak_sort(const struct matarray matrices, size_t n)
         }
 
         // find points in replicates closest to p
-        struct matrix peak = mat_zeros(matrices_copy.length, 2);
-        for (size_t j = 0; j < matrices_copy.length; j++) {
-            struct matrix mj = matarr_get(matrices_copy, j);
+        struct matrix peak = mat_zeros(replicates_copy.length, 2);
+        for (size_t j = 0; j < replicates_copy.length; j++) {
+            struct matrix mj = matarr_get(replicates_copy, j);
             double mindist = inf;
             
             // get closest pt in mj matrix
@@ -187,7 +187,7 @@ peak_sort(const struct matarray matrices, size_t n)
         // make the next peak a new matrix in P
         matarr_set(P, i, peak);
     }
-    matarr_free(matrices_copy);
+    matarr_free(replicates_copy);
     return P;
 }
 
