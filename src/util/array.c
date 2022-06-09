@@ -6,6 +6,17 @@
 #include <string.h>
 #include "array.h"
 
+#define KAHAN_INIT(_SUM)                 \
+    _SUM = 0;                            \
+    double _SUM ## _low = 0              \
+
+// read documentation for vec_sum
+#define KAHAN_INCR(_SUM, _INCR)                           \
+        double a ## _SUM = _INCR + _SUM ## _low;          \
+        double new_ ## _SUM = _SUM + a ## _SUM;           \
+        _SUM ## _low = a ## _SUM - (new_ ## _SUM - _SUM); \
+        _SUM = new_ ## _SUM
+
 /* 
  * This function takes a double and returns it's bits as an unsigned 64 bit int,
  * which is very useful when trying to generate bitwise identical floats to
@@ -204,14 +215,15 @@ mat_equal(const struct matrix m1, const struct matrix m2)
         WARNING("incompatible matrices\n\tmat_equal %zdx%zd vs %zdx%zd\n", m1.len1, m1.len2, m2.len1, m2.len2);
         return false;
     }
+    bool are_equal = true;
     for (size_t i = 0; i < m1.len1; i++) {
         for (size_t j = 0; j < m1.len2; j++) {
             if (!equals(mat_get(m1, i, j), mat_get(m2, i, j))) {
-                return false;
+                are_equal = false;
             }
         }
     }
-    return true;
+    return are_equal;
 }
 
 bool
@@ -298,18 +310,33 @@ vec_copy(const struct vec v)
     return vcopy;
 }
 
+/*
+ * Read the `vec_sum` documentation for explanation of the kahan sum.
+ * Notice that `sqsum / (n-1)` is the standard deviation. However, we can
+ * approximate the error term with: ((\sum x_i)^2 / n) / (n-1). This is
+ * formula 1.7 in 
+ *
+ * Algorithms for Computing the Sample Variance: Analysis and Recommendations
+ * by Tony F. Chan, et al.
+ * https://www.jstor.org/stable/2683386
+ */
 double
 vec_std(const struct vec v) 
 {
     if (v.length < 2) {
-            return 0;
+        return 0;
     }
-    struct vec vcopy = vec_copy(v);
-    double mean = vec_mean(vcopy);
-    vec_add_const(vcopy, -mean);
-    vec_square(vcopy);
-    double variance = vec_sum(vcopy)/(v.length - 1);
-    vec_free(vcopy);
+    double mean = vec_mean(v);
+    double sum, sqsum;
+
+    KAHAN_INIT(sum);
+    KAHAN_INIT(sqsum);
+    for (size_t i = 0; i < v.length; i++) {
+        double diff = vec_get(v, i) - mean;
+        KAHAN_INCR(sum, diff);
+        KAHAN_INCR(sqsum, diff * diff);
+    }
+    double variance = (sqsum - (sum * sum) / v.length) / (v.length - 1);
     return sqrt(variance);
 }
 
@@ -452,11 +479,11 @@ vec_sum(const struct vec v)
         double a = vec_get(v, i) + low;
         double hi_plus_a = hi + a;
 
-        double a_hi = hi_plus_a - hi;
-        double a_lo = a - a_hi;
+        // double a_hi = hi_plus_a - hi;
+        // double a_lo = a - a_hi;
 
+        low = a - (hi_plus_a - hi); // a_lo = a - a_hi; which we assign to low
         hi  = hi_plus_a;
-        low = a_lo;
     }
     return hi;
 }

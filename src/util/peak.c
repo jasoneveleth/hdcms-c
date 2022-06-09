@@ -20,7 +20,7 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
 {
     n = min3(m1.len1, m2.len1, n);
     if (n == 0) {
-        WARNING("peak_sim_measure_L2 one of the matrices has %d length\n", 0);
+        WARNING("%s\n", "peak_sim_measure_L2 one of the matrices has 0 length");
         return 0;
     }
     struct matrix m1_copy = mat_copy(m1);
