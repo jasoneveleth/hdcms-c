@@ -344,7 +344,7 @@ void
 vec_multiply(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
-        WARNING("vec_multiply: incorrect dims\n\t%ld > %ld\n", v.length, u.length);
+        WARNING("vec_multiply: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
         exit(EXIT_FAILURE);
     }
     for (size_t i = 0; i < v.length; i++) {
@@ -356,7 +356,7 @@ double
 vec_dot(const struct vec v, const struct vec u)
 {
     if (v.length != u.length) {
-        WARNING("vec_dot: incorrect dims\n\t%ld > %ld\n", v.length, u.length);
+        WARNING("vec_dot: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
         exit(EXIT_FAILURE);
     }
 
@@ -371,7 +371,7 @@ void
 vec_divide(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
-        WARNING("vec_divide: incorrect dims\n\t%ld > %ld\n", v.length, u.length);
+        WARNING("vec_divide: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
         exit(EXIT_FAILURE);
     }
     for (size_t i = 0; i < v.length; i++) {
@@ -383,7 +383,7 @@ void
 vec_add(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
-        WARNING("vec_add: incorrect dims\n\t%ld > %ld\n", v.length, u.length);
+        WARNING("vec_add: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
         exit(EXIT_FAILURE);
     }
     for (size_t i = 0; i < v.length; i++) {
@@ -395,7 +395,7 @@ void
 vec_sub(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
-        WARNING("vec_sub: incorrect dims\n\t%ld > %ld\n", v.length, u.length);
+        WARNING("vec_sub: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
         exit(EXIT_FAILURE);
     }
     for (size_t i = 0; i < v.length; i++) {
@@ -492,7 +492,7 @@ void
 vec_to_row(struct matrix m, const struct vec v, const size_t row)
 {
     if (m.len2 != v.length) {
-        WARNING("vec_to_row: incorrect dims\n\t%ld > %ld\n", m.len2, v.length);
+        WARNING("vec_to_row: incorrect dims\n\t%zu > %zu\n", m.len2, v.length);
         exit(EXIT_FAILURE);
     }
     for (size_t i = 0; i < m.len2; i++) {
@@ -552,7 +552,7 @@ static struct vec
 vec_arange(size_t n)
 {
     if (n <= 0) {
-        WARNING("vec_arange: %ld <= 0\n", n);
+        WARNING("vec_arange: %zu <= 0\n", n);
         return vec_zeros(1);
     }
 
