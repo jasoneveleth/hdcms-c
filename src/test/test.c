@@ -1140,6 +1140,17 @@ test_spec_vec_10_CM1_28()
     ret = ret && vec_equal(A_8_spec, sol_spec_vec_A_8);
     ret = ret && vec_equal(A_9_spec, sol_spec_vec_A_9);
     ret = ret && vec_equal(A_10_spec, sol_spec_vec_A_10);
+
+    vec_free(sol_spec_vec_A_1);
+    vec_free(sol_spec_vec_A_2);
+    vec_free(sol_spec_vec_A_3);
+    vec_free(sol_spec_vec_A_4);
+    vec_free(sol_spec_vec_A_5);
+    vec_free(sol_spec_vec_A_6);
+    vec_free(sol_spec_vec_A_7);
+    vec_free(sol_spec_vec_A_8);
+    vec_free(sol_spec_vec_A_9);
+    vec_free(sol_spec_vec_A_10);
     return ret;
 }
 
@@ -1161,7 +1172,10 @@ test_bin_stats_CM1_28()
     }
     struct matrix sol = mat_from_file(TESTDATADIR "bin_stats_CM1_28.txt");
     struct matrix bin_stats = bin_stat_1D(L, 0.1);
-    return mat_equal(sol, bin_stats);
+    bool ret = mat_equal(sol, bin_stats);
+    mat_free(sol);
+    matarr_free(L);
+    return ret;
 }
 
 static bool
