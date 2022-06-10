@@ -1193,6 +1193,7 @@ test_bin_stats_CM1_28()
     struct matrix sol = mat_from_file(TESTDATADIR "bin_stats_CM1_28.txt");
     struct matrix bin_stats = bin_stat_1D(L, 0.1);
     bool ret = mat_equal(sol, bin_stats);
+    mat_free(bin_stats);
     mat_free(sol);
     matarr_free(L);
     return ret;
