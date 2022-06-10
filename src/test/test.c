@@ -1141,6 +1141,26 @@ test_spec_vec_10_CM1_28()
     ret = ret && vec_equal(A_9_spec, sol_spec_vec_A_9);
     ret = ret && vec_equal(A_10_spec, sol_spec_vec_A_10);
 
+    vec_free(A_1_spec);
+    vec_free(A_2_spec);
+    vec_free(A_3_spec);
+    vec_free(A_4_spec);
+    vec_free(A_5_spec);
+    vec_free(A_6_spec);
+    vec_free(A_7_spec);
+    vec_free(A_8_spec);
+    vec_free(A_9_spec);
+    vec_free(A_10_spec);
+    mat_free(A_1);
+    mat_free(A_2);
+    mat_free(A_3);
+    mat_free(A_4);
+    mat_free(A_5);
+    mat_free(A_6);
+    mat_free(A_7);
+    mat_free(A_8);
+    mat_free(A_9);
+    mat_free(A_10);
     vec_free(sol_spec_vec_A_1);
     vec_free(sol_spec_vec_A_2);
     vec_free(sol_spec_vec_A_3);
