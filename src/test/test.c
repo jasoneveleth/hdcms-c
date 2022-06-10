@@ -1161,12 +1161,6 @@ test_bin_stats_CM1_28()
     }
     struct matrix sol = mat_from_file(TESTDATADIR "bin_stats_CM1_28.txt");
     struct matrix bin_stats = bin_stat_1D(L, 0.1);
-    FILE *f = safe_fopen("/tmp/matrix.txt", "w");
-    mat_fprintf(f, bin_stats);
-    fclose(f);
-    f = safe_fopen("/tmp/sol.txt", "w");
-    mat_fprintf(f, sol);
-    fclose(f);
     return mat_equal(sol, bin_stats);
 }
 
