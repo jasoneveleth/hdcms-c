@@ -7,7 +7,7 @@ bin_stat_1D(const struct matarray A, double width)
 {
     double num_bins = floor(900./width);
     width = 900./num_bins; // XXX unneeded
-    struct matrix M = mat_zeros(A.length, num_bins);
+    struct matrix M = mat_zeros(A.length, (size_t)num_bins);
     for (size_t i = 0; i < A.length; i++) {
         struct matrix spectra = matarr_get(A, i);
         struct vec bin_heights = spec_vec(spectra, width);
@@ -15,7 +15,7 @@ bin_stat_1D(const struct matarray A, double width)
         vec_free(bin_heights);
     }
 
-    struct matrix B = mat_zeros(num_bins, 2);
+    struct matrix B = mat_zeros((size_t)num_bins, 2);
     for (size_t i = 0; i < num_bins; i++) {
         struct vec ith_bin = vec_from_col(M, i);
         mat_set(B, i, 0, vec_mean(ith_bin));
@@ -41,7 +41,7 @@ spec_vec(const struct matrix m, double width)
     double n = floor(900./width);
     width = 900./n;
     struct vec t = vec_linspace(0, 900. * ((n - 1) / n), n);
-    struct vec v = vec_zeros(n);
+    struct vec v = vec_zeros((size_t)n);
 
     for (size_t i = 0; i < m.len1; i++) {
         size_t i_max = get_bin(t, mat_get(m, i, 0));
@@ -102,7 +102,7 @@ prob_dot_prod(const struct matrix u, const struct matrix v)
 
     vec_multiply(weights, v_mean);
     double denom = sqrt(vec_dot(u_mean, u_mean)) * sqrt(vec_dot(v_mean, v_mean));
-    double ans = vec_dot(weights, u_mean) / (sqrt(vec_dot(u_mean, u_mean)) * sqrt(vec_dot(v_mean, v_mean)));
+    double ans = vec_dot(weights, u_mean) / denom;
 
     vec_free(weights);
     return ans;

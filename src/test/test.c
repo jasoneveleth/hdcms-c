@@ -611,9 +611,9 @@ test_edgecase_0_peak_stat()
 {
     printf(__FUNCTION__);
     struct matarray m = matarr_zeros(0);
-    freopen(NULL_DEVICE, "w", stderr);
+    safe_freopen(NULL_DEVICE, "w", stderr);
     struct matrix output = peak_stat(m, 5);
-    freopen(CONSOLE, "w", stderr);
+    safe_freopen(CONSOLE, "w", stderr);
     bool ret = output.len1 == 0 && output.len2 == 0;
     matarr_free(m);
     return ret;
@@ -626,9 +626,9 @@ test_edge_case_0_peak_sim()
     struct matrix m = {0, 0, 0, NULL, false};
     double ndata[] = {420, 69, 0, 0};
     struct matrix n = {1, 4, 4, ndata, false};
-    freopen(NULL_DEVICE, "w", stderr);
+    safe_freopen(NULL_DEVICE, "w", stderr);
     double d = peak_sim_measure_L2(m, n, 5);
-    freopen(CONSOLE, "w", stderr);
+    safe_freopen(CONSOLE, "w", stderr);
     return equals(d, 0);
 }
 
@@ -638,9 +638,9 @@ test_edge_case_0_cos_sim()
     printf(__FUNCTION__);
     struct vec v = {0, 0, NULL, false};
     struct vec u = {0, 0, NULL, false};
-    freopen(NULL_DEVICE, "w", stderr);
+    safe_freopen(NULL_DEVICE, "w", stderr);
     double d = cos_sim_L2(u, v);
-    freopen(CONSOLE, "w", stderr);
+    safe_freopen(CONSOLE, "w", stderr);
     return equals(d, 0);
 }
 
@@ -1087,8 +1087,6 @@ static bool
 test_spec_vec_10_CM1_28()
 {
     printf(__FUNCTION__);
-    struct matarray L = matarr_zeros(10);
-
     struct matrix A_1 = mat_from_file(TESTDATADIR "CM1_28_1.txt");
     struct matrix A_2 = mat_from_file(TESTDATADIR "CM1_28_2.txt");
     struct matrix A_3 = mat_from_file(TESTDATADIR "CM1_28_3.txt");
@@ -1163,10 +1161,10 @@ test_bin_stats_CM1_28()
     }
     struct matrix sol = mat_from_file(TESTDATADIR "bin_stats_CM1_28.txt");
     struct matrix bin_stats = bin_stat_1D(L, 0.1);
-    FILE *f = fopen("/tmp/matrix.txt", "w");
+    FILE *f = safe_fopen("/tmp/matrix.txt", "w");
     mat_fprintf(f, bin_stats);
     fclose(f);
-    f = fopen("/tmp/sol.txt", "w");
+    f = safe_fopen("/tmp/sol.txt", "w");
     mat_fprintf(f, sol);
     fclose(f);
     return mat_equal(sol, bin_stats);

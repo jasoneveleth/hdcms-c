@@ -70,6 +70,17 @@ safe_fopen(const char * restrict path, const char * restrict mode)
     return ret;
 }
 
+FILE *
+safe_freopen(const char *path, const char *mode, FILE *stream)
+{
+    FILE *ret = freopen(path, mode, stream);
+    if (ret == NULL) {
+        perror("freopen");
+        abort();
+    }
+    return ret;
+}
+
 /* 
  * This function starts with a buffer size of 2, and reads characters into the
  * buffer, properly avoiding buffer overflow. While there are more characters
@@ -558,7 +569,7 @@ vec_arange(size_t n)
 
     struct vec v = vec_zeros(n);
     for (size_t i = 0; i < n; i++) {
-        vec_set(v, i, i);
+        vec_set(v, i, (double)i);
     }
     return v;
 }
@@ -570,14 +581,14 @@ vec_linspace(double start, double end, double num_steps)
         WARNING("linspace: start > end\n\t%g > %g\n", start, end);
     }
     num_steps = floor(num_steps);
-    struct vec v = vec_arange(num_steps);
+    struct vec v = vec_arange((size_t)num_steps);
 
     vec_scale(v, end - start);
     vec_invscale(v, num_steps - 1);
     vec_add_const(v, start);
 
     vec_set(v, 0, start); // in case the first term didn't round correctly
-    vec_set(v, num_steps - 1, end); // in case the last term didn't round correctly
+    vec_set(v, (size_t)num_steps - 1, end); // in case the last term didn't round correctly
     return v;
 }
 

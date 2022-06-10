@@ -27,6 +27,7 @@ struct matarray
     size_t length;
     struct matrix *data;
     int is_owner;
+    char padding[4]; // to make alignment explicit
 };
 
 /* 
@@ -41,6 +42,7 @@ struct vec
     size_t stride;
     double *data;
     int is_owner;
+    char padding[4]; // to make alignment explicit
 };
 
 /*
@@ -58,6 +60,7 @@ struct matrix
     size_t physlen;
     double *data;
     int is_owner;
+    char padding[4]; // to make alignment explicit
 };
 
 /* vec */
@@ -179,6 +182,8 @@ void *safe_calloc(size_t num, size_t size);
 void *safe_realloc(void *ptr, size_t size);
 // wrapper for fopen() which opens a path and returns a file pointer.
 FILE *safe_fopen(const char *path, const char *mode);
+// wrapper for freopn() which changes file stream to point to file at path
+FILE * safe_freopen(const char *path, const char *mode, FILE *stream);
 
 // reads one line from a file
 char *read_line(FILE *fp);
