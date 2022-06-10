@@ -6,6 +6,8 @@
 #include <string.h>
 #include "array.h"
 
+#define BUF_SIZE_INIT 120
+
 #define KAHAN_INIT(_SUM)                 \
     _SUM = 0;                            \
     double _SUM ## _low = 0              \
@@ -90,7 +92,7 @@ safe_freopen(const char *path, const char *mode, FILE *stream)
 char *
 read_line(FILE *fp)
 {
-    size_t allocd = 2;
+    size_t allocd = BUF_SIZE_INIT;
     char *line = safe_calloc(allocd, sizeof(char));
     size_t len = 0;
     int c = getc(fp);
@@ -590,7 +592,7 @@ vec_fscanf(FILE *file, const char *const argformat)
     const char *const format = (argformat == NULL) ? "%lg" : argformat;
     struct vec v;
     size_t len_of_vec = 0;
-    size_t allocd = 1;
+    size_t allocd = BUF_SIZE_INIT;
     double *data = safe_calloc(allocd, sizeof(double));
 
     while (!feof(file)) {
@@ -637,7 +639,7 @@ struct matrix
 mat_fscanf(FILE *file)
 {
     size_t num_cols = 0;
-    size_t allocd = 1;
+    size_t allocd = BUF_SIZE_INIT;
     double *data = safe_calloc(allocd, sizeof(double));
     char *sep = " \t,";
 
