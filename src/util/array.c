@@ -277,14 +277,6 @@ matarr_from_data(struct matrix *data, size_t len, const bool is_owner)
     return arr;
 }
 
-void
-mat_set(struct matrix m, const size_t i, const size_t j, const double a)
-{
-    assert(i < m.len1 && "trying to set an index outside num_rows in matrix");
-    assert(j < m.len2 && "trying to set an index outside num_cols in matrix");
-    m.data[i * m.physlen + j] = a;
-}
-
 struct matrix
 mat_zeros(size_t len1, size_t len2)
 {
@@ -704,26 +696,11 @@ mat_from_file(const char *path)
     return m;
 }
 
-double
-vec_get(const struct vec v, size_t i)
-{
-    assert(i < v.length && "trying to get an index outside bounds in vector");
-    return v.data[v.stride * i];
-}
-
 struct vec
 vec_zeros(size_t len)
 {
     double *data = safe_calloc(len, sizeof(double));
     return vec_from_data(data, len, true);
-}
-
-double
-mat_get(const struct matrix m, size_t i, size_t j)
-{
-    assert(i < m.len1 && "trying to get an index outside num_rows in matrix");
-    assert(j < m.len2 && "trying to get an index outside num_cols in matrix");
-    return m.data[i * m.physlen + j];
 }
 
 struct matrix
@@ -859,23 +836,3 @@ vec_free(struct vec v)
         free(v.data);
 }
 
-void
-matarr_set(const struct matarray arr, size_t i, struct matrix m)
-{
-    assert(i < arr.length && "trying to set an index outside bounds in matarray");
-    arr.data[i] = m;
-}
-
-struct matrix
-matarr_get(const struct matarray arr, size_t i)
-{
-    assert(i < arr.length && "trying to get an index outside bounds in matarray");
-    return arr.data[i];
-}
-
-void
-vec_set(struct vec v, size_t i, double a)
-{
-    assert(i < v.length && "trying to set an index outside bounds in vector");
-    v.data[v.stride * i] = a;
-}

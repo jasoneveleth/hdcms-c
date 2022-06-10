@@ -60,6 +60,8 @@ this in powershell
 * remove `mat_copy()` in `peak_sim_measure_L2` (since the input
   is the output of `peak_stat`?)
 * align malloc and realloc
+* cache a 9000 `vec_arange` and reuse it, or make one even bigger
+  and just make the lenght of the vector stop before the end
 
 ## BLAS
 

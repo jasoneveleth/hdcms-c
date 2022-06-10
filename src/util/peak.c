@@ -107,13 +107,13 @@ cos_sim_L2(const struct vec u, const struct vec v)
 {
     // assert input correct
     if (u.length != 4) {
-        WARNING("%s vec size not equal to 4\n", __FUNCTION__);
+        WARNING("%s vec size not equal to 4\n", __func__);
         fprintf(stderr, "vec:\t");
         vec_fprintf(stderr, u);
         return 0;
     }
     if (v.length != 4) {
-        WARNING("%s vec size not equal to 4\n", __FUNCTION__);
+        WARNING("%s vec size not equal to 4\n", __func__);
         fprintf(stderr, "vec:\t");
         vec_fprintf(stderr, v);
         return 0;

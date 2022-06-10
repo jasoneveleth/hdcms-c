@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <assert.h>
 
 // escape codes for terminals
 #define RED "\033[31m"
@@ -27,7 +28,6 @@ struct matarray
     size_t length;
     struct matrix *data;
     int is_owner;
-    char padding[4]; // to make alignment explicit
 };
 
 /* 
@@ -42,7 +42,6 @@ struct vec
     size_t stride;
     double *data;
     int is_owner;
-    char padding[4]; // to make alignment explicit
 };
 
 /*
@@ -60,19 +59,29 @@ struct matrix
     size_t physlen;
     double *data;
     int is_owner;
-    char padding[4]; // to make alignment explicit
 };
 
 /* vec */
+// retrive element at index in the vector
+static inline double
+vec_get(const struct vec v, size_t i)
+{
+    assert(i < v.length && "trying to get an index outside bounds in vector");
+    return v.data[v.stride * i];
+}
+// *mutates* element at index
+static inline void
+vec_set(struct vec v, size_t i, double a)
+{
+    assert(i < v.length && "trying to set an index outside bounds in vector");
+    v.data[v.stride * i] = a;
+}
 // maximum value in vector
 double vec_max(const struct vec v);
+// minimum value in vector
 double vec_min(const struct vec v);
 // uses a kahan summation to accumulate with quad precision
 double vec_sum(const struct vec v);
-// retrive element at index in the vector
-double vec_get(const struct vec v, size_t i);
-// *mutates* element at index
-void vec_set(struct vec v, size_t i, double a);
 // initializes a vector structure with data pointer
 struct vec vec_from_data(double *data, size_t len, int is_owner);
 // write vector to stdout
@@ -135,9 +144,19 @@ void vec_to_row(struct matrix m, const struct vec v, const size_t row);
 
 /* matarr */
 // retrives a value from array of matrices at index i
-struct matrix matarr_get(const struct matarray arr, size_t i);
+static inline struct matrix
+matarr_get(const struct matarray arr, size_t i)
+{
+    assert(i < arr.length && "trying to get an index outside bounds in matarray");
+    return arr.data[i];
+}
 // *mutates* matrix array by setting index i to struct matrix
-void matarr_set(const struct matarray arr, size_t i, struct matrix m);
+static inline void
+matarr_set(const struct matarray arr, size_t i, struct matrix m)
+{
+    assert(i < arr.length && "trying to set an index outside bounds in matarray");
+    arr.data[i] = m;
+}
 // duplicates the data in the matrix array into a new array
 struct matarray matarr_copy(const struct matarray old);
 // initializes empty matrix array of the length len
@@ -152,10 +171,22 @@ void matarr_printf(const struct matarray arr);
 bool matarr_equal(const struct matarray arr, const struct matarray arr2);
 
 /* mat */
-// retrieve element at index (i,j)
-double mat_get(const struct matrix m, size_t i, size_t j);
 // *mutates* matrix by setting elemetn (i,j) to x
-void mat_set(struct matrix m, const size_t i, const size_t j, const double a);
+static inline void
+mat_set(struct matrix m, const size_t i, const size_t j, const double a)
+{
+    assert(i < m.len1 && "trying to set an index outside num_rows in matrix");
+    assert(j < m.len2 && "trying to set an index outside num_cols in matrix");
+    m.data[i * m.physlen + j] = a;
+}
+// retrieve element at index (i,j)
+static inline double
+mat_get(const struct matrix m, size_t i, size_t j)
+{
+    assert(i < m.len1 && "trying to get an index outside num_rows in matrix");
+    assert(j < m.len2 && "trying to get an index outside num_cols in matrix");
+    return m.data[i * m.physlen + j];
+}
 // initalizes matrix from pointer
 struct matrix mat_from_data(double *data, size_t len1, size_t len2, size_t physlen, int is_owner);
 // initalizes empty matrix of size (len1, len2)
@@ -185,7 +216,7 @@ FILE *safe_fopen(const char *path, const char *mode);
 // wrapper for freopn() which changes file stream to point to file at path
 FILE * safe_freopen(const char *path, const char *mode, FILE *stream);
 
-// reads one line from a file
+// reads one line from a file, removes newline if any
 char *read_line(FILE *fp);
 
 // returns the bits of a float as unsigned 64 bit int
