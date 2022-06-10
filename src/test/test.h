@@ -11,7 +11,7 @@
 #endif
 
 // testfunc definition
-typedef bool (*testfunc)(void);
+typedef bool (*testfunc)();
 
 // arrays from data.c:
 
