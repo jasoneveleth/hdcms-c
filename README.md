@@ -38,7 +38,7 @@ $ ./pmcs
 For windows:
 
 Download Git, CMake, and Visual Studio (with C++ CMake tools for Windows,
-and the latest SDK). Add MSBuild and CMake to your path. Then run
+and the latest SDK). Add MSBuild, CMake, and Git to your path. Then run
 this in powershell
 
 ```powershell
