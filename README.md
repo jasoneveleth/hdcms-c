@@ -22,7 +22,11 @@ The problem was I was calculating elements of the linspace using
 
 For mac and linux:
 
+Install cmake and git.
+
 ```bash
+$ git clone XXXXXXXXXXXX
+$ cd XXXX
 $ mkdir build
 $ cd build
 $ cmake ..
@@ -31,9 +35,15 @@ $ ./test_runner
 $ ./pmcs
 ```
 
-For windows (windows terminal; so not cmd, nor powershell):
+For windows:
+
+Download Git, CMake, and Visual Studio (with C++ CMake tools for Windows,
+and the latest SDK). Add MSBuild and CMake to your path. Then run
+this in powershell
 
 ```powershell
+> git clone XXXXXXXXXX
+> cd XXXXXXX
 > mkdir build
 > cd build
 > cmake ..
@@ -42,40 +52,24 @@ For windows (windows terminal; so not cmd, nor powershell):
 > Debug\pmcs
 ```
 
-# Library
-
-`peak_sim_measure_L2`
-2 4xn matrices (output of `peak_stat`), number of peaks -> similarity of them btwn
-0 and 1
-
-`peak_stat`
-5 matrices of spectra, and number of peaks -> nx4 matrix of peaks
-
-helpers:
-
-`cos_sim_L2`
-2 4-length vectors -> cos of angle between gaussians those vectors represent
-
-`peak_sort`
-5 matrices of spectra, number of peaks -> n matrices s.t. ith matrix is 5
-pts assoc. with ith largest peak
-
-# Misc
-
-[gnu scientific lib](https://www.gnu.org/software/gsl/doc/html/vectors.html#c.gsl_vector_view)
-
-# Questions:
-
 # Increasing performance
-
-* http://math-atlas.sourceforge.net/atlas_install/
-* http://math-atlas.sourceforge.net/faq.html
-* https://stackoverflow.com/questions/1303182/how-does-blas-get-such-extreme-performance
 
 * set all `allocd`s to 128 or something, so the expandable memory
   starts larger
-* make `vec_std` use a for loop
+* remove `vec_copy()` calls in `prob_dot_prod`
+* remove `mat_copy()` in `peak_sim_measure_L2` (since the input
+  is the output of `peak_stat`?)
+* align malloc and realloc
 
-# Future test
+## BLAS
+
+* [ATLAS install](http://math-atlas.sourceforge.net/atlas_install/)
+* [ATLAS FAQ](http://math-atlas.sourceforge.net/faq.html)
+* [STACKOVERFLOW BLAS](https://stackoverflow.com/questions/1303182/how-does-blas-get-such-extreme-performance)
+* [BLIS](https://www.cs.utexas.edu/users/flame/pubs/blis1_toms_rev3.pdf)
+
+# Future testing
+
 * equivalence partitioning and boundary testing
   https://www.guru99.com/equivalence-partitioning-boundary-value-analysis.html
+
