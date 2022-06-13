@@ -25,14 +25,37 @@ bin_stat_1D(const struct matarray A, double width)
     return B;
 }
 
+// binary search
+//
+// this condition is always true (other cases need to be handled in get_bin()): 
+//
+//      bins[start] <= val < bins[end]
+static size_t
+binary_search(const struct vec bins, size_t start, size_t stop, double val)
+{
+    // assert condition
+    assert(vec_get(bins, start) <= val && val < vec_get(bins, stop));
+
+    if (stop == start + 1)
+        return start;
+
+    size_t i = (start + stop) / 2;
+    if (vec_get(bins, i) <= val) {
+        return binary_search(bins, i, stop, val);
+    } else {
+        return binary_search(bins, start, i, val);
+    }
+}
+
 static size_t
 get_bin(const struct vec bins, double val)
 {
-    size_t i = 0;
-    while (vec_get(bins, i) <= val) {
-        i++;
+    if (val < vec_get(bins, 0)) {
+        return 0;
+    } else if (vec_get(bins, bins.length - 1) <= val) {
+        return bins.length - 1;
     }
-    return i == 0 ? 0 : i - 1;
+    return binary_search(bins, 0, bins.length - 1, val);
 }
 
 struct vec 
