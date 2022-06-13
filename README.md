@@ -62,6 +62,10 @@ this in powershell
 * align malloc and realloc
 * cache a 9000 `vec_arange` and reuse it, or make one even bigger
   and just make the lenght of the vector stop before the end
+* don't use a temp matrix in `bin_stat_1D`, rather, recode the
+  standard deviation and mean from scratch on an array of
+  vectors, or make the `spec_vec` function take in an answer
+  array and fill that out rather than allocating separate one
 
 ## BLAS
 
@@ -70,8 +74,6 @@ this in powershell
 * [STACKOVERFLOW BLAS](https://stackoverflow.com/questions/1303182/how-does-blas-get-such-extreme-performance)
 * [BLIS](https://www.cs.utexas.edu/users/flame/pubs/blis1_toms_rev3.pdf)
 
-# Future testing
-
-* equivalence partitioning and boundary testing
-  https://www.guru99.com/equivalence-partitioning-boundary-value-analysis.html
+Possibly try binning and taking the max rather than the most
+recent measurement in `spec_vec`.
 

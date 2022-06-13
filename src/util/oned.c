@@ -6,7 +6,7 @@ struct matrix
 bin_stat_1D(const struct matarray A, double width)
 {
     double num_bins = floor(900./width);
-    width = 900./num_bins; // XXX unneeded
+    width = 900./num_bins; // XXX unneeded (since it happens in `prob_dot_prod`)
     struct matrix M = mat_zeros(A.length, (size_t)num_bins);
     for (size_t i = 0; i < A.length; i++) {
         struct matrix spectra = matarr_get(A, i);

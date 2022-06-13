@@ -76,7 +76,7 @@ double peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_
  * integrate), and divide by their norm (recall we want $$\frac{<f,g>}{||f|| ||g||}$$),
  * which remarkably gives the expression:
   
-    $$\sqrt{\frac{2 u_2 v_2}{u_2^2 + v_2^2}} \sqrt{\frac{2 u_3 v_3}{u_3^2 + v_3^2}} e^{-\frac{1}{2} (\frac{(u_0 - v_0)^2}{u_2^2 + v_2^2} + \frac{(u_1 - v_1)^2}{u_3^2 + v_3^2})}$$
+    $$\sqrt{\frac{2 u_2 v_2}{u_2^2 + v_2^2}} \sqrt{\frac{2 u_3 v_3}{u_3^2 + v_3^2}} e^{-\frac{1}{2} \left(\frac{(u_0 - v_0)^2}{u_2^2 + v_2^2} + \frac{(u_1 - v_1)^2}{u_3^2 + v_3^2}\right)}$$
 
  * `cos_sim_L2` is just evaluating that expression.
  */
