@@ -11,7 +11,7 @@ ELSE()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -Wpedantic -O2 -fno-omit-frame-pointer -g")
 ENDIF()
 
-project(pmcs)
+project(prob_mass_spec)
 set(TEST "test_runner")
 
 file(GLOB SRC_UTIL "src/util/*.c")
