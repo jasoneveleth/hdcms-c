@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <fcntl.h>
 #include <stdnoreturn.h>
 #include <getopt.h>
 #include "../util/array.h"
@@ -16,11 +17,11 @@ static int mflag;
 
 noreturn static void
 usage() {
-    printf("usage: %s [--1d|--2d] [-h] [-q] --list=path1[,path2,...] LIST ...\n", argv0);
+    printf("usage: %s [--1d|--2d] [-h] [-q] --list=path1[,path2,...] FILE ...\n", argv0);
     printf("\n");
     printf("The default mode is --2d, which is for high resolution spectra.\n");
     printf("The argument --list is a list of pathnames to replicate files of a compound.\n");
-    printf("The argument LIST is a file with a list of pathnames to replicate files of a compound.\n");
+    printf("The argument FILE should contain a list of pathnames to replicate files of a compound.\n");
     exit(2);
 }
 
@@ -43,6 +44,18 @@ compare_2d(struct matarray arr)
             double t = peak_sim_measure_L2(matarr_get(arr, i), matarr_get(arr, j), -1);
         }
     }
+}
+
+static inline bool
+file_readable(char *path)
+{
+    int fd = open(path, O_RDONLY);
+    if (fd == -1) {
+        perror(path);
+        return false;
+    }
+    close(fd);
+    return true;
 }
 
 static struct matrix
@@ -185,7 +198,7 @@ main(int argc, char *argv[])
     free(replicates);
 
     for (int i = 0; i < argc; i++) {
-        if (access(argv[i], F_OK) == -1) { // check if file exists
+        if (!file_readable(argv[i])) { // check if file exists
             printf("unrecognized argument / not file: `%s`\n\n", argv[i]);
             usage();
         }

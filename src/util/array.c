@@ -97,8 +97,10 @@ read_line(FILE *fp)
 
 #ifndef WIN32
     flockfile(fp); // lock for getc()
-#endif
     int c = getc_unlocked(fp);
+#else
+    int c = getc(fp);
+#endif
     while (c != EOF && c != '\n') {
         if (len >= allocd) {
             allocd *= 2;
