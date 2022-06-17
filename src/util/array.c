@@ -821,6 +821,16 @@ mat_fprintf(FILE * restrict file, const struct matrix m)
 }
 
 void
+mat_stats_printf(struct matrix m)
+{
+    printf("len1    : %zu\n", m.len1);
+    printf("len2    : %zu\n", m.len2);
+    printf("physlen : %zu\n", m.physlen);
+    printf("data    : %p\n", (void *)m.data);
+    printf("is_owner: %s\n", m.is_owner ? "true" : "false");
+}
+
+void
 mat_printf(const struct matrix m)
 {
     mat_fprintf(stdout, m);

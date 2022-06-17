@@ -3072,6 +3072,41 @@ test_CM1_9_and_CM1_6()
     matarr_free(B);
     return ret;
 }
+static bool
+test_CM1_10_vs_21_sanity_check()
+{
+    printf(__func__);
+    struct matrix m = mat_from_file(TESTDATADIR "CM1_10_1.txt");
+    struct matrix m2 = mat_from_file(TESTDATADIR "CM1_10_3.txt");
+    struct matrix m3 = mat_from_file(TESTDATADIR "CM1_10_4.txt");
+    struct matrix n = mat_from_file(TESTDATADIR "CM1_21_1.txt");
+    struct matrix n2 = mat_from_file(TESTDATADIR "CM1_21_3.txt");
+    struct matrix n3 = mat_from_file(TESTDATADIR "CM1_21_4.txt");
+    scaled_data(m);
+    scaled_data(m2);
+    scaled_data(m3);
+    scaled_data(n);
+    scaled_data(n2);
+    scaled_data(n3);
+    struct matrix data[3];
+    data[0] = m;
+    data[1] = m2;
+    data[2] = m3;
+    struct matrix ndata[3];
+    ndata[0] = n;
+    ndata[1] = n2;
+    ndata[2] = n3;
+    struct matarray arr = matarr_from_data(data, 3, false);
+    struct matarray arr2 = matarr_from_data(ndata, 3, false);
+    struct matrix a = bin_stat_1D(arr, 0.1);
+    struct matrix a2 = bin_stat_1D(arr2, 0.1);
+    double d = prob_dot_prod(a, a2);
+    mat_free(a);
+    mat_free(a2);
+    matarr_free(arr);
+    matarr_free(arr2);
+    return 0.015949719716551063 == d;
+}
 
 static bool
 simple() 
@@ -3185,6 +3220,7 @@ int main()
         test_CM1_8_and_CM1_19,
         test_CM1_9_and_CM1_3,
         test_CM1_9_and_CM1_6,
+        test_CM1_10_vs_21_sanity_check,
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);

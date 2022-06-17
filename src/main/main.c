@@ -28,14 +28,11 @@ usage() {
 static void
 compare_1d(struct matarray arr)
 {
-    double t = prob_dot_prod(matarr_get(arr, 0), matarr_get(arr, 1));
-    printf("%g\n", t);
-    puts("0.06845171025487");
-    // for (size_t i = 0; i < arr.length; i++) {
-    //     for (size_t j = 0; j < arr.length; j++) {
-    //         double t = prob_dot_prod(matarr_get(arr, i), matarr_get(arr, j));
-    //     }
-    // }
+    for (size_t i = 0; i < arr.length; i++) {
+        for (size_t j = 0; j < arr.length; j++) {
+            double t = prob_dot_prod(matarr_get(arr, i), matarr_get(arr, j));
+        }
+    }
 }
 
 static void
@@ -55,7 +52,8 @@ filenames_to_stats(char *str)
     struct matarray arr = matarr_zeros(2);
 
     char *path;
-    for (size_t i = 0; (path = find_token(&str, " ,\n\t")); i++) {
+    size_t i;
+    for (i = 0; (path = find_token(&str, " ,\n\t")); i++) {
         if (i == arr.length) { // resize
             arr.length *= 2;
             arr.data = safe_realloc(arr.data, arr.length * sizeof(*arr.data));
@@ -64,6 +62,7 @@ filenames_to_stats(char *str)
         scaled_data(m); // this is redundant in TWOD since the data we are given is scaled
         matarr_set(arr, i, m);
     }
+    arr.length = i; // cuts off some of the malloc'd mem but that's okay
     struct matrix ret;
     if (mflag == ONED) {
         ret = bin_stat_1D(arr, width);
@@ -103,9 +102,8 @@ list_file(char *filename, struct matarray arr, size_t i)
     buffer[len] = '\0';                  // NUL terminate the string
 
     struct matrix bin_stats = filenames_to_stats(buffer);
-    matarr_set(arr, i, bin_stats);
-    mat_free(bin_stats);
     free(buffer);
+    matarr_set(arr, i, bin_stats);
 }
 
 void
@@ -196,10 +194,13 @@ main(int argc, char *argv[])
         nreplicates++;
     }
 
+    // done parsing args
+
     if (mflag == ONED)
         compare_1d(replicate_stats);
     else
         compare_2d(replicate_stats);
+    matarr_free(replicate_stats);
     return 0;
 }
 

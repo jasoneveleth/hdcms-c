@@ -194,6 +194,8 @@ struct matrix mat_from_data(double *data, size_t len1, size_t len2, size_t physl
 struct matrix mat_zeros(size_t len1, size_t len2);
 // destructor for matrix
 void mat_free(struct matrix m);
+// print properties of matrix to stdout
+void mat_stats_printf(struct matrix m);
 // print matrix in human readable form to stdout
 void mat_printf(const struct matrix m);
 // print matrix in human readable form to file

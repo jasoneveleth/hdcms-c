@@ -1,5 +1,5 @@
-#ifndef ONED_H
-#define ONED_H
+#ifndef BIND_H
+#define BIND_H
 #include <stdbool.h>
 #include "array.h"
 
@@ -66,5 +66,5 @@ struct matrix bin_stat_1D(const struct matarray A, double width);
  */
 double prob_dot_prod(const struct matrix u, const struct matrix v);
 
-#endif // ONED_H
+#endif // BIN_H
 
