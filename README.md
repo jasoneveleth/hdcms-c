@@ -20,7 +20,7 @@ The problem was I was calculating elements of the linspace using
 
 # Install
 
-For mac and linux:
+## Unix (mac and linux)
 
 Install cmake and git.
 
@@ -32,14 +32,26 @@ $ cd build
 $ cmake ..
 $ make
 $ ./test_runner
-$ ./pmcs
+$ ./prob_mass_spec
 ```
 
-For windows:
+## Windows
 
 Download Git, CMake, and Visual Studio (with C++ CMake tools for Windows,
-and the latest SDK). Add MSBuild, CMake, and Git to your path. Then run
-this in powershell
+and the latest SDK). Add MSBuild, CMake, and Git to your path.
+For me they were:
+
+* `C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin`
+* `C:\Program File\CMake\bin`
+* `C:\Program Files\Git\bin`
+
+Then download [getopt.h from here](https://raw.githubusercontent.com/skandhurkat/Getopt-for-Visual-Studio/master/getopt.h)
+, then place it where your includes are, for me this was
+`C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt`. 
+But I think you can go into Visual Studio and use the VC folder
+too.
+
+Then run this in powershell
 
 ```powershell
 > git clone XXXXXXXXXX
@@ -49,7 +61,7 @@ this in powershell
 > cmake ..
 > msbuild pmcs.sln
 > Debug\test_runner
-> Debug\pmcs
+> Debug\prob_mass_spec
 ```
 
 # Increasing performance
