@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #define flockfile (void)
 #define funlockfile (void)
 #define getc_unlocked getc

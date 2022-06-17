@@ -1,7 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <io.h>
 #define open _open
 #define close _close

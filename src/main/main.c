@@ -26,25 +26,29 @@ usage() {
     exit(2);
 }
 
-static void
+static struct matrix
 compare_1d(struct matarray arr)
 {
+    struct matrix m = mat_zeros(arr.length, arr.length);
     for (size_t i = 0; i < arr.length; i++) {
         for (size_t j = 0; j < arr.length; j++) {
-            double t = prob_dot_prod(matarr_get(arr, i), matarr_get(arr, j));
+            mat_set(m, i, j, prob_dot_prod(matarr_get(arr, i), matarr_get(arr, j)));
         }
     }
+    return m;
 }
 
-static void
+static struct matrix
 compare_2d(struct matarray arr)
 {
+    struct matrix m = mat_zeros(arr.length, arr.length);
     for (size_t i = 0; i < arr.length; i++) {
         for (size_t j = 0; j < arr.length; j++) {
             // exploit that -1 is all 1's in twos complement to get huge value
-            double t = peak_sim_measure_L2(matarr_get(arr, i), matarr_get(arr, j), -1);
+            mat_set(m, i, j, peak_sim_measure_L2(matarr_get(arr, i), matarr_get(arr, j), -1));
         }
     }
+    return m;
 }
 
 static inline bool
@@ -133,6 +137,27 @@ list_option(char *str, struct matarray arr, size_t i)
     mat_free(bin_stats);
 }
 
+static void
+print_comparison(struct matrix m)
+{
+    printf("|%10s|", "x");
+    for (size_t i = 0; i < m.len1; i++) {
+        printf("%10zu|", i);
+    }
+    printf("\n");
+    printf("|----------|");
+    for (size_t i = 0; i < m.len1; i++) {
+        printf("----------|", i);
+    }
+    printf("\n");
+    for (size_t i = 0; i < m.len1; i++) {
+        printf("|%10zu|", i);
+        for (size_t j = 0; j < m.len1; j++) {
+            printf("%10.4e|", mat_get(m, i, j));
+        }
+        printf("\n");
+    }
+}
 
 int 
 main(int argc, char *argv[])
@@ -193,6 +218,7 @@ main(int argc, char *argv[])
     struct matarray replicate_stats = matarr_zeros(2);
 
     for (size_t i = 0; i < nreplicates; i++) {
+        printf("%zu: %s\n", i, replicates[i]);
         list_option(replicates[i], replicate_stats, i);
     }
 
@@ -203,17 +229,21 @@ main(int argc, char *argv[])
             printf("unrecognized argument / not file: `%s`\n\n", argv[i]);
             usage();
         }
+        printf("%zu: %s\n", nreplicates, argv[i]);
         list_file(argv[i], replicate_stats, nreplicates);
         nreplicates++;
     }
 
     // done parsing args
 
+    struct matrix comparison;
     if (mflag == ONED)
-        compare_1d(replicate_stats);
+        comparison = compare_1d(replicate_stats);
     else
-        compare_2d(replicate_stats);
+        comparison = compare_2d(replicate_stats);
     matarr_free(replicate_stats);
+    print_comparison(comparison);
+    mat_free(comparison);
     return 0;
 }
 
