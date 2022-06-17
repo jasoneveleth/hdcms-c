@@ -8,7 +8,7 @@ the last number in the bin). The problem is the `linspace()`
 function. If you don't have bit perfect doubles coming out of
 your `linspace` function you get very different results. For
 example, MATLAB uses a different `linspace` than the one you
-would expect (multiplying the step function), or the one that you
+would expect (multiplying the step size), or the one that you
 would next expect (addition of stepsize), or the next (symmetric
 subtraction of multiples of stepsize). So if the library used one
 linspace and you're using another to decide bins (even with the
@@ -54,8 +54,6 @@ this in powershell
 
 # Increasing performance
 
-* set all `allocd`s to 128 or something, so the expandable memory
-  starts larger
 * remove `vec_copy()` calls in `prob_dot_prod`
 * remove `mat_copy()` in `peak_sim_measure_L2` (since the input
   is the output of `peak_stat`?)
@@ -66,6 +64,10 @@ this in powershell
   standard deviation and mean from scratch on an array of
   vectors, or make the `spec_vec` function take in an answer
   array and fill that out rather than allocating separate one
+
+* mmap file rather than `read_line()` from it
+* use gnu wc -l or wc -w method
+* store floats in files as hex (or all of these)
 
 ## BLAS
 

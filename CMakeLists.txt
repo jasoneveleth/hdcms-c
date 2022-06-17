@@ -8,7 +8,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 IF (WIN32)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2")
 ELSE()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Wextra -Wpedantic -O2 -fno-omit-frame-pointer -g")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c17 -Wall -Wextra -Wpedantic -O2 -fno-omit-frame-pointer -g")
 ENDIF()
 
 project(prob_mass_spec)
