@@ -6,7 +6,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 # compiler
 # set(CMAKE_C_COMPILER /usr/bin/clang)
 IF (WIN32)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /RTCs /O2 /std:c17")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /std:c17 /O2 /Zi")
 ELSE()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c17 -Wall -Wextra -Wpedantic -O2 -fno-omit-frame-pointer -g")
 ENDIF()
