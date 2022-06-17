@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdnoreturn.h>
-#include <unistd.h>
 #include <getopt.h>
 #include "../util/array.h"
 #include "../util/bin.h" // oned
