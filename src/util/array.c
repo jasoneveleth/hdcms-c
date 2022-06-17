@@ -44,7 +44,7 @@ safe_calloc(size_t num, size_t size)
     void *ret = calloc(num, size);
     if (ret == NULL) {
         perror("calloc");
-        abort();
+        exit(1);
     }
     return ret;
 }
@@ -55,7 +55,7 @@ safe_realloc(void *ptr, size_t size)
     void *ret = realloc(ptr, size);
     if (ret == NULL) {
         perror("realloc");
-        abort();
+        exit(1);
     }
     return ret;
 }
@@ -65,9 +65,8 @@ safe_fopen(const char * restrict path, const char * restrict mode)
 {
     FILE *ret = fopen(path, mode);
     if (ret == NULL) {
-        fprintf(stderr, "%s: ", path);
-        perror("");
-        abort();
+        perror(path);
+        exit(1);
     }
     return ret;
 }
@@ -78,7 +77,7 @@ safe_freopen(const char *path, const char *mode, FILE *stream)
     FILE *ret = freopen(path, mode, stream);
     if (ret == NULL) {
         perror("freopen");
-        abort();
+        exit(1);
     }
     return ret;
 }
@@ -95,20 +94,23 @@ read_line(FILE *fp)
     size_t allocd = BUF_SIZE_INIT;
     char *line = safe_calloc(allocd, sizeof(char));
     size_t len = 0;
-    int c = getc(fp);
+
+    flockfile(fp); // lock for getc()
+    int c = getc_unlocked(fp);
     while (c != EOF && c != '\n') {
         if (len >= allocd) {
             allocd *= 2;
             line = safe_realloc(line, allocd);
         }
         line[len++] = (char)c;
-        c = getc(fp);
+        c = getc_unlocked(fp);
     }
+    funlockfile(fp); // unlock for getc()
 
     // handle possible error
     if (ferror(fp)) {
-        perror("getc");
-        abort();
+        perror("getc_unlocked");
+        exit(1);
     }
 
     // handle ending
@@ -173,7 +175,7 @@ safe_strtod(const char *const token)
     assert(memcmp(res, buf, sizeof(buf)));
 
  */
-static char *
+char *
 find_token(char **resumer, const char *const sep)
 {
     if ((*resumer) == NULL) {
@@ -350,7 +352,7 @@ vec_multiply(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
         WARNING("vec_multiply: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
     for (size_t i = 0; i < v.length; i++) {
         vec_set(v, i, vec_get(v, i) * vec_get(u, i));
@@ -362,7 +364,7 @@ vec_dot(const struct vec v, const struct vec u)
 {
     if (v.length != u.length) {
         WARNING("vec_dot: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     double sum = 0;
@@ -377,7 +379,7 @@ vec_divide(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
         WARNING("vec_divide: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
     for (size_t i = 0; i < v.length; i++) {
         vec_set(v, i, vec_get(v, i) / vec_get(u, i));
@@ -389,7 +391,7 @@ vec_add(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
         WARNING("vec_add: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
     for (size_t i = 0; i < v.length; i++) {
         vec_set(v, i, vec_get(v, i) + vec_get(u, i));
@@ -401,7 +403,7 @@ vec_sub(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
         WARNING("vec_sub: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
     for (size_t i = 0; i < v.length; i++) {
         vec_set(v, i, vec_get(v, i) - vec_get(u, i));
@@ -498,7 +500,7 @@ vec_to_row(struct matrix m, const struct vec v, const size_t row)
 {
     if (m.len2 != v.length) {
         WARNING("vec_to_row: incorrect dims\n\t%zu > %zu\n", m.len2, v.length);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
     for (size_t i = 0; i < m.len2; i++) {
         mat_set(m, row, i, vec_get(v, i));

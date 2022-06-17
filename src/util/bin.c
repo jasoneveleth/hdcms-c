@@ -1,6 +1,6 @@
 #include <stdbool.h>
 #include <math.h>
-#include "oned.h"
+#include "bin.h"
 
 struct matrix 
 bin_stat_1D(const struct matarray A, double width)

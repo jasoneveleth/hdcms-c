@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
+#include <stdbool.h>
 
 // escape codes for terminals
 #define RED "\033[31m"
@@ -218,6 +219,7 @@ FILE * safe_freopen(const char *path, const char *mode, FILE *stream);
 
 // reads one line from a file, removes newline if any
 char *read_line(FILE *fp);
+char *find_token(char **resumer, const char *const sep);
 
 // returns the bits of a float as unsigned 64 bit int
 uint64_t d2z(const double a);

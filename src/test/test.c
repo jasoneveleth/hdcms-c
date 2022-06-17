@@ -5,7 +5,7 @@
 #include "test.h"
 #include "../util/peak.h"
 #include "../util/array.h"
-#include "../util/oned.h"
+#include "../util/bin.h"
 
 // path from current working directory of shell running the test executable
 // CANNOT INCLUDE '%' CHARACTER BECAUSE USED IN snprintf()
