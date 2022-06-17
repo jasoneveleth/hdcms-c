@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <stdnoreturn.h>
 #include <getopt.h>
+#include "main.h"
 #include "../util/array.h"
 #include "../util/bin.h" // oned
 #include "../util/peak.h" // twod

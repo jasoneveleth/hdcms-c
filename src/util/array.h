@@ -6,6 +6,12 @@
 #include <assert.h>
 #include <stdbool.h>
 
+#ifdef WIN32
+#define flockfile (void)
+#define funlockfile (void)
+#define getc_unlocked getc
+#endif
+
 // escape codes for terminals
 #define RED "\033[31m"
 #define GREEN "\033[32m"

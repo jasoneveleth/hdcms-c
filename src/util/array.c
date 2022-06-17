@@ -95,27 +95,17 @@ read_line(FILE *fp)
     char *line = safe_calloc(allocd, sizeof(char));
     size_t len = 0;
 
-#ifndef WIN32
     flockfile(fp); // lock for getc()
     int c = getc_unlocked(fp);
-#else
-    int c = getc(fp);
-#endif
     while (c != EOF && c != '\n') {
         if (len >= allocd) {
             allocd *= 2;
             line = safe_realloc(line, allocd);
         }
         line[len++] = (char)c;
-#ifndef WIN32
         c = getc_unlocked(fp);
-#else
-        c = getc(fp);
-#endif
     }
-#ifndef WIN32
     funlockfile(fp); // unlock for getc()
-#endif
 
     // handle possible error
     if (ferror(fp)) {
