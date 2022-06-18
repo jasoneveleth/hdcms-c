@@ -59,10 +59,32 @@ Then run this in powershell
 > mkdir build
 > cd build
 > cmake ..
-> msbuild pmcs.sln
-> Debug\test_runner
-> Debug\prob_mass_spec
+> msbuild prob_mass_spec.sln
+> .\test_runner
+> .\prob_mass_spec
 ```
+
+# Design
+
+My `src/` directory is split up into 3 pieces: main (which has
+main.c -- functions associated with CLI), test (which has test.c
+-- all the test functions), and util (which has array.c, bin.c,
+peak.c). I split them up like this so I could easily craft the
+cmake recipe for the two executables; I could use `util/*.c` and
+`main/*.c` for `prob_mass_spec`, and `util/*.c` and `test/*.c`
+for `test_runner`. This way we don't get different `main()`
+symbols when we're linking.
+
+In `util/`, I have my array library `array.c`. In `bin.c` I have
+the functions associated with the low resolution data; the
+similarity function there is `prob_dot_prod`. In `peak.c` I have
+the functions associated with the high resolution data; the
+similarity function there is `peak_sim_measure_L2`.
+
+Inside `test/data/` are all the text files with data in them.
+Also, there's one c file, `data.c`, which is included in
+`test.c`. It has all the arrays that I didn't want cluttering up
+my test file.
 
 # Increasing performance
 
