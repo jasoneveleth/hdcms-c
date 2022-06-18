@@ -100,7 +100,7 @@ read_line(FILE *fp)
     while (c != EOF && c != '\n') {
         if (len + 1 >= allocd) { // +1 so we have room for NUL byte terminator
             allocd *= 2;
-            line = safe_realloc(line, allocd);
+            line = safe_realloc(line, allocd * sizeof(*line));
         }
         line[len++] = (char)c;
         c = getc_unlocked(fp);
@@ -659,7 +659,7 @@ mat_fscanf(FILE *file)
     while ((token = find_token(&resumer, sep))) {
         if (allocd <= num_cols) {
             allocd *= 2;
-            data = safe_realloc(data, allocd * sizeof(double));
+            data = safe_realloc(data, allocd * sizeof(*data));
         }
         double ele = safe_strtod(token);
         data[num_cols++] = ele;
@@ -677,7 +677,7 @@ mat_fscanf(FILE *file)
         }
         if (col_zero + num_cols >= allocd) {
             allocd *= 2;
-            data = safe_realloc(data, allocd * sizeof(double));
+            data = safe_realloc(data, allocd * sizeof(*data));
         }
         resumer = line;
         for (size_t i = 0; i < num_cols; i++) {
@@ -796,6 +796,14 @@ matarr_free(struct matarray arr)
     }
     if (arr.is_owner)
         free(arr.data);
+}
+
+void
+matarr_stats_printf(struct matarray arr)
+{
+    for (size_t i = 0; i < arr.length; i++) {
+        mat_stats_printf(matarr_get(arr, i));
+    }
 }
 
 void

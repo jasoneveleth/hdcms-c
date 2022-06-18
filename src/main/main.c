@@ -82,7 +82,7 @@ filenames_to_stats(char *str)
         scaled_data(m); // this is redundant in TWOD since the data we are given is scaled
         matarr_set(arr, i, m);
     }
-    arr.length = i; // cuts off some of the malloc'd mem but that's okay
+    arr.length = i; // wastes some of the malloc'd mem but that's okay
     struct matrix ret;
     if (mflag == ONED) {
         ret = bin_stat_1D(arr, width);
@@ -99,12 +99,6 @@ filenames_to_stats(char *str)
 static void
 list_file(char *filename, struct matarray arr, size_t i)
 {
-    // deal with list reallocation
-    if (i == arr.length) {
-        arr.length *= 2;
-        arr.data = safe_realloc(arr.data, arr.length);
-    }
-
     // https://stackoverflow.com/questions/22059189/read-a-file-as-byte-array
     FILE *fileptr;
     char *buffer;
@@ -129,12 +123,6 @@ list_file(char *filename, struct matarray arr, size_t i)
 static void
 list_option(char *str, struct matarray arr, size_t i)
 {
-    // deal with list reallocation
-    if (i == arr.length) {
-        arr.length *= 2;
-        arr.data = safe_realloc(arr.data, arr.length);
-    }
-
     struct matrix bin_stats = filenames_to_stats(str);
     matarr_set(arr, i, bin_stats);
     mat_free(bin_stats);
@@ -143,23 +131,38 @@ list_option(char *str, struct matarray arr, size_t i)
 static void
 print_comparison(struct matrix m)
 {
-    printf("|%10s|", "x");
+    printf("╭────┬");
+    for (size_t i = 0; i < m.len1 - 1; i++) {
+        printf("──────────┬");
+    }
+    printf("──────────╮\n");
+
+    printf("│%4s│", "x");
     for (size_t i = 0; i < m.len1; i++) {
-        printf("%10zu|", i);
+        printf("%10zu│", i);
     }
     printf("\n");
-    printf("|----------|");
-    for (size_t i = 0; i < m.len1; i++) {
-        printf("----------|");
+
+    printf("├────┼");
+    for (size_t i = 0; i < m.len1 - 1; i++) {
+        printf("──────────┼");
     }
+    printf("──────────┤");
+
     printf("\n");
     for (size_t i = 0; i < m.len1; i++) {
-        printf("|%10zu|", i);
+        printf("│%4zu│", i);
         for (size_t j = 0; j < m.len1; j++) {
-            printf("%10.4e|", mat_get(m, i, j));
+            printf(" %8.6f │", mat_get(m, i, j));
         }
         printf("\n");
     }
+
+    printf("╰────┴");
+    for (size_t i = 0; i < m.len1 - 1; i++) {
+        printf("──────────┴");
+    }
+    printf("──────────╯\n");
 }
 
 int 
@@ -221,6 +224,12 @@ main(int argc, char *argv[])
     struct matarray replicate_stats = matarr_zeros(2);
 
     for (size_t i = 0; i < nreplicates; i++) {
+        // deal with list reallocation
+        if (i == replicate_stats.length) {
+            replicate_stats.length *= 2;
+            replicate_stats.data = safe_realloc(replicate_stats.data, replicate_stats.length * sizeof(*replicate_stats.data));
+        }
+
         printf("%zu: %s\n", i, replicates[i]);
         list_option(replicates[i], replicate_stats, i);
     }
@@ -233,9 +242,18 @@ main(int argc, char *argv[])
             usage();
         }
         printf("%zu: %s\n", nreplicates, argv[i]);
+
+        // deal with list reallocation
+        if (i == replicate_stats.length) {
+            replicate_stats.length *= 2;
+            replicate_stats.data = safe_realloc(replicate_stats.data, replicate_stats.length * sizeof(*replicate_stats.data));
+        }
+
         list_file(argv[i], replicate_stats, nreplicates);
         nreplicates++;
     }
+
+    replicate_stats.length = nreplicates; // wastes some of the malloc'd mem but that's okay
 
     // done parsing args
 

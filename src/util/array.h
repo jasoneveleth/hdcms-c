@@ -173,6 +173,8 @@ struct matarray matarr_from_data(struct matrix *data, size_t len, const bool is_
 void matarr_free(struct matarray arr);
 // print the matrix array to stdout
 void matarr_printf(const struct matarray arr);
+// printf the stats of the matrices in the array to stdout
+void matarr_stats_printf(struct matarray arr);
 // check for equality between matrix arrays
 bool matarr_equal(const struct matarray arr, const struct matarray arr2);
 

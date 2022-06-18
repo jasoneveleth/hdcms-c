@@ -83,9 +83,12 @@ scaled_data(const struct matrix m)
 }
 
 double 
-prob_dot_prod(const struct matrix u, const struct matrix v)
+prob_dot_prod(const struct matrix u_orig, const struct matrix v_orig)
 {
     // input are nx2 matrices of (mean, std) pairs
+
+    struct matrix u = mat_copy(u_orig);
+    struct matrix v = mat_copy(v_orig);
 
     struct vec u_mean = vec_from_col(u, 0);
     struct vec u_std = vec_from_col(u, 1);
@@ -128,6 +131,8 @@ prob_dot_prod(const struct matrix u, const struct matrix v)
     double ans = vec_dot(weights, u_mean) / denom;
 
     vec_free(weights);
+    mat_free(u);
+    mat_free(v);
     return ans;
 }
 
