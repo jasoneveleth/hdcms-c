@@ -3,9 +3,8 @@ cmake_minimum_required(VERSION 3.13.4)
 # this is required for cross compilation for some reason
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
-# compiler
 # set(CMAKE_C_COMPILER /usr/bin/clang)
-IF (WIN32)
+IF(MSVC)
     # /Wall
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /std:c17 /wd4068 /O2 /Zi")
 ELSE()

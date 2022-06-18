@@ -77,6 +77,7 @@ Then run this in powershell
   vectors, or make the `spec_vec` function take in an answer
   array and fill that out rather than allocating separate one
 
+* consider faster parsing methods: [1](https://stackoverflow.com/questions/17925051/fast-textfile-reading-in-c) [2](https://stackoverflow.com/questions/17465061/how-to-parse-space-separated-floats-in-c-quickly/17479702#17479702)
 * mmap file rather than `read_line()` from it
 * use gnu wc -l or wc -w method
 * store floats in files as hex (or all of these)
