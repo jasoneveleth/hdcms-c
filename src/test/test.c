@@ -633,17 +633,18 @@ test_edge_case_0_peak_sim()
     return equals(d, 0);
 }
 
-static bool
-test_edge_case_0_cos_sim()
-{
-    printf(__func__);
-    struct vec v = {0, 0, NULL, false};
-    struct vec u = {0, 0, NULL, false};
-    safe_freopen(NULL_DEVICE, "w", stderr);
-    double d = cos_sim_L2(u, v);
-    safe_freopen(CONSOLE, "w", stderr);
-    return equals(d, 0);
-}
+// we want it to exit(1) now -- don't test
+// static bool
+// test_edge_case_0_cos_sim()
+// {
+//     printf(__func__);
+//     struct vec v = {0, 0, NULL, false};
+//     struct vec u = {0, 0, NULL, false};
+//     safe_freopen(NULL_DEVICE, "w", stderr);
+//     double d = cos_sim_L2(u, v);
+//     safe_freopen(CONSOLE, "w", stderr);
+//     return equals(d, 0);
+// }
 
 static bool
 test_read_line_w_newline() 
@@ -3157,7 +3158,7 @@ int main()
         test_edgecase_contains_0_peak_stat,
         test_edgecase_0_peak_stat,
         test_edge_case_0_peak_sim,
-        test_edge_case_0_cos_sim,
+        // test_edge_case_0_cos_sim,
         test_read_line_w_newline,
         test_read_line_wo_newline,
         test_vec_read_simple,
