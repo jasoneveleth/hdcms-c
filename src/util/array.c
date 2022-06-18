@@ -135,13 +135,13 @@ safe_strtod(const char *const token)
     char *endptr;
     double ele = strtod(token, &endptr);
     if (token == endptr) {
-        WARNING("safe_strtod: unknown token\n\t\"%s\"\n\tsetting ele to 0.0\n", token);
+        WARNING("%s: unknown token\n\t\"%s\"\n\tsetting ele to 0.0\n", __func__, token);
     }
     if (*endptr != '\0') {
-        WARNING("safe_strtod: part of the string wasn't valid (likely\n"
+        WARNING("%s: part of the string wasn't valid (likely\n"
             "trailing whitespace/commas)\n"
             "\t\"%s\" -> %g\n"
-            "\tyou can ignore this if the value is right\n", token, ele);
+            "\tyou can ignore this if the value is right\n", __func__, token, ele);
     }
     return ele;
 }
@@ -362,7 +362,7 @@ void
 vec_multiply(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
-        WARNING("vec_multiply: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
+        WARNING("%s: incorrect dims\n\t%zu > %zu\n", __func__, v.length, u.length);
         exit(1);
     }
     for (size_t i = 0; i < v.length; i++) {
@@ -374,7 +374,7 @@ double
 vec_dot(const struct vec v, const struct vec u)
 {
     if (v.length != u.length) {
-        WARNING("vec_dot: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
+        WARNING("%s: incorrect dims\n\t%zu > %zu\n", __func__, v.length, u.length);
         exit(1);
     }
 
@@ -389,7 +389,7 @@ void
 vec_divide(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
-        WARNING("vec_divide: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
+        WARNING("%s: incorrect dims\n\t%zu > %zu\n", __func__, v.length, u.length);
         exit(1);
     }
     for (size_t i = 0; i < v.length; i++) {
@@ -401,7 +401,7 @@ void
 vec_add(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
-        WARNING("vec_add: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
+        WARNING("%s: incorrect dims\n\t%zu > %zu\n", __func__, v.length, u.length);
         exit(1);
     }
     for (size_t i = 0; i < v.length; i++) {
@@ -413,7 +413,7 @@ void
 vec_sub(struct vec v, struct vec u)
 {
     if (v.length != u.length) {
-        WARNING("vec_sub: incorrect dims\n\t%zu > %zu\n", v.length, u.length);
+        WARNING("%s: incorrect dims\n\t%zu > %zu\n", __func__, v.length, u.length);
         exit(1);
     }
     for (size_t i = 0; i < v.length; i++) {
@@ -510,7 +510,7 @@ void
 vec_to_row(struct matrix m, const struct vec v, const size_t row)
 {
     if (m.len2 != v.length) {
-        WARNING("vec_to_row: incorrect dims\n\t%zu > %zu\n", m.len2, v.length);
+        WARNING("%s: incorrect dims\n\t%zu > %zu\n", __func__, m.len2, v.length);
         exit(1);
     }
     for (size_t i = 0; i < m.len2; i++) {
@@ -570,7 +570,7 @@ static struct vec
 vec_arange(size_t n)
 {
     if (n <= 0) {
-        WARNING("vec_arange: %zu <= 0\n", n);
+        WARNING("%s: %zu <= 0\n", __func__, n);
         return vec_zeros(1);
     }
 
@@ -585,7 +585,7 @@ struct vec
 vec_linspace(double start, double end, double num_steps)
 {
     if (start > end) {
-        WARNING("linspace: start > end\n\t%g > %g\n", start, end);
+        WARNING("%s: start > end\n\t%g > %g\n", __func__, start, end);
     }
     num_steps = floor(num_steps);
     struct vec v = vec_arange((size_t)num_steps);

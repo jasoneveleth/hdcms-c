@@ -86,6 +86,17 @@ double
 prob_dot_prod(const struct matrix u_orig, const struct matrix v_orig)
 {
     // input are nx2 matrices of (mean, std) pairs
+    // assert input correct
+    if (u_orig.len2 != 2) {
+        WARNING("%s vec size not equal to 2 (maybe pass --2d)\n", __func__);
+        exit(1);
+        // unreachable
+    }
+    if (v_orig.len2 != 2) {
+        WARNING("%s vec size not equal to 2 (maybe pass --2d)\n", __func__);
+        exit(1);
+        // unreachable
+    }
 
     struct matrix u = mat_copy(u_orig);
     struct matrix v = mat_copy(v_orig);
