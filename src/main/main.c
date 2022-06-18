@@ -147,7 +147,7 @@ print_comparison(struct matrix m)
     printf("\n");
     printf("|----------|");
     for (size_t i = 0; i < m.len1; i++) {
-        printf("----------|", i);
+        printf("----------|");
     }
     printf("\n");
     for (size_t i = 0; i < m.len1; i++) {
