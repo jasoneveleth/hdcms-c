@@ -104,12 +104,10 @@ prob_dot_prod(const struct matrix u_orig, const struct matrix v_orig)
     vec_multiply(weights, v_std);
 
     // sq_sum = u_std^2 + v_std^2       <-- all pointwise
-    struct vec sq_sum = vec_copy(u_std);
-    struct vec tmp = vec_copy(v_std);
-    vec_square(sq_sum);
-    vec_square(tmp);
-    vec_add(sq_sum, tmp);
-    vec_free(tmp);
+    vec_square(u_std);
+    vec_square(v_std);
+    struct vec sq_sum = u_std; // rename for clarity
+    vec_add(sq_sum, v_std);
 
     vec_divide(weights, sq_sum);
     vec_sqrt(weights);

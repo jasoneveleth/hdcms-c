@@ -88,21 +88,19 @@ my test file.
 
 # Increasing performance
 
-* remove `vec_copy()` calls in `prob_dot_prod`
-* remove `mat_copy()` in `peak_sim_measure_L2` (since the input
-  is the output of `peak_stat`?)
-* align malloc and realloc
-* cache a 9000 `vec_arange` and reuse it, or make one even bigger
-  and just make the lenght of the vector stop before the end
+* store floats in files as hex (make a converter)
 * don't use a temp matrix in `bin_stat_1D`, rather, recode the
   standard deviation and mean from scratch on an array of
   vectors, or make the `spec_vec` function take in an answer
   array and fill that out rather than allocating separate one
 
-* consider faster parsing methods: [1](https://stackoverflow.com/questions/17925051/fast-textfile-reading-in-c) [2](https://stackoverflow.com/questions/17465061/how-to-parse-space-separated-floats-in-c-quickly/17479702#17479702)
-* mmap file rather than `read_line()` from it
-* use gnu wc -l or wc -w method
-* store floats in files as hex (or all of these)
+* align malloc and realloc of large arrays -- probably doesn't matter
+* cache a 9000 `vec_arange` and reuse it, or make one even bigger
+  and just make the lenght of the vector stop before the end
+* mmap file / read (gnu wc method) in blocks rather than
+  `read_line()` from it
+  [1](https://stackoverflow.com/questions/17925051/fast-textfile-reading-in-c)
+  [2](https://stackoverflow.com/questions/17465061/how-to-parse-space-separated-floats-in-c-quickly/17479702#17479702)
 
 ## BLAS
 

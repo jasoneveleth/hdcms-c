@@ -111,18 +111,18 @@ cos_sim_L2(const struct vec u, const struct vec v)
 {
     // assert input correct
     if (u.length != 4) {
-        WARNING("%s vec size not equal to 4\n", __func__);
         fprintf(stderr, "vec:\t");
         vec_fprintf(stderr, u);
+        WARNING("%s vec size not equal to 4 (maybe forgot to pass --1d)\n", __func__);
         exit(1);
-        return 0;
+        // unreachable
     }
     if (v.length != 4) {
-        WARNING("%s vec size not equal to 4\n", __func__);
         fprintf(stderr, "vec:\t");
         vec_fprintf(stderr, v);
+        WARNING("%s vec size not equal to 4 (maybe forgot to pass --1d)\n", __func__);
         exit(1);
-        return 0;
+        // unreachable
     }
 
     // add 1e-4 to all std, to avoid the 0 std div 0 error
