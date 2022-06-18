@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.13.4)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
 # set(CMAKE_C_COMPILER /usr/bin/clang)
-IF(MSVC)
+IF(WIN32)
     # /Wall
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /std:c17 /wd4068 /O2 /Zi")
 ELSE()
