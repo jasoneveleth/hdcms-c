@@ -74,7 +74,7 @@ filenames_to_stats(char *str)
     char *path;
     size_t i;
     for (i = 0; (path = find_token(&str, " ,\n\t")); i++) {
-        if (i == arr.length) { // resize
+        if ((size_t)i == arr.length) { // resize
             arr.length *= 2;
             arr.data = safe_realloc(arr.data, arr.length * sizeof(*arr.data));
         }
@@ -224,7 +224,7 @@ main(int argc, char *argv[])
 
     for (size_t i = 0; i < nreplicates; i++) {
         // deal with list reallocation
-        if (i == replicate_stats.length) {
+        if ((size_t)i == replicate_stats.length) {
             replicate_stats.length *= 2;
             replicate_stats.data = safe_realloc(replicate_stats.data, replicate_stats.length * sizeof(*replicate_stats.data));
         }
@@ -243,7 +243,7 @@ main(int argc, char *argv[])
         printf("%zu: %s\n", nreplicates, argv[i]);
 
         // deal with list reallocation
-        if (i == replicate_stats.length) {
+        if ((size_t)i == replicate_stats.length) {
             replicate_stats.length *= 2;
             replicate_stats.data = safe_realloc(replicate_stats.data, replicate_stats.length * sizeof(*replicate_stats.data));
         }
