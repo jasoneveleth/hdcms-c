@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#ifdef _WIN32
+#if !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(__APPLE__)
 #define flockfile (void)
 #define funlockfile (void)
 #define getc_unlocked getc
@@ -34,7 +34,7 @@ struct matarray
 {
     size_t length;
     struct matrix *data;
-    int is_owner;
+    long is_owner;
 };
 
 /* 
@@ -48,7 +48,7 @@ struct vec
     size_t length;
     size_t stride;
     double *data;
-    int is_owner;
+    long is_owner;
 };
 
 /*
@@ -65,7 +65,7 @@ struct matrix
     size_t len2;
     size_t physlen;
     double *data;
-    int is_owner;
+    long is_owner;
 };
 
 /* vec */
@@ -132,8 +132,7 @@ double vec_std(const struct vec v);
 // returns whether two vectors are equal (using a tolerance)
 bool vec_equal(const struct vec v1, const struct vec v2);
 // takes file pointer, and reads contents into a vector
-// if the format string is NULL, then it uses the format "%lg"
-struct vec vec_fscanf(FILE *file, const char *const format);
+struct vec vec_fscanf(FILE *file);
 // takes path name and reads file into a vector using the default format string "%lg"
 struct vec vec_from_file(const char *path);
 // *mutates* v by setting all the values to a

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include "test.h"
+#include "data/data.c"
 #include "../util/peak.h"
 #include "../util/array.h"
 #include "../util/bin.h"
@@ -809,14 +810,24 @@ test_analytes_normal_1_1_1()
     return ret;
 }
 
-static int 
-safe_snprintf(char *restrict str, size_t size, const char *restrict format, ...)
+#ifdef __has_attribute
+#if __has_attribute(__format__)
+/* This makes compiler verify that `format` is a string literal.
+ * The numbers are the index of the arguemnts starting from 1.
+ * The (string literal) format is arg number 3, and the compiler should verify
+ * the format literal against all the variadic args (which start at arg 4).
+ */
+__attribute__((__format__ (__printf__, 3, 4)))
+#endif
+#endif
+static size_t 
+safe_snprintf(char *restrict buf, size_t size, const char *restrict format, ...)
 {
     int result;
     va_list args;
 
     va_start(args, format);
-    result = vsnprintf(str, size, format, args);
+    result = vsnprintf(buf, size, format, args);
     if (result < 0) {
         fprintf(stderr, "%s:%d: snprintf error\n", __FILE__, __LINE__);
         perror("snprintf");
@@ -824,7 +835,7 @@ safe_snprintf(char *restrict str, size_t size, const char *restrict format, ...)
     }
     va_end(args);
 
-    return result;
+    return (size_t)result;
 }
 
 static bool
@@ -851,7 +862,7 @@ test_similarity_analysis()
             // this loop reads the 5 replicates into `replicates`
             for (size_t k = 0; k < 5; k++) {
                 // calling with NULL returns the length of the string
-                int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
+                size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
                 char *buf = safe_calloc(bufsz + 1, sizeof(char));
 
                 safe_snprintf(buf, bufsz + 1, TESTDATADIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
@@ -927,7 +938,7 @@ test_spec_vec_all()
     printf(__func__);
     bool ret = true;
     for (size_t i = 0; i < 10; i++) {
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         struct vec sol = vec_from_file(filename);
@@ -955,7 +966,7 @@ test_spec_vec_all_matarr()
     printf(__func__);
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         matarr_set(A, i, mat_from_file(filename));
@@ -964,7 +975,7 @@ test_spec_vec_all_matarr()
 
     bool ret = true;
     for (size_t i = 0; i < 10; i++) {
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         struct vec sol = vec_from_file(filename);
@@ -991,7 +1002,7 @@ test_bin_stat()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1018,7 +1029,7 @@ test_prob_dot_prob_through()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1032,7 +1043,7 @@ test_prob_dot_prob_through()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1181,7 +1192,7 @@ test_bin_stats_CM1_28()
     struct matarray L = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1206,7 +1217,7 @@ test_CM1_25_and_CM1_28()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1220,7 +1231,7 @@ test_CM1_25_and_CM1_28()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1246,7 +1257,7 @@ test_CM1_25_and_CM1_10()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1260,7 +1271,7 @@ test_CM1_25_and_CM1_10()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1285,7 +1296,7 @@ test_CM1_27_and_CM1_4()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1299,7 +1310,7 @@ test_CM1_27_and_CM1_4()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1324,7 +1335,7 @@ test_CM1_1_and_CM1_11()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1338,7 +1349,7 @@ test_CM1_1_and_CM1_11()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1363,7 +1374,7 @@ test_CM1_24_and_CM1_21()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1377,7 +1388,7 @@ test_CM1_24_and_CM1_21()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1402,7 +1413,7 @@ test_CM1_25_and_CM1_21()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1416,7 +1427,7 @@ test_CM1_25_and_CM1_21()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1441,7 +1452,7 @@ test_CM1_23_and_CM1_8()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1455,7 +1466,7 @@ test_CM1_23_and_CM1_8()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1480,7 +1491,7 @@ test_CM1_10_and_CM1_21()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1494,7 +1505,7 @@ test_CM1_10_and_CM1_21()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1519,7 +1530,7 @@ test_CM1_10_and_CM1_22()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1533,7 +1544,7 @@ test_CM1_10_and_CM1_22()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1558,7 +1569,7 @@ test_CM1_10_and_CM1_7()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1572,7 +1583,7 @@ test_CM1_10_and_CM1_7()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1597,7 +1608,7 @@ test_CM1_11_and_CM1_12()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1611,7 +1622,7 @@ test_CM1_11_and_CM1_12()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1636,7 +1647,7 @@ test_CM1_11_and_CM1_3()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1650,7 +1661,7 @@ test_CM1_11_and_CM1_3()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1675,7 +1686,7 @@ test_CM1_12_and_CM1_18()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1689,7 +1700,7 @@ test_CM1_12_and_CM1_18()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1714,7 +1725,7 @@ test_CM1_12_and_CM1_23()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1728,7 +1739,7 @@ test_CM1_12_and_CM1_23()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1753,7 +1764,7 @@ test_CM1_13_and_CM1_12()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1767,7 +1778,7 @@ test_CM1_13_and_CM1_12()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1792,7 +1803,7 @@ test_CM1_14_and_CM1_3()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_14_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_14_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_14_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1806,7 +1817,7 @@ test_CM1_14_and_CM1_3()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1831,7 +1842,7 @@ test_CM1_15_and_CM1_12()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1845,7 +1856,7 @@ test_CM1_15_and_CM1_12()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1870,7 +1881,7 @@ test_CM1_15_and_CM1_13()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1884,7 +1895,7 @@ test_CM1_15_and_CM1_13()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1909,7 +1920,7 @@ test_CM1_18_and_CM1_5()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1923,7 +1934,7 @@ test_CM1_18_and_CM1_5()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1948,7 +1959,7 @@ test_CM1_20_and_CM1_11()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1962,7 +1973,7 @@ test_CM1_20_and_CM1_11()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -1987,7 +1998,7 @@ test_CM1_20_and_CM1_12()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2001,7 +2012,7 @@ test_CM1_20_and_CM1_12()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2026,7 +2037,7 @@ test_CM1_20_and_CM1_17()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2040,7 +2051,7 @@ test_CM1_20_and_CM1_17()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2065,7 +2076,7 @@ test_CM1_20_and_CM1_20()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2079,7 +2090,7 @@ test_CM1_20_and_CM1_20()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2104,7 +2115,7 @@ test_CM1_22_and_CM1_17()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2118,7 +2129,7 @@ test_CM1_22_and_CM1_17()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2143,7 +2154,7 @@ test_CM1_23_and_CM1_22()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2157,7 +2168,7 @@ test_CM1_23_and_CM1_22()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2182,7 +2193,7 @@ test_CM1_24_and_CM1_11()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2196,7 +2207,7 @@ test_CM1_24_and_CM1_11()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2221,7 +2232,7 @@ test_CM1_26_and_CM1_1()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2235,7 +2246,7 @@ test_CM1_26_and_CM1_1()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2260,7 +2271,7 @@ test_CM1_26_and_CM1_11()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2274,7 +2285,7 @@ test_CM1_26_and_CM1_11()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2299,7 +2310,7 @@ test_CM1_26_and_CM1_12()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2313,7 +2324,7 @@ test_CM1_26_and_CM1_12()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2338,7 +2349,7 @@ test_CM1_26_and_CM1_2()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2352,7 +2363,7 @@ test_CM1_26_and_CM1_2()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2377,7 +2388,7 @@ test_CM1_27_and_CM1_16()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2391,7 +2402,7 @@ test_CM1_27_and_CM1_16()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_16_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_16_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_16_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2416,7 +2427,7 @@ test_CM1_27_and_CM1_28()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2430,7 +2441,7 @@ test_CM1_27_and_CM1_28()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2455,7 +2466,7 @@ test_CM1_28_and_CM1_1()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2469,7 +2480,7 @@ test_CM1_28_and_CM1_1()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2494,7 +2505,7 @@ test_CM1_28_and_CM1_20()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2508,7 +2519,7 @@ test_CM1_28_and_CM1_20()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2533,7 +2544,7 @@ test_CM1_1_and_CM1_8()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2547,7 +2558,7 @@ test_CM1_1_and_CM1_8()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2572,7 +2583,7 @@ test_CM1_2_and_CM1_2()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2586,7 +2597,7 @@ test_CM1_2_and_CM1_2()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2611,7 +2622,7 @@ test_CM1_2_and_CM1_26()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2625,7 +2636,7 @@ test_CM1_2_and_CM1_26()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2650,7 +2661,7 @@ test_CM1_2_and_CM1_6()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2664,7 +2675,7 @@ test_CM1_2_and_CM1_6()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2689,7 +2700,7 @@ test_CM1_3_and_CM1_18()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2703,7 +2714,7 @@ test_CM1_3_and_CM1_18()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2728,7 +2739,7 @@ test_CM1_3_and_CM1_20()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2742,7 +2753,7 @@ test_CM1_3_and_CM1_20()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2767,7 +2778,7 @@ test_CM1_3_and_CM1_6()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2781,7 +2792,7 @@ test_CM1_3_and_CM1_6()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2806,7 +2817,7 @@ test_CM1_4_and_CM1_6()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2820,7 +2831,7 @@ test_CM1_4_and_CM1_6()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2845,7 +2856,7 @@ test_CM1_5_and_CM1_12()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2859,7 +2870,7 @@ test_CM1_5_and_CM1_12()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2884,7 +2895,7 @@ test_CM1_5_and_CM1_20()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2898,7 +2909,7 @@ test_CM1_5_and_CM1_20()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2923,7 +2934,7 @@ test_CM1_7_and_CM1_9()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2937,7 +2948,7 @@ test_CM1_7_and_CM1_9()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2962,7 +2973,7 @@ test_CM1_8_and_CM1_19()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -2976,7 +2987,7 @@ test_CM1_8_and_CM1_19()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_19_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_19_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_19_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -3001,7 +3012,7 @@ test_CM1_9_and_CM1_3()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -3015,7 +3026,7 @@ test_CM1_9_and_CM1_3()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -3040,7 +3051,7 @@ test_CM1_9_and_CM1_6()
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -3054,7 +3065,7 @@ test_CM1_9_and_CM1_6()
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        int bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
         safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
@@ -3105,7 +3116,7 @@ test_CM1_10_vs_21_sanity_check()
     mat_free(a2);
     matarr_free(arr);
     matarr_free(arr2);
-    return 0.015949719716551063 == d;
+    return equals(0.015949719716551063, d);
 }
 
 static bool

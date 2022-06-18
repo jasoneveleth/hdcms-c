@@ -45,7 +45,7 @@ compare_2d(struct matarray arr)
     for (size_t i = 0; i < arr.length; i++) {
         for (size_t j = 0; j < arr.length; j++) {
             // exploit that -1 is all 1's in twos complement to get huge value
-            mat_set(m, i, j, peak_sim_measure_L2(matarr_get(arr, i), matarr_get(arr, j), -1));
+            mat_set(m, i, j, peak_sim_measure_L2(matarr_get(arr, i), matarr_get(arr, j), (size_t)-1));
         }
     }
     return m;
@@ -84,7 +84,7 @@ filenames_to_stats(char *str)
     if (mflag == ONED) {
         ret = bin_stat_1D(arr, width);
     } else if (mflag == TWOD) {
-        ret = peak_stat(arr, -1); // explot 2's complement, largest size_t
+        ret = peak_stat(arr, (size_t)-1); // explot 2's complement, largest size_t
     } else {
         printf("\n");
         usage();
@@ -123,7 +123,7 @@ list_file(char *filename, struct matarray arr, size_t i)
     matarr_set(arr, i, bin_stats);
 }
 
-void
+static void
 list_option(char *str, struct matarray arr, size_t i)
 {
     // deal with list reallocation
@@ -164,7 +164,7 @@ main(int argc, char *argv[])
 {
     argv0 = argv[0];
 
-    int ch, mflag;
+    int ch;
     size_t nreplicates;
 
     /* options descriptor */
@@ -185,7 +185,7 @@ main(int argc, char *argv[])
 
     mflag = TWOD;
     nreplicates = 0;
-    char **replicates = malloc(argc * sizeof(*replicates)); // can't be larger than argc
+    char **replicates = malloc((size_t)argc * sizeof(*replicates)); // can't be larger than argc
     width = DEFAULT_WIDTH;
     while ((ch = getopt_long(argc, argv, "hqw:", longopts, NULL)) != -1) {
         switch (ch) {
@@ -208,8 +208,8 @@ main(int argc, char *argv[])
             case '?':
             case ':':
             default:
-                usage();
-                break;
+                usage(); 
+                // impossible to get here
         }
     }
     argc -= optind;

@@ -45,7 +45,11 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
         struct vec sim_scores = vec_zeros(matrix_without_max_peak_p->len1);
         for (size_t j = 0; j < matrix_without_max_peak_p->len1; j++) {
             struct vec v = vec_from_row(*matrix_without_max_peak_p, j);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+            // this is oaky because we set it to be this
             if (vec_get(v, 1) == -inf) { // this peak has already been used
+#pragma GCC diagnostic pop
                 vec_set(sim_scores, j, -inf);
             } else {
                 vec_set(sim_scores, j, cos_sim_L2(u, v));

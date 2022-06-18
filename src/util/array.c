@@ -98,7 +98,7 @@ read_line(FILE *fp)
     flockfile(fp); // lock for getc()
     int c = getc_unlocked(fp);
     while (c != EOF && c != '\n') {
-        if (len >= allocd) {
+        if (len + 1 >= allocd) { // +1 so we have room for NUL byte terminator
             allocd *= 2;
             line = safe_realloc(line, allocd);
         }
@@ -128,13 +128,20 @@ static double
 safe_strtod(const char *const token)
 {
     if (token == NULL) {
-        WARNING("no token recieved, setting ele to %g\n", 0.);
-        return 0;
+        const double default_val = 0.;
+        WARNING("no token recieved, setting ele to %g\n", default_val);
+        return default_val;
     }
     char *endptr;
     double ele = strtod(token, &endptr);
     if (token == endptr) {
-        WARNING("unknown token\n\t\"%s\"\n\tsetting ele to 0.0\n", token);
+        WARNING("safe_strtod: unknown token\n\t\"%s\"\n\tsetting ele to 0.0\n", token);
+    }
+    if (*endptr != '\0') {
+        WARNING("safe_strtod: part of the string wasn't valid (likely\n"
+            "trailing whitespace/commas)\n"
+            "\t\"%s\" -> %g\n"
+            "\tyou can ignore this if the value is right\n", token, ele);
     }
     return ele;
 }
@@ -201,7 +208,11 @@ find_token(char **resumer, const char *const sep)
 bool
 equals(const double a, const double b)
 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wfloat-equal"
+    // this is okay because we do only care when its 0
     if (b == 0) {
+#pragma GCC diagnostic pop
         return fabs(a) < TOLABS;
     }
     double ratio = a / b;
@@ -589,9 +600,8 @@ vec_linspace(double start, double end, double num_steps)
 }
 
 struct vec
-vec_fscanf(FILE *file, const char *const argformat)
+vec_fscanf(FILE *file)
 {
-    const char *const format = (argformat == NULL) ? "%lg" : argformat;
     struct vec v;
     size_t len_of_vec = 0;
     size_t allocd = BUF_SIZE_INIT;
@@ -600,18 +610,15 @@ vec_fscanf(FILE *file, const char *const argformat)
     while (!feof(file)) {
         char *line = read_line(file);
 
-        double ele = 0;
-        int num_matches = sscanf(line, format, &ele);
-        if (num_matches == EOF) { // empty line
+        if (*line == '\0') { // empty line
             free(line);
             continue;
         }
-        if (num_matches == 0) { // invalid input
-            WARNING("vec_read: line didn't match\n\t`%s`\n\tsetting ele to 0.0\n", line);
-        }
+
+        double ele = safe_strtod(line);
         if (len_of_vec == allocd) {
-            allocd = len_of_vec * 2;
-            data = safe_realloc(data, allocd * sizeof(double));
+            allocd *= 2;
+            data = safe_realloc(data, allocd * sizeof(*data));
         }
         data[len_of_vec++] = ele;
         free(line);
@@ -627,7 +634,7 @@ struct vec
 vec_from_file(const char *path)
 {
     FILE *file = safe_fopen(path, "r");
-    struct vec v = vec_fscanf(file, NULL);
+    struct vec v = vec_fscanf(file);
     fclose(file);
     return v;
 }
