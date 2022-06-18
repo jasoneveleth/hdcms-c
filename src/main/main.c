@@ -125,7 +125,6 @@ list_option(char *str, struct matarray arr, size_t i)
 {
     struct matrix bin_stats = filenames_to_stats(str);
     matarr_set(arr, i, bin_stats);
-    mat_free(bin_stats);
 }
 
 static void
