@@ -25,8 +25,8 @@ The problem was I was calculating elements of the linspace using
 Install cmake and git.
 
 ```bash
-$ git clone XXXXXXXXXXXX
-$ cd XXXX
+$ git clone https://gitlab.nist.gov/gitlab/jje4/hdcms.git
+$ cd hdcms
 $ mkdir build
 $ cd build
 $ cmake ..
@@ -54,8 +54,8 @@ too.
 Then run this in powershell
 
 ```powershell
-> git clone XXXXXXXXXX
-> cd XXXXXXX
+> git clone https://gitlab.nist.gov/gitlab/jje4/hdcms.git
+> cd hdcms
 > mkdir build
 > cd build
 > cmake ..
