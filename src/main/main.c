@@ -165,6 +165,31 @@ print_comparison(const struct matrix m)
     printf("──────────╯\n");
 }
 
+static void
+print_comparison_no_utf8(const struct matrix m)
+{
+    printf("|%4s|", "x");
+    for (size_t i = 0; i < m.len1; i++) {
+        printf("%10zu|", i);
+    }
+    printf("\n");
+
+    printf("|----|");
+    for (size_t i = 0; i < m.len1 - 1; i++) {
+        printf("----------|");
+    }
+    printf("----------|");
+
+    printf("\n");
+    for (size_t i = 0; i < m.len1; i++) {
+        printf("|%4zu|", i);
+        for (size_t j = 0; j < m.len1; j++) {
+            printf(" %8.6f |", mat_get(m, i, j));
+        }
+        printf("\n");
+    }
+}
+
 int 
 main(int argc, char *argv[])
 {
@@ -263,7 +288,11 @@ main(int argc, char *argv[])
     else
         comparison = compare_2d(replicate_stats);
     matarr_free(replicate_stats);
+#ifdef _WIN32
+    print_comparison_no_utf8(comparison);
+#else
     print_comparison(comparison);
+#endif
     mat_free(comparison);
     return 0;
 }

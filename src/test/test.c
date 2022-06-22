@@ -3130,7 +3130,6 @@ simple()
 int main() 
 {
     int ret = EXIT_SUCCESS;
-    puts("================");
     testfunc tests[] = {
         simple, 
 
@@ -3236,16 +3235,32 @@ int main()
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);
+    size_t num_passed = 0;
+    size_t num_failed = 0;
     for (size_t i = 0; i < len; i++) {
         bool passed = tests[i]();
         if (passed) {
+            num_passed += 1;
             printf(GREEN " OK" RESET "\n");
         } else {
+            num_failed += 1;
             printf(RED " FAILED" RESET "\n");
             ret = EXIT_FAILURE;
         }
     }
-    puts("================");
+    puts(GREEN "======================");
+    puts("Testsuite summary");
+    puts("======================" RESET);
+
+    printf(BOLD "total: %zu\n" RESET, len);
+
+    if (num_passed) printf(GREEN);
+    printf("pass: %zu\n" RESET, num_passed);
+
+    if (num_failed) printf(RED);
+    printf("fail: %zu\n" RESET, num_failed);
+    puts(GREEN "======================" RESET);
     return ret;
+
 }
 
