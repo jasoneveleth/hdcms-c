@@ -13,7 +13,7 @@
 #define TESTDATADIR "../src/test/data/"
 
 static bool
-test_cos_sim_L2()
+test_cos_sim_L2(void)
 {
     printf(__func__);
     double udata[] = {91, 0.9, 0.1, 0.08};
@@ -39,7 +39,7 @@ test_cos_sim_L2()
  *      sim: 0.5993
  */
 static bool
-test_cos_sim_3rd_highest_of_12_11_30V()
+test_cos_sim_3rd_highest_of_12_11_30V(void)
 {
     printf(__func__);
     double udata[] = {3.882976388000000, 0.002553558503045, 0.000017707525801, 0.000093945978461};
@@ -67,7 +67,7 @@ test_cos_sim_3rd_highest_of_12_11_30V()
  *      sim: 0.7344
  */
 static bool
-test_cos_sim_11th_highest_of_12_11_30V() 
+test_cos_sim_11th_highest_of_12_11_30V(void) 
 {
     printf(__func__);
     double udata2[] = {3.893009976000000, 0.000527014227888, 0.000015185034738, 0.000069406478369};
@@ -83,7 +83,7 @@ test_cos_sim_11th_highest_of_12_11_30V()
 }
 
 static bool
-test_argmax()
+test_argmax(void)
 {
     printf(__func__);
     double m2data[] = {83, 0.23,
@@ -100,7 +100,7 @@ test_argmax()
 }
 
 static bool
-test_peak_sort_simple()
+test_peak_sort_simple(void)
 {
     printf(__func__);
     size_t n = 20;
@@ -145,7 +145,7 @@ test_peak_sort_simple()
 }
 
 static bool
-test_peak_sort_zeros()
+test_peak_sort_zeros(void)
 {
     printf(__func__);
     size_t n = 20;
@@ -201,7 +201,7 @@ test_peak_sort_zeros()
 }
 
 static bool 
-test_peak_sort_real2()
+test_peak_sort_real2(void)
 {
     printf(__func__);
     size_t n = 2;
@@ -236,7 +236,7 @@ test_peak_sort_real2()
 }
 
 static bool
-test_peak_sort_real15()
+test_peak_sort_real15(void)
 {
     printf(__func__);
     size_t n = 15;
@@ -282,7 +282,7 @@ test_peak_sort_real15()
 }
 
 static bool
-test_peak_stat_real()
+test_peak_stat_real(void)
 {
     printf(__func__);
     size_t n = 15;
@@ -312,7 +312,7 @@ test_peak_stat_real()
 }
 
 static bool
-test_vec_read_simple()
+test_vec_read_simple(void)
 {
     printf(__func__);
     struct vec output = vec_from_file(TESTDATADIR "vec_read_simple.txt");
@@ -325,7 +325,7 @@ test_vec_read_simple()
 }
 
 static bool
-test_cos_sim_extra1()
+test_cos_sim_extra1(void)
 {
     printf(__func__);
     double adata[] = {90, 0.5, 0.001, 0.02};
@@ -336,7 +336,7 @@ test_cos_sim_extra1()
 }
 
 static bool
-test_cos_sim_extra2()
+test_cos_sim_extra2(void)
 {
     printf(__func__);
     double adata[] = {100, 0.9, 0.003, 0.008};
@@ -347,7 +347,7 @@ test_cos_sim_extra2()
 }
 
 static bool
-test_peak_sim_measure_simple()
+test_peak_sim_measure_simple(void)
 {
     printf(__func__);
     double adata[] = {90, 0.5, 0.001, 0.02,
@@ -364,7 +364,7 @@ test_peak_sim_measure_simple()
 }
 
 static bool
-test_peak_sim_measure_complex()
+test_peak_sim_measure_complex(void)
 {
     printf(__func__);
     double adata[] = {78.946, 0.961, 0.5, 0.02,  
@@ -397,7 +397,7 @@ test_peak_sim_measure_complex()
 }
 
 static bool
-test_peak_sim_measure_complex2()
+test_peak_sim_measure_complex2(void)
 {
     printf(__func__);
     double adata[] = {
@@ -434,7 +434,7 @@ test_peak_sim_measure_complex2()
 }
 
 static bool
-test_peak_sim_measure_n_less_than_both()
+test_peak_sim_measure_n_less_than_both(void)
 {
     printf(__func__);
     double adata[] = {
@@ -471,7 +471,7 @@ test_peak_sim_measure_n_less_than_both()
 }
 
 static bool
-test_peak_sim_measure_real()
+test_peak_sim_measure_real(void)
 {
     printf(__func__);
     struct matrix A = mat_from_data(stat_m13_i_2, 13, 4, 4, false);
@@ -484,7 +484,7 @@ test_peak_sim_measure_real()
 }
 
 static bool
-test_vec_read_real()
+test_vec_read_real(void)
 {
     printf(__func__);
     struct vec output = vec_from_file(TESTDATADIR "vec_read_real.txt");
@@ -510,7 +510,7 @@ test_vec_read_real()
 }
 
 static bool
-test_edgecase_contains_0_peak_sort()
+test_edgecase_contains_0_peak_sort(void)
 {
     printf(__func__);
     struct matrix m = mat_zeros(0, 0);
@@ -524,7 +524,7 @@ test_edgecase_contains_0_peak_sort()
 }
 
 static bool
-test_edgecase_0_peak_sort()
+test_edgecase_0_peak_sort(void)
 {
     printf(__func__);
     struct matarray m = matarr_zeros(0);
@@ -536,7 +536,7 @@ test_edgecase_0_peak_sort()
 }
 
 static bool
-test_edgecase_1_peak_sort()
+test_edgecase_1_peak_sort(void)
 {
     printf(__func__);
     double mdata[] = {83, 0.23,
@@ -569,7 +569,7 @@ test_edgecase_1_peak_sort()
 }
 
 static bool
-test_edge_case_1_peak_stat()
+test_edge_case_1_peak_stat(void)
 {
     printf(__func__);
     double mdata[] = {83, 0.23,
@@ -594,7 +594,7 @@ test_edge_case_1_peak_stat()
 }
 
 static bool
-test_edgecase_contains_0_peak_stat()
+test_edgecase_contains_0_peak_stat(void)
 {
     printf(__func__);
     struct matrix m = mat_zeros(0, 0);
@@ -608,7 +608,7 @@ test_edgecase_contains_0_peak_stat()
 }
 
 static bool
-test_edgecase_0_peak_stat()
+test_edgecase_0_peak_stat(void)
 {
     printf(__func__);
     struct matarray m = matarr_zeros(0);
@@ -621,7 +621,7 @@ test_edgecase_0_peak_stat()
 }
 
 static bool
-test_edge_case_0_peak_sim()
+test_edge_case_0_peak_sim(void)
 {
     printf(__func__);
     struct matrix m = {0, 0, 0, NULL, false};
@@ -647,7 +647,7 @@ test_edge_case_0_peak_sim()
 // }
 
 static bool
-test_read_line_w_newline() 
+test_read_line_w_newline(void) 
 {
     printf(__func__);
     FILE *file = safe_fopen(TESTDATADIR "vec_read_simple.txt", "r");
@@ -660,7 +660,7 @@ test_read_line_w_newline()
 }
 
 static bool
-test_read_line_wo_newline() 
+test_read_line_wo_newline(void) 
 {
     printf(__func__);
     FILE *file = safe_fopen(TESTDATADIR "oneline.txt", "r");
@@ -673,7 +673,7 @@ test_read_line_wo_newline()
 }
 
 static bool
-test_read_vec_no_eof_eol()
+test_read_vec_no_eof_eol(void)
 {
     printf(__func__);
     struct vec v = vec_from_file(TESTDATADIR "no_newline.txt");
@@ -688,7 +688,7 @@ test_read_vec_no_eof_eol()
 }
 
 static bool
-test_mat_read_no_extra_newln_ints()
+test_mat_read_no_extra_newln_ints(void)
 {
     printf(__func__);
     struct matrix m = mat_from_file(TESTDATADIR "mat_no_extra_newln_ints.txt");
@@ -705,7 +705,7 @@ test_mat_read_no_extra_newln_ints()
 }
 
 static bool
-test_mat_read_blank_lines_ints()
+test_mat_read_blank_lines_ints(void)
 {
     printf(__func__);
     struct matrix m = mat_from_file(TESTDATADIR "mat_blank_line_ints.txt");
@@ -722,7 +722,7 @@ test_mat_read_blank_lines_ints()
 }
 
 static bool
-test_mat_read_ints()
+test_mat_read_ints(void)
 {
     printf(__func__);
     struct matrix m = mat_from_file(TESTDATADIR "mat_ints.txt");
@@ -739,7 +739,7 @@ test_mat_read_ints()
 }
 
 static bool
-test_mat_read_trailing_white_space()
+test_mat_read_trailing_white_space(void)
 {
     printf(__func__);
     struct matrix m = mat_from_file(TESTDATADIR "mat_trailing_white_space.txt");
@@ -754,7 +754,7 @@ test_mat_read_trailing_white_space()
 }
 
 static bool
-test_mat_read_leading_white_space()
+test_mat_read_leading_white_space(void)
 {
     printf(__func__);
     struct matrix m = mat_from_file(TESTDATADIR "mat_leading_white_space.txt");
@@ -769,7 +769,7 @@ test_mat_read_leading_white_space()
 }
 
 static bool
-test_analytes_normal_1_1_1()
+test_analytes_normal_1_1_1(void)
 {
     printf(__func__);
     struct matrix m = mat_from_file(TESTDATADIR "analytes_normal_1_1_1.txt");
@@ -840,7 +840,7 @@ safe_snprintf(char *restrict buf, size_t size, const char *restrict format, ...)
 }
 
 static bool
-test_similarity_analysis()
+test_similarity_analysis(void)
 {
     printf(__func__);
     double soldata[] = {
@@ -892,7 +892,7 @@ test_similarity_analysis()
 }
 
 static bool
-test_mat_read_cm_data()
+test_mat_read_cm_data(void)
 {
     printf(__func__);
     struct matrix m = mat_from_data(cm1_1_4, 231, 2, 2, 0);
@@ -904,7 +904,7 @@ test_mat_read_cm_data()
 }
 
 static bool
-test_scaled_data()
+test_scaled_data(void)
 {
     printf(__func__);
     struct matrix m = mat_from_file(TESTDATADIR "CM1_1_4.txt");
@@ -916,7 +916,7 @@ test_scaled_data()
 }
 
 static bool
-test_spec_vec()
+test_spec_vec(void)
 {
     printf(__func__);
 
@@ -934,7 +934,7 @@ test_spec_vec()
 }
 
 static bool
-test_spec_vec_all()
+test_spec_vec_all(void)
 {
     printf(__func__);
     bool ret = true;
@@ -962,7 +962,7 @@ test_spec_vec_all()
 }
 
 static bool
-test_spec_vec_all_matarr()
+test_spec_vec_all_matarr(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -994,7 +994,7 @@ test_spec_vec_all_matarr()
 }
 
 static bool
-test_bin_stat()
+test_bin_stat(void)
 {
     printf(__func__);
 
@@ -1022,7 +1022,7 @@ test_bin_stat()
 }
 
 static bool
-test_prob_dot_prob_through()
+test_prob_dot_prob_through(void)
 {
     printf(__func__);
     double sol = 0.034024882840827;
@@ -1064,7 +1064,7 @@ test_prob_dot_prob_through()
 }
 
 static bool
-test_prob_dot_prob()
+test_prob_dot_prob(void)
 {
     printf(__func__);
     double sol = 0.034024882840827;
@@ -1081,7 +1081,7 @@ test_prob_dot_prob()
 }
 
 static bool
-test_CM1_25_and_CM1_28_prob_dot_prod()
+test_CM1_25_and_CM1_28_prob_dot_prod(void)
 {
     printf(__func__);
     double sol = 0.041264598345041;
@@ -1096,7 +1096,7 @@ test_CM1_25_and_CM1_28_prob_dot_prod()
 }
 
 static bool
-test_spec_vec_10_CM1_28()
+test_spec_vec_10_CM1_28(void)
 {
     printf(__func__);
     struct matrix A_1 = mat_from_file(TESTDATADIR "CM1_28_1.txt");
@@ -1187,7 +1187,7 @@ test_spec_vec_10_CM1_28()
 }
 
 static bool
-test_bin_stats_CM1_28()
+test_bin_stats_CM1_28(void)
 {
     printf(__func__);
     struct matarray L = matarr_zeros(10);
@@ -1212,7 +1212,7 @@ test_bin_stats_CM1_28()
 }
 
 static bool
-test_CM1_25_and_CM1_28()
+test_CM1_25_and_CM1_28(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1252,7 +1252,7 @@ test_CM1_25_and_CM1_28()
 }
 
 static bool
-test_CM1_25_and_CM1_10()
+test_CM1_25_and_CM1_10(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1291,7 +1291,7 @@ test_CM1_25_and_CM1_10()
     return ret;
 }
 static bool
-test_CM1_27_and_CM1_4()
+test_CM1_27_and_CM1_4(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1330,7 +1330,7 @@ test_CM1_27_and_CM1_4()
     return ret;
 }
 static bool
-test_CM1_1_and_CM1_11()
+test_CM1_1_and_CM1_11(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1369,7 +1369,7 @@ test_CM1_1_and_CM1_11()
     return ret;
 }
 static bool
-test_CM1_24_and_CM1_21()
+test_CM1_24_and_CM1_21(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1408,7 +1408,7 @@ test_CM1_24_and_CM1_21()
     return ret;
 }
 static bool
-test_CM1_25_and_CM1_21()
+test_CM1_25_and_CM1_21(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1447,7 +1447,7 @@ test_CM1_25_and_CM1_21()
     return ret;
 }
 static bool
-test_CM1_23_and_CM1_8()
+test_CM1_23_and_CM1_8(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1486,7 +1486,7 @@ test_CM1_23_and_CM1_8()
     return ret;
 }
 static bool
-test_CM1_10_and_CM1_21()
+test_CM1_10_and_CM1_21(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1525,7 +1525,7 @@ test_CM1_10_and_CM1_21()
     return ret;
 }
 static bool
-test_CM1_10_and_CM1_22()
+test_CM1_10_and_CM1_22(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1564,7 +1564,7 @@ test_CM1_10_and_CM1_22()
     return ret;
 }
 static bool
-test_CM1_10_and_CM1_7()
+test_CM1_10_and_CM1_7(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1603,7 +1603,7 @@ test_CM1_10_and_CM1_7()
     return ret;
 }
 static bool
-test_CM1_11_and_CM1_12()
+test_CM1_11_and_CM1_12(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1642,7 +1642,7 @@ test_CM1_11_and_CM1_12()
     return ret;
 }
 static bool
-test_CM1_11_and_CM1_3()
+test_CM1_11_and_CM1_3(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1681,7 +1681,7 @@ test_CM1_11_and_CM1_3()
     return ret;
 }
 static bool
-test_CM1_12_and_CM1_18()
+test_CM1_12_and_CM1_18(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1720,7 +1720,7 @@ test_CM1_12_and_CM1_18()
     return ret;
 }
 static bool
-test_CM1_12_and_CM1_23()
+test_CM1_12_and_CM1_23(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1759,7 +1759,7 @@ test_CM1_12_and_CM1_23()
     return ret;
 }
 static bool
-test_CM1_13_and_CM1_12()
+test_CM1_13_and_CM1_12(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1798,7 +1798,7 @@ test_CM1_13_and_CM1_12()
     return ret;
 }
 static bool
-test_CM1_14_and_CM1_3()
+test_CM1_14_and_CM1_3(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1837,7 +1837,7 @@ test_CM1_14_and_CM1_3()
     return ret;
 }
 static bool
-test_CM1_15_and_CM1_12()
+test_CM1_15_and_CM1_12(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1876,7 +1876,7 @@ test_CM1_15_and_CM1_12()
     return ret;
 }
 static bool
-test_CM1_15_and_CM1_13()
+test_CM1_15_and_CM1_13(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1915,7 +1915,7 @@ test_CM1_15_and_CM1_13()
     return ret;
 }
 static bool
-test_CM1_18_and_CM1_5()
+test_CM1_18_and_CM1_5(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1954,7 +1954,7 @@ test_CM1_18_and_CM1_5()
     return ret;
 }
 static bool
-test_CM1_20_and_CM1_11()
+test_CM1_20_and_CM1_11(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -1993,7 +1993,7 @@ test_CM1_20_and_CM1_11()
     return ret;
 }
 static bool
-test_CM1_20_and_CM1_12()
+test_CM1_20_and_CM1_12(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2032,7 +2032,7 @@ test_CM1_20_and_CM1_12()
     return ret;
 }
 static bool
-test_CM1_20_and_CM1_17()
+test_CM1_20_and_CM1_17(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2071,7 +2071,7 @@ test_CM1_20_and_CM1_17()
     return ret;
 }
 static bool
-test_CM1_20_and_CM1_20()
+test_CM1_20_and_CM1_20(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2110,7 +2110,7 @@ test_CM1_20_and_CM1_20()
     return ret;
 }
 static bool
-test_CM1_22_and_CM1_17()
+test_CM1_22_and_CM1_17(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2149,7 +2149,7 @@ test_CM1_22_and_CM1_17()
     return ret;
 }
 static bool
-test_CM1_23_and_CM1_22()
+test_CM1_23_and_CM1_22(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2188,7 +2188,7 @@ test_CM1_23_and_CM1_22()
     return ret;
 }
 static bool
-test_CM1_24_and_CM1_11()
+test_CM1_24_and_CM1_11(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2227,7 +2227,7 @@ test_CM1_24_and_CM1_11()
     return ret;
 }
 static bool
-test_CM1_26_and_CM1_1()
+test_CM1_26_and_CM1_1(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2266,7 +2266,7 @@ test_CM1_26_and_CM1_1()
     return ret;
 }
 static bool
-test_CM1_26_and_CM1_11()
+test_CM1_26_and_CM1_11(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2305,7 +2305,7 @@ test_CM1_26_and_CM1_11()
     return ret;
 }
 static bool
-test_CM1_26_and_CM1_12()
+test_CM1_26_and_CM1_12(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2344,7 +2344,7 @@ test_CM1_26_and_CM1_12()
     return ret;
 }
 static bool
-test_CM1_26_and_CM1_2()
+test_CM1_26_and_CM1_2(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2383,7 +2383,7 @@ test_CM1_26_and_CM1_2()
     return ret;
 }
 static bool
-test_CM1_27_and_CM1_16()
+test_CM1_27_and_CM1_16(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2422,7 +2422,7 @@ test_CM1_27_and_CM1_16()
     return ret;
 }
 static bool
-test_CM1_27_and_CM1_28()
+test_CM1_27_and_CM1_28(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2461,7 +2461,7 @@ test_CM1_27_and_CM1_28()
     return ret;
 }
 static bool
-test_CM1_28_and_CM1_1()
+test_CM1_28_and_CM1_1(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2500,7 +2500,7 @@ test_CM1_28_and_CM1_1()
     return ret;
 }
 static bool
-test_CM1_28_and_CM1_20()
+test_CM1_28_and_CM1_20(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2539,7 +2539,7 @@ test_CM1_28_and_CM1_20()
     return ret;
 }
 static bool
-test_CM1_1_and_CM1_8()
+test_CM1_1_and_CM1_8(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2578,7 +2578,7 @@ test_CM1_1_and_CM1_8()
     return ret;
 }
 static bool
-test_CM1_2_and_CM1_2()
+test_CM1_2_and_CM1_2(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2617,7 +2617,7 @@ test_CM1_2_and_CM1_2()
     return ret;
 }
 static bool
-test_CM1_2_and_CM1_26()
+test_CM1_2_and_CM1_26(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2656,7 +2656,7 @@ test_CM1_2_and_CM1_26()
     return ret;
 }
 static bool
-test_CM1_2_and_CM1_6()
+test_CM1_2_and_CM1_6(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2695,7 +2695,7 @@ test_CM1_2_and_CM1_6()
     return ret;
 }
 static bool
-test_CM1_3_and_CM1_18()
+test_CM1_3_and_CM1_18(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2734,7 +2734,7 @@ test_CM1_3_and_CM1_18()
     return ret;
 }
 static bool
-test_CM1_3_and_CM1_20()
+test_CM1_3_and_CM1_20(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2773,7 +2773,7 @@ test_CM1_3_and_CM1_20()
     return ret;
 }
 static bool
-test_CM1_3_and_CM1_6()
+test_CM1_3_and_CM1_6(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2812,7 +2812,7 @@ test_CM1_3_and_CM1_6()
     return ret;
 }
 static bool
-test_CM1_4_and_CM1_6()
+test_CM1_4_and_CM1_6(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2851,7 +2851,7 @@ test_CM1_4_and_CM1_6()
     return ret;
 }
 static bool
-test_CM1_5_and_CM1_12()
+test_CM1_5_and_CM1_12(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2890,7 +2890,7 @@ test_CM1_5_and_CM1_12()
     return ret;
 }
 static bool
-test_CM1_5_and_CM1_20()
+test_CM1_5_and_CM1_20(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2929,7 +2929,7 @@ test_CM1_5_and_CM1_20()
     return ret;
 }
 static bool
-test_CM1_7_and_CM1_9()
+test_CM1_7_and_CM1_9(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -2968,7 +2968,7 @@ test_CM1_7_and_CM1_9()
     return ret;
 }
 static bool
-test_CM1_8_and_CM1_19()
+test_CM1_8_and_CM1_19(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -3007,7 +3007,7 @@ test_CM1_8_and_CM1_19()
     return ret;
 }
 static bool
-test_CM1_9_and_CM1_3()
+test_CM1_9_and_CM1_3(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -3046,7 +3046,7 @@ test_CM1_9_and_CM1_3()
     return ret;
 }
 static bool
-test_CM1_9_and_CM1_6()
+test_CM1_9_and_CM1_6(void)
 {
     printf(__func__);
     struct matarray A = matarr_zeros(10);
@@ -3085,7 +3085,7 @@ test_CM1_9_and_CM1_6()
     return ret;
 }
 static bool
-test_CM1_10_vs_21_sanity_check()
+test_CM1_10_vs_21_sanity_check(void)
 {
     printf(__func__);
     struct matrix m = mat_from_file(TESTDATADIR "CM1_10_1.txt");
@@ -3121,7 +3121,7 @@ test_CM1_10_vs_21_sanity_check()
 }
 
 static bool
-simple() 
+simple(void)
 {
     printf(__func__);
     return 0 == 0;
