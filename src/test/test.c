@@ -1,3 +1,8 @@
+#ifdef _WIN32
+// windows can't even compile its own headers without warnings (missing _WIN32_WINNT_WIN10_TH2, ...)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
