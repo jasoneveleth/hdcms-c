@@ -10,6 +10,6 @@
 #define CONSOLE "/dev/tty"
 #endif
 
-typedef bool (*testfunc)();
+typedef bool (*testfunc)(void);
 
 #endif // TEST_H
