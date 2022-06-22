@@ -30,7 +30,7 @@ usage() {
 }
 
 static struct matrix
-compare_1d(struct matarray arr)
+compare_1d(const struct matarray arr)
 {
     struct matrix m = mat_zeros(arr.length, arr.length);
     for (size_t i = 0; i < arr.length; i++) {
@@ -42,20 +42,20 @@ compare_1d(struct matarray arr)
 }
 
 static struct matrix
-compare_2d(struct matarray arr)
+compare_2d(const struct matarray arr)
 {
     struct matrix m = mat_zeros(arr.length, arr.length);
     for (size_t i = 0; i < arr.length; i++) {
         for (size_t j = 0; j < arr.length; j++) {
-            // exploit that -1 is all 1's in twos complement to get huge value
-            mat_set(m, i, j, peak_sim_measure_L2(matarr_get(arr, i), matarr_get(arr, j), (size_t)-1));
+            size_t n = matarr_get(arr, i).len1; // >= longest possible length
+            mat_set(m, i, j, peak_sim_measure_L2(matarr_get(arr, i), matarr_get(arr, j), n));
         }
     }
     return m;
 }
 
 static inline bool
-file_readable(char *path)
+file_readable(const char *const path)
 {
     int fd = open(path, O_RDONLY);
     if (fd == -1) {
@@ -87,7 +87,8 @@ filenames_to_stats(char *str)
     if (mflag == ONED) {
         ret = bin_stat_1D(arr, width);
     } else if (mflag == TWOD) {
-        ret = peak_stat(arr, (size_t)-1); // explot 2's complement, largest size_t
+        size_t n = matarr_get(arr, 0).len1; // >= longest possible length
+        ret = peak_stat(arr, n);
     } else {
         printf("\n");
         usage();
@@ -97,7 +98,7 @@ filenames_to_stats(char *str)
 }
 
 static void
-list_file(char *filename, struct matarray arr, size_t i)
+list_file(const char *const filename, const struct matarray arr, const size_t i)
 {
     // https://stackoverflow.com/questions/22059189/read-a-file-as-byte-array
     FILE *fileptr;
@@ -121,14 +122,14 @@ list_file(char *filename, struct matarray arr, size_t i)
 }
 
 static void
-list_option(char *str, struct matarray arr, size_t i)
+list_option(char *str, struct matarray arr, const size_t i)
 {
     struct matrix bin_stats = filenames_to_stats(str);
     matarr_set(arr, i, bin_stats);
 }
 
 static void
-print_comparison(struct matrix m)
+print_comparison(const struct matrix m)
 {
     printf("╭────┬");
     for (size_t i = 0; i < m.len1 - 1; i++) {

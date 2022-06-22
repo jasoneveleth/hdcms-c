@@ -223,7 +223,7 @@ void *safe_calloc(size_t num, size_t size);
 // wrapper for realloc(), which resizes the memory pointed to by ptr
 void *safe_realloc(void *ptr, size_t size);
 // wrapper for fopen() which opens a path and returns a file pointer.
-FILE *safe_fopen(const char *path, const char *mode);
+FILE *safe_fopen(const char *const path, const char *const mode);
 // wrapper for freopn() which changes file stream to point to file at path
 FILE * safe_freopen(const char *path, const char *mode, FILE *stream);
 
