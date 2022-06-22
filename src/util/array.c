@@ -69,7 +69,7 @@ safe_fopen(const char * restrict path, const char * restrict mode)
 #endif
     FILE *ret = fopen(path, mode);
 #ifdef _WIN32
-#pragma warning pop
+#pragma warning( pop )
 #endif
     if (ret == NULL) {
         perror(path);
@@ -82,12 +82,12 @@ FILE *
 safe_freopen(const char *path, const char *mode, FILE *stream)
 {
 #ifdef _WIN32
-#pragma warning ( push )
+#pragma warning( push )
 #pragma warning( disable : 4996 )
 #endif
     FILE *ret = freopen(path, mode, stream);
 #ifdef _WIN32
-#pragma warning pop
+#pragma warning( pop )
 #endif
     if (ret == NULL) {
         perror("freopen");
