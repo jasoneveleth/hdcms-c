@@ -15,6 +15,7 @@
 // escape codes for terminals
 #define RED "\033[31m"
 #define GREEN "\033[32m"
+#define BOLD "\033[1m"
 #define RESET "\033[0m"
 
 #define WARNING(fmt, ...) fprintf(stderr, "%s:%d: " RED "WARNING: " RESET fmt, __FILE__, __LINE__, __VA_ARGS__)
@@ -90,7 +91,7 @@ double vec_min(const struct vec v);
 // uses a kahan summation to accumulate with quad precision
 double vec_sum(const struct vec v);
 // initializes a vector structure with data pointer
-struct vec vec_from_data(double *data, size_t len, int is_owner);
+struct vec vec_from_data(double data[], size_t len, int is_owner);
 // write vector to stdout
 void vec_printf(const struct vec v);
 // write vector to a file
@@ -168,7 +169,7 @@ struct matarray matarr_copy(const struct matarray old);
 // initializes empty matrix array of the length len
 struct matarray matarr_zeros(size_t len);
 // initializes a matrix array with data from pointer
-struct matarray matarr_from_data(struct matrix *data, size_t len, const bool is_owner);
+struct matarray matarr_from_data(struct matrix data[], size_t len, const bool is_owner);
 // destructor for matrix array
 void matarr_free(struct matarray arr);
 // print the matrix array to stdout
@@ -196,7 +197,7 @@ mat_get(const struct matrix m, size_t i, size_t j)
     return m.data[i * m.physlen + j];
 }
 // initalizes matrix from pointer
-struct matrix mat_from_data(double *data, size_t len1, size_t len2, size_t physlen, int is_owner);
+struct matrix mat_from_data(double data[], size_t len1, size_t len2, size_t physlen, int is_owner);
 // initalizes empty matrix of size (len1, len2)
 struct matrix mat_zeros(size_t len1, size_t len2);
 // destructor for matrix
