@@ -317,15 +317,11 @@ vec_square(struct vec v)
 struct vec
 vec_copy(const struct vec v)
 {
-    struct vec vcopy;
-    vcopy.data = safe_calloc(v.length, sizeof(double));
-    vcopy.is_owner = true;
-    vcopy.length = v.length;
-    vcopy.stride = 1;
+    double *data = safe_calloc(v.length, sizeof(double));
     for (size_t i = 0; i < v.length; i++) {
-        vec_set(vcopy, i, vec_get(v, i));
+        data[i] = vec_get(v, i);
     }
-    return vcopy;
+    return vec_from_data(data, v.length, true);
 }
 
 /*
@@ -602,7 +598,6 @@ vec_linspace(double start, double end, double num_steps)
 struct vec
 vec_fscanf(FILE *file)
 {
-    struct vec v;
     size_t len_of_vec = 0;
     size_t allocd = BUF_SIZE_INIT;
     double *data = safe_calloc(allocd, sizeof(double));
@@ -623,11 +618,7 @@ vec_fscanf(FILE *file)
         data[len_of_vec++] = ele;
         free(line);
     }
-    v.data = data;
-    v.is_owner = true;
-    v.length = len_of_vec;
-    v.stride = 1;
-    return v;
+    return vec_from_data(data, len_of_vec, true);
 }
 
 struct vec
@@ -688,14 +679,7 @@ mat_fscanf(FILE *file)
         num_rows++;
         free(line);
     }
-
-    struct matrix m;
-    m.data = data;
-    m.len1 = num_rows;
-    m.len2 = num_cols;
-    m.physlen = num_cols;
-    m.is_owner = true;
-    return m;
+    return mat_from_data(data, num_rows, num_cols, num_cols, true);
 }
 
 struct matrix
@@ -741,15 +725,12 @@ mat_copy(struct matrix m)
 struct matarray
 matarr_copy(const struct matarray old)
 {
-    struct matarray new;
-    new.length = old.length;
-    new.data = safe_calloc(old.length, sizeof(struct matrix));
-    new.is_owner = true;
+    struct matrix *data = safe_calloc(old.length, sizeof(struct matrix));
     for (size_t i = 0; i < old.length; i++)
     {
-        matarr_set(new, i, mat_copy(matarr_get(old, i)));
+        data[i] = mat_copy(matarr_get(old, i));
     }
-    return new;
+    return matarr_from_data(data, old.length, true);
 }
 
 void
@@ -763,10 +744,7 @@ vec_set_all(struct vec v, const double a)
 struct vec
 vec_from_col(const struct matrix m, const size_t col)
 {
-    struct vec v;
-    v.data = m.data + col;
-    v.is_owner = false;
-    v.length = m.len1;
+    struct vec v = vec_from_data(m.data + col, m.len1, false);
     v.stride = m.physlen;
     return v;
 }
@@ -774,12 +752,7 @@ vec_from_col(const struct matrix m, const size_t col)
 struct vec
 vec_from_row(const struct matrix m, const size_t row)
 {
-    struct vec v;
-    v.data = m.data + m.physlen * row;
-    v.is_owner = false;
-    v.length = m.len2;
-    v.stride = 1;
-    return v;
+    return vec_from_data(m.data + m.physlen * row, m.len2, false);
 }
 
 struct matarray
