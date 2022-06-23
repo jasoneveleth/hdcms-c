@@ -1,22 +1,11 @@
 #ifndef ARRAY_H
 #define ARRAY_H
+#include "../fixwindows.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
 #include <stdbool.h>
-
-#if !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(__APPLE__)
-#define flockfile (void)
-#define funlockfile (void)
-#define getc_unlocked getc
-#endif
-
-// escape codes for terminals
-#define RED "\033[31m"
-#define GREEN "\033[32m"
-#define BOLD "\033[1m"
-#define RESET "\033[0m"
 
 #define WARNING(fmt, ...) fprintf(stderr, "%s:%d: " RED "WARNING: " RESET fmt, __FILE__, __LINE__, __VA_ARGS__)
 

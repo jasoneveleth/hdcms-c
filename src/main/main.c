@@ -1,8 +1,3 @@
-#ifdef _WIN32
-// windows can't even compile its own headers without warnings (missing _WIN32_WINNT_WIN10_TH2, ...)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -293,11 +288,12 @@ main(int argc, char *argv[])
     else
         comparison = compare_2d(replicate_stats);
     matarr_free(replicate_stats);
-#ifdef _WIN32
-    print_comparison_no_utf8(comparison);
-#else
-    print_comparison(comparison);
-#endif
+
+    if (HAS_WINDOWS)
+        print_comparison_no_utf8(comparison);
+    else
+        print_comparison(comparison);
+
     mat_free(comparison);
     return 0;
 }

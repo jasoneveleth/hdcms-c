@@ -1,8 +1,4 @@
-#ifdef _WIN32
-// windows can't even compile its own headers without warnings (missing _WIN32_WINNT_WIN10_TH2, ...)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
+#include "../fixwindows.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -816,13 +812,13 @@ test_analytes_normal_1_1_1(void)
     return ret;
 }
 
-#ifdef __has_attribute
-#if __has_attribute(__format__)
 /* This makes compiler verify that `format` is a string literal.
  * The numbers are the index of the arguemnts starting from 1.
  * The (string literal) format is arg number 3, and the compiler should verify
  * the format literal against all the variadic args (which start at arg 4).
  */
+#ifdef __GNUC__
+#if __has_attribute(__format__)
 __attribute__((__format__ (__printf__, 3, 4)))
 #endif
 #endif
