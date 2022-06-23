@@ -1,12 +1,15 @@
 #ifndef ARRAY_H
 #define ARRAY_H
-#include "../fixwindows.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
 #include <stdbool.h>
 
+#if !defined(RED) || !defined(RESET)
+#define RED ""
+#define RESET ""
+#endif
 #define WARNING(fmt, ...) fprintf(stderr, "%s:%d: " RED "WARNING: " RESET fmt, __FILE__, __LINE__, __VA_ARGS__)
 
 // tolerance ratio
