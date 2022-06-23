@@ -1,5 +1,6 @@
 #ifndef ARRAY_H
 #define ARRAY_H
+#include "../fixwindows.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
