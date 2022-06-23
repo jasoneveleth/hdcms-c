@@ -106,7 +106,7 @@ struct vec vec_zeros(size_t len);
 size_t vec_argmax(const struct vec v);
 // destructor for vector
 void vec_free(struct vec v);
-// *mutates* vector by adding a constant a to each element
+// *mutates* vector by adding a constant `a` to each element
 void vec_add_const(struct vec v, const double a);
 // *mutates* vector v by element-wise subtracting values of u
 void vec_sub(struct vec v, struct vec u);
