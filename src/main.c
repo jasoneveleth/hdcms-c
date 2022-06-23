@@ -8,9 +8,9 @@
 #include <stdnoreturn.h>
 #include <getopt.h>
 #include "main.h"
-#include "../util/array.h"
-#include "../util/bin.h" // oned
-#include "../util/peak.h" // twod
+#include "util/array.h"
+#include "util/bin.h" // oned
+#include "util/peak.h" // twod
 
 #define DEFAULT_WIDTH (0.1)
 

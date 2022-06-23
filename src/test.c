@@ -1,17 +1,19 @@
-#include "../fixwindows.h"
+#include "fixwindows.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdarg.h>
 #include "test.h"
-#include "data/data.c"
-#include "../util/peak.h"
-#include "../util/array.h"
-#include "../util/bin.h"
+#include "../data/data.c"
+#include "util/peak.h"
+#include "util/array.h"
+#include "util/bin.h"
+
+typedef bool (*testfunc)(void);
 
 // path from current working directory of shell running the test executable
 // CANNOT INCLUDE '%' CHARACTER BECAUSE USED IN snprintf()
-#define TESTDATADIR "../src/test/data/"
+#define TESTDATADIR "../data/"
 
 static bool
 test_cos_sim_L2(void)

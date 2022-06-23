@@ -20,8 +20,8 @@ project(prob_mass_spec)
 set(TEST "test_runner")
 
 file(GLOB SRC_UTIL "src/util/*.c")
-file(GLOB SRC_TEST "src/test/*.c")
-file(GLOB SRC_MAIN "src/main/*.c")
+file(GLOB SRC_TEST "src/test.c")
+file(GLOB SRC_MAIN "src/main.c")
 
 add_executable(${TEST} ${SRC_UTIL} ${SRC_TEST})
 add_executable(${PROJECT_NAME} ${SRC_UTIL} ${SRC_MAIN})
