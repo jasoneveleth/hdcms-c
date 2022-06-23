@@ -21,7 +21,7 @@ static double width;
 static int mflag;
 
 noreturn static void
-usage() {
+usage(void) {
     printf("usage: %s [--1d|--2d] [-h] [-q] --list=path1[,path2,...] FILE ...\n", argv0);
     printf("\n");
     printf("The default mode is --2d, which is for high resolution spectra.\n");

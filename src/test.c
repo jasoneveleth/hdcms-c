@@ -3130,7 +3130,7 @@ simple(void)
     return 0 == 0;
 }
 
-int main() 
+int main(int argc, char *argv[])
 {
     int ret = EXIT_SUCCESS;
     testfunc tests[] = {
