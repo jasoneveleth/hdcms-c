@@ -27,9 +27,10 @@
 #define RESET "\033[0m"
 #endif
 
-#if !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(__APPLE__)
-#define flockfile (void)
-#define funlockfile (void)
+// assuming all non-windows are posix
+#ifdef _WIN32
+#define flockfile(x) do {} while (0)
+#define funlockfile(x) do {} while (0)
 #define getc_unlocked getc
 #endif
 
