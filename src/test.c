@@ -3132,6 +3132,12 @@ simple(void)
 
 int main(int argc, char *argv[])
 {
+    if (argc > 1) {
+        WARNING("%s\n", "too many parameters");
+        for (int i = 1; i < argc; i++) {
+            printf("ignored: %s\n", argv[i]);
+        }
+    }
     int ret = EXIT_SUCCESS;
     testfunc tests[] = {
         simple, 
