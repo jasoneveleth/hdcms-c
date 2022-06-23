@@ -109,21 +109,21 @@ void vec_free(struct vec v);
 // *mutates* vector by adding a constant `a` to each element
 void vec_add_const(struct vec v, const double a);
 // *mutates* vector v by element-wise subtracting values of u
-void vec_sub(struct vec v, struct vec u);
+void vec_sub(struct vec v, const struct vec u);
 // *mutates* vector v by element-wise squaring
 void vec_square(struct vec v);
 // *mutates* vector v by element-wise square-rooting
 void vec_sqrt(struct vec v);
 // *mutates* vector v by element-wise multiplying values of u
-void vec_multiply(struct vec v, struct vec u);
+void vec_multiply(struct vec v, const struct vec u);
 // *mutates* vector v by element-wise dividing values of u
-void vec_divide(struct vec v, struct vec u);
+void vec_divide(struct vec v, const struct vec u);
 // *mutates* vector v by raising each value to the power of Euler's constant e
 void vec_exp(struct vec v);
 // returns dot product of two vectors
 double vec_dot(const struct vec v, const struct vec u);
 // *mutates* vector v by element-wise addition of u
-void vec_add(struct vec v, struct vec u);
+void vec_add(struct vec v, const struct vec u);
 // returns a copy of vector v which has its own copied pointer
 struct vec vec_copy(const struct vec v);
 // returns the arithmetic mean of the elements of v

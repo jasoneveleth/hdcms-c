@@ -369,7 +369,7 @@ vec_std(const struct vec v)
 }
 
 void 
-vec_multiply(struct vec v, struct vec u)
+vec_multiply(struct vec v, const struct vec u)
 {
     if (v.length != u.length) {
         WARNING("%s: incorrect dims\n\t%zu > %zu\n", __func__, v.length, u.length);
@@ -396,7 +396,7 @@ vec_dot(const struct vec v, const struct vec u)
 }
 
 void 
-vec_divide(struct vec v, struct vec u)
+vec_divide(struct vec v, const struct vec u)
 {
     if (v.length != u.length) {
         WARNING("%s: incorrect dims\n\t%zu > %zu\n", __func__, v.length, u.length);
@@ -408,7 +408,7 @@ vec_divide(struct vec v, struct vec u)
 }
 
 void 
-vec_add(struct vec v, struct vec u)
+vec_add(struct vec v, const struct vec u)
 {
     if (v.length != u.length) {
         WARNING("%s: incorrect dims\n\t%zu > %zu\n", __func__, v.length, u.length);
@@ -420,7 +420,7 @@ vec_add(struct vec v, struct vec u)
 }
 
 void
-vec_sub(struct vec v, struct vec u)
+vec_sub(struct vec v, const struct vec u)
 {
     if (v.length != u.length) {
         WARNING("%s: incorrect dims\n\t%zu > %zu\n", __func__, v.length, u.length);
