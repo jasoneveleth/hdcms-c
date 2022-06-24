@@ -64,6 +64,7 @@ suppress_stderr(void) {
     return ret;
 }
 
+// set stderr to `fd`
 static void
 resume_stderr(int fd) {
     int stderr_fileno = fileno(stderr);

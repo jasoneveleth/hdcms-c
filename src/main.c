@@ -169,6 +169,11 @@ print_comparison(const struct matrix m)
 static void
 print_comparison_no_utf8(const struct matrix m)
 {
+    printf("------");
+    for (size_t i = 0; i < m.len1; i++) {
+        printf("-----------");
+    }
+
     printf("|%4s|", "x");
     for (size_t i = 0; i < m.len1; i++) {
         printf("%10zu|", i);
@@ -188,6 +193,11 @@ print_comparison_no_utf8(const struct matrix m)
             printf(" %8.6f |", mat_get(m, i, j));
         }
         printf("\n");
+    }
+
+    printf("------");
+    for (size_t i = 0; i < m.len1; i++) {
+        printf("-----------");
     }
 }
 
