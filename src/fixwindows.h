@@ -7,12 +7,6 @@
 #define NULL_DEVICE "/dev/null"
 #endif
 
-// windows can't even compile its own headers without warnings (missing _WIN32_WINNT_WIN10_TH2, ...)
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
 #ifdef _WIN32
 #define RED ""
 #define GREEN ""
@@ -33,15 +27,21 @@
 #endif
 
 #ifdef _WIN32
-#include <io.h>
-#define open _open
-#define close _close
-#endif
-
-#ifdef _WIN32
 #define HAS_WINDOWS 1
 #else
 #define HAS_WINDOWS 0
+#endif
+
+// windows can't even compile its own headers without warnings (missing _WIN32_WINNT_WIN10_TH2, ...)
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <unistd.h>
 #endif
 
 #endif // FIXWINDOWS_H

@@ -3,9 +3,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdarg.h>
-#ifndef _WIN32
-#include <unistd.h>
-#endif
 #include <fcntl.h>
 #include "test.h"
 #include "../data/data.c"
