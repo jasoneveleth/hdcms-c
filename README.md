@@ -1,22 +1,4 @@
-# Note on stability
-
-One of the issues with the 1D case is the fact that we are
-binning. It isn't a problem in teh way you expect: that there is
-something you miss by having important stuff between bins (also
-the fact that our algorithm doesn't select the max, but rather
-the last number in the bin). The problem is the `linspace()`
-function. If you don't have bit perfect doubles coming out of
-your `linspace` function you get very different results. For
-example, MATLAB uses a different `linspace` than the one you
-would expect (multiplying the step size), or the one that you
-would next expect (addition of stepsize), or the next (symmetric
-subtraction of multiples of stepsize). So if the library used one
-linspace and you're using another to decide bins (even with the
-same spacing and stuff) produces very different `spec_vec`s.
-
-The problem was I was calculating elements of the linspace using
-`i * ((end - start) / (n - 1))`, MATLAB was using 
-`(i * (end - start)) / (n - 1)`.
+# High Dimensional Consensus Mass Spec - HDCMS
 
 # Install
 
@@ -32,7 +14,7 @@ $ cd build
 $ cmake ..
 $ make
 $ ./test_runner
-$ ./prob_mass_spec
+$ ./hdcms --1d --list=compound1,compound2 compounds_list
 ```
 
 ## Windows
@@ -61,9 +43,9 @@ Then run this in powershell
 > mkdir build
 > cd build
 > cmake ..
-> msbuild prob_mass_spec.sln
+> msbuild high_dimensional_consensus_mass_spec.sln
 > .\test_runner
-> .\prob_mass_spec
+> .\hdcms --1d --list=compound1,compound2 compounds_list
 ```
 
 Notes: Probably irrelevant, but in order to compile something on its own using `cl` (without cmake and everything that is setup for this project), I needed to set up these environmental variables:
@@ -120,4 +102,24 @@ smallest stack space I can find of 128KB).
 
 Possibly try binning and taking the max rather than the most
 recent measurement in `spec_vec`.
+
+# Note on stability
+
+One of the issues with the 1D case is the fact that we are
+binning. It isn't a problem in teh way you expect: that there is
+something you miss by having important stuff between bins (also
+the fact that our algorithm doesn't select the max, but rather
+the last number in the bin). The problem is the `linspace()`
+function. If you don't have bit perfect doubles coming out of
+your `linspace` function you get very different results. For
+example, MATLAB uses a different `linspace` than the one you
+would expect (multiplying the step size), or the one that you
+would next expect (addition of stepsize), or the next (symmetric
+subtraction of multiples of stepsize). So if the library used one
+linspace and you're using another to decide bins (even with the
+same spacing and stuff) produces very different `spec_vec`s.
+
+The problem was I was calculating elements of the linspace using
+`i * ((end - start) / (n - 1))`, MATLAB was using 
+`(i * (end - start)) / (n - 1)`.
 
