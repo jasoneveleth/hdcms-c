@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.13.4)
 
-# this is required for cross compilation for some reason
-set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
-
 IF(WIN32)
     # std:c17 (or something recent) is needed for `noreturn`
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall /std:c17 /O2 /Zi")
@@ -18,21 +15,22 @@ ENDIF()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ".")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ".")
 
-project(prob_mass_spec)
+project(high_dimensional_consensus_mass_spec)
 set(TEST "test_runner")
+set(MAIN "hdcms")
 
 file(GLOB SRC_UTIL "src/util/*.c")
 file(GLOB SRC_TEST "src/test.c")
 file(GLOB SRC_MAIN "src/main.c")
 
 add_executable(${TEST} ${SRC_UTIL} ${SRC_TEST})
-add_executable(${PROJECT_NAME} ${SRC_UTIL} ${SRC_MAIN})
+add_executable(${MAIN} ${SRC_UTIL} ${SRC_MAIN})
 
 
 # link with math library
 find_library(MATHLIB m)
 if(MATHLIB)
     target_link_libraries(${TEST} PUBLIC m)
-    target_link_libraries(${PROJECT_NAME} PUBLIC m)
+    target_link_libraries(${MAIN} PUBLIC m)
 endif()
 
