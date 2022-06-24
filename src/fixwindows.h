@@ -3,10 +3,8 @@
 
 #ifdef _WIN32
 #define NULL_DEVICE "NUL:"
-#define CONSOLE "CON:"
 #else
 #define NULL_DEVICE "/dev/null"
-#define CONSOLE "/dev/tty"
 #endif
 
 // windows can't even compile its own headers without warnings (missing _WIN32_WINNT_WIN10_TH2, ...)

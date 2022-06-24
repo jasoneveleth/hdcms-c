@@ -3,6 +3,10 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdarg.h>
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+#include <fcntl.h>
 #include "test.h"
 #include "../data/data.c"
 #include "util/peak.h"
@@ -14,6 +18,60 @@ typedef bool (*testfunc)(void);
 // path from current working directory of shell running the test executable
 // CANNOT INCLUDE '%' CHARACTER BECAUSE USED IN snprintf()
 #define TESTDATADIR "../data/"
+
+/* This makes compiler verify that `format` is a string literal.
+ * The numbers are the index of the arguemnts starting from 1.
+ * The (string literal) format is arg number 3, and the compiler should verify
+ * the format literal against all the variadic args (which start at arg 4).
+ */
+#ifdef __GNUC__
+#if __has_attribute(__format__)
+__attribute__((__format__ (__printf__, 3, 4)))
+#endif
+#endif
+static size_t 
+safe_snprintf(char *restrict buf, size_t size, const char *restrict format, ...)
+{
+    int result;
+    va_list args;
+
+    va_start(args, format);
+    result = vsnprintf(buf, size, format, args);
+    if (result < 0) {
+        fprintf(stderr, "%s:%d: snprintf error\n", __FILE__, __LINE__);
+        perror("snprintf");
+        abort();
+    }
+    va_end(args);
+
+    return (size_t)result;
+}
+
+// replaces stderr with null device, returns the new file descriptor for stderr
+static int 
+suppress_stderr(void) {
+    int stderr_fileno = fileno(stderr);
+
+    int ret = dup(stderr_fileno);
+    int nullfd = open(NULL_DEVICE, O_WRONLY);
+    if (nullfd == -1) {
+        WARNING("%s", "");
+        perror("open " NULL_DEVICE);
+    }
+    dup2(nullfd, stderr_fileno);
+    close(nullfd);
+
+    return ret;
+}
+
+static void
+resume_stderr(int fd) {
+    int stderr_fileno = fileno(stderr);
+    dup2(fd, stderr_fileno);
+    close(fd);
+}
+
+// ==================+ END OF HELPER FUNCTIONS +==================
 
 static bool
 test_cos_sim_L2(void)
@@ -615,9 +673,9 @@ test_edgecase_0_peak_stat(void)
 {
     printf(__func__);
     struct matarray m = matarr_zeros(0);
-    safe_freopen(NULL_DEVICE, "w", stderr);
+    int fd = suppress_stderr();
     struct matrix output = peak_stat(m, 5);
-    safe_freopen(CONSOLE, "w", stderr);
+    resume_stderr(fd);
     bool ret = output.len1 == 0 && output.len2 == 0;
     matarr_free(m);
     return ret;
@@ -630,9 +688,9 @@ test_edge_case_0_peak_sim(void)
     struct matrix m = {0, 0, 0, NULL, false};
     double ndata[] = {420, 69, 0, 0};
     struct matrix n = {1, 4, 4, ndata, false};
-    safe_freopen(NULL_DEVICE, "w", stderr);
+    int fd = suppress_stderr();
     double d = peak_sim_measure_L2(m, n, 5);
-    safe_freopen(CONSOLE, "w", stderr);
+    resume_stderr(fd);
     return equals(d, 0);
 }
 
@@ -643,9 +701,9 @@ test_edge_case_0_peak_sim(void)
 //     printf(__func__);
 //     struct vec v = {0, 0, NULL, false};
 //     struct vec u = {0, 0, NULL, false};
-//     safe_freopen(NULL_DEVICE, "w", stderr);
+//     int fd = suppress_stderr();
 //     double d = cos_sim_L2(u, v);
-//     safe_freopen(CONSOLE, "w", stderr);
+//     resume_stderr(fd);
 //     return equals(d, 0);
 // }
 
@@ -812,34 +870,6 @@ test_analytes_normal_1_1_1(void)
     bool ret = mat_equal(m, n);
     mat_free(m);
     return ret;
-}
-
-/* This makes compiler verify that `format` is a string literal.
- * The numbers are the index of the arguemnts starting from 1.
- * The (string literal) format is arg number 3, and the compiler should verify
- * the format literal against all the variadic args (which start at arg 4).
- */
-#ifdef __GNUC__
-#if __has_attribute(__format__)
-__attribute__((__format__ (__printf__, 3, 4)))
-#endif
-#endif
-static size_t 
-safe_snprintf(char *restrict buf, size_t size, const char *restrict format, ...)
-{
-    int result;
-    va_list args;
-
-    va_start(args, format);
-    result = vsnprintf(buf, size, format, args);
-    if (result < 0) {
-        fprintf(stderr, "%s:%d: snprintf error\n", __FILE__, __LINE__);
-        perror("snprintf");
-        abort();
-    }
-    va_end(args);
-
-    return (size_t)result;
 }
 
 static bool
