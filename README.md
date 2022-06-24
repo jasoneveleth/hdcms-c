@@ -44,6 +44,8 @@ For me they were:
 * `C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin`
 * `C:\Program File\CMake\bin`
 * `C:\Program Files\Git\bin`
+* optional (unix tools): `C:\Program Files\Git\usr\bin`
+* optional (cl): `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\bin\Hostx64\x64`
 
 Then download [getopt.h from here](https://raw.githubusercontent.com/skandhurkat/Getopt-for-Visual-Studio/master/getopt.h)
 , then place it where your includes are, for me this was
@@ -73,25 +75,36 @@ So they might be helpful if things aren't working. Keep in mind that `cl` is in 
 
 # Design
 
-My `src/` directory is split up into 3 pieces: main (which has
-main.c -- functions associated with CLI), test (which has test.c
--- all the test functions), and util (which has array.c, bin.c,
-peak.c). I split them up like this so I could easily craft the
-cmake recipe for the two executables; I could use `util/*.c` and
-`main/*.c` for `prob_mass_spec`, and `util/*.c` and `test/*.c`
-for `test_runner`. This way we don't get different `main()`
-symbols when we're linking.
+My `src/` directory has `main.c` (functions associated with CLI),
+`test.c` (all the test functions), and `util/` (which has array.c,
+bin.c, peak.c). 
 
-In `util/`, I have my array library `array.c`. In `bin.c` I have
+In `src/util/`, I have my array library `array.c`. In `bin.c` I have
 the functions associated with the low resolution data; the
 similarity function there is `prob_dot_prod`. In `peak.c` I have
 the functions associated with the high resolution data; the
 similarity function there is `peak_sim_measure_L2`.
 
-Inside `test/data/` are all the text files with data in them.
+Inside `data/` are all the text files with data in them.
 Also, there's one c file, `data.c`, which is included in
 `test.c`. It has all the arrays that I didn't want cluttering up
 my test file.
+
+## Parameters
+
+For most of the functions I pass the struct by value. One
+advantage to this is that the callee can't edit the fields of
+the struct in the caller (although if those fields are pointers,
+it can modify what it pointed to). Another advantage is you don't
+need to NULL check for proper defensive programming because you
+know that you are recieving a struct. The only
+disadvantage is if you don't need all the fields of the struct
+then the compiler is copying extra things onto the stack, which
+could cause a stack overflow if you only have 4KB of stack space
+(maximum depth of 10, say 10 matrix structs on the stack for each
+call (40 bytes each) ~4000 bytes, but this is a generous
+upperbound), but a stack that small is unlikely (musl c has the
+smallest stack space I can find of 128KB).
 
 # Increasing performance
 
@@ -104,17 +117,6 @@ my test file.
 * align malloc and realloc of large arrays -- probably doesn't matter
 * cache a 9000 `vec_arange` and reuse it, or make one even bigger
   and just make the lenght of the vector stop before the end
-* mmap file / read (gnu wc method) in blocks rather than
-  `read_line()` from it
-  [1](https://stackoverflow.com/questions/17925051/fast-textfile-reading-in-c)
-  [2](https://stackoverflow.com/questions/17465061/how-to-parse-space-separated-floats-in-c-quickly/17479702#17479702)
-
-## BLAS
-
-* [ATLAS install](http://math-atlas.sourceforge.net/atlas_install/)
-* [ATLAS FAQ](http://math-atlas.sourceforge.net/faq.html)
-* [STACKOVERFLOW BLAS](https://stackoverflow.com/questions/1303182/how-does-blas-get-such-extreme-performance)
-* [BLIS](https://www.cs.utexas.edu/users/flame/pubs/blis1_toms_rev3.pdf)
 
 Possibly try binning and taking the max rather than the most
 recent measurement in `spec_vec`.
