@@ -6,8 +6,10 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 IF(WIN32)
     # std:c17 (or something recent) is needed for `noreturn`
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall /std:c17 /O2 /Zi")
-    # 4820: struct padding, 4068: unknown pragma, 5045: spectre mitigation, 4996: unsafe system calls, 4464: '..' in include path
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4820 /wd4068 /wd5045 /wd4996 /wd4464")
+    # 4820: struct padding, 4068: unknown pragma, 5045: spectre mitigation,
+    # 4996: unsafe system calls, 4464: '..' in include path, 
+    # 4706: assignment in conditional
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4820 /wd4068 /wd5045 /wd4996 /wd4464 /wd4706")
 ELSE()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -O2 -fno-omit-frame-pointer -g")
 ENDIF()
