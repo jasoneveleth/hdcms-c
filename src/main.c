@@ -173,6 +173,7 @@ print_comparison_no_utf8(const struct matrix m)
     for (size_t i = 0; i < m.len1; i++) {
         printf("-----------");
     }
+    printf("\n");
 
     printf("|%4s|", "x");
     for (size_t i = 0; i < m.len1; i++) {
@@ -199,6 +200,7 @@ print_comparison_no_utf8(const struct matrix m)
     for (size_t i = 0; i < m.len1; i++) {
         printf("-----------");
     }
+    printf("\n");
 }
 
 int 
