@@ -103,6 +103,48 @@ smallest stack space I can find of 128KB).
 Possibly try binning and taking the max rather than the most
 recent measurement in `spec_vec`.
 
+only calculate half the table and write to both addresses at the same time
+
+## Flame graphs
+
+### Linux
+
+Setup: 
+
+```bash
+$ git clone git@github.com:brendangregg/FlameGraph
+$ cd /path/to/bin
+$ ln -s /path/to/FlameGraph/stackcollapse-perf.pl
+$ ln -s /path/to/FlameGraph/flamegraph.pl
+```
+
+Record and visualize:
+
+```
+$ # -F 99 so we don't sample at a regular interval, idk why -g. \
+  # Also, I has to allow myself to use `perf` without sudo by   \
+  # running `sudo visudo` and adding `NOPASSWD: /bin/perf` after\
+  # the `ALL= ` for my user's entry. If you can't do this, then \
+  # just `chown` the `perf.data` file.                          \
+$ perf record -F 99 -g -- ./test_runner
+$ perf script | stackcollapse-perf.pl > out.perf-folded
+$ flamegraph.pl out.perf-folded > perf.svg
+$ # then open up the svg in a browser and click around to zoom in
+```
+
+### Windows
+
+Setup: download Windows Performance Recorder and Windows
+Performance Analyzer.
+
+Then open Windows Performance Recorder and click Start. Then run
+the powershell command `./test_runner` or whatever you are
+profiling. Name the file. Open the file in Windows Performance 
+Analyzer. Go to Trace > Load Symbols, this may take like 10
+minutes. Then go to Computation > CPU Usage (Sampled) > Flame by
+Process. Right click on an entry in the flame graph and select
+Filter To Flame to zoom in.
+
 # Note on stability
 
 One of the issues with the 1D case is the fact that we are
