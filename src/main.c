@@ -81,18 +81,18 @@ filenames_to_stats(char *str)
         matarr_set(arr, i, m);
     }
     arr.length = i; // wastes some of the malloc'd mem but that's okay
-    struct matrix ret;
+    struct matrix stats;
     if (mflag == ONED) {
-        ret = bin_stat_1D(arr, width);
+        stats = bin_stat_1D(arr, width);
     } else if (mflag == TWOD) {
         size_t n = matarr_get(arr, 0).len1; // >= longest possible length
-        ret = peak_stat(arr, n);
+        stats = peak_stat(arr, n);
     } else {
         printf("\n");
         usage();
     }
     matarr_free(arr);
-    return ret;
+    return stats;
 }
 
 static void
@@ -114,16 +114,16 @@ list_file(const char *const filename, const struct matarray arr, const size_t i)
     fclose(fileptr);                     // Close the file
     buffer[len] = '\0';                  // NUL terminate the string
 
-    struct matrix bin_stats = filenames_to_stats(buffer);
+    struct matrix stats = filenames_to_stats(buffer);
     free(buffer);
-    matarr_set(arr, i, bin_stats);
+    matarr_set(arr, i, stats);
 }
 
 static void
 list_option(char *str, struct matarray arr, const size_t i)
 {
-    struct matrix bin_stats = filenames_to_stats(str);
-    matarr_set(arr, i, bin_stats);
+    struct matrix stats = filenames_to_stats(str);
+    matarr_set(arr, i, stats);
 }
 
 static void
