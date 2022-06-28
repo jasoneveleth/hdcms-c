@@ -1,5 +1,18 @@
 # High Dimensional Consensus Mass Spec - HDCMS
 
+# TODO
+
+[minmax](https://data.nist.gov/od/id/mds2-2418)
+
+### python bindings
+
+* https://dev.to/erikwhiting88/how-to-use-c-functions-in-python-7do
+* http://docs.cython.org/en/latest/src/userguide/external_C_code.html
+* https://stavshamir.github.io/python/making-your-c-library-callable-from-python-by-wrapping-it-with-cython/
+* https://medium.com/@mliuzzolino/wrapping-c-with-python-in-5-minutes-cdd1124f5c01
+* https://intermediate-and-advanced-software-carpentry.readthedocs.io/en/latest/c++-wrapping.html
+* https://docs.python.org/3/extending/extending.htmlhttps://opensource.com/article/19/5/how-write-good-c-main-function[how to write a good c main function]
+
 # Install
 
 ## Unix (mac and linux)
