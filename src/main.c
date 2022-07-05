@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <stdnoreturn.h>
 #include <getopt.h>
 #include "main.h"
 #include "util/array.h"
@@ -17,7 +16,7 @@ static char *argv0;
 static double width;
 static int mflag;
 
-noreturn static void
+static void
 usage(void) {
     printf("usage: %s [--1d|--2d] [-h] [-q] --list=path1[,path2,...] FILE ...\n", argv0);
     printf("\n");
