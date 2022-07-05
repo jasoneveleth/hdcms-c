@@ -44,4 +44,10 @@
 #include <unistd.h>
 #endif
 
+#ifdef _WIN32
+#include <stdnoreturn.h>
+#else
+#define noreturn
+#endif
+
 #endif // FIXWINDOWS_H

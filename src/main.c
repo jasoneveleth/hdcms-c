@@ -16,7 +16,7 @@ static char *argv0;
 static double width;
 static int mflag;
 
-static void
+noreturn static void
 usage(void) {
     printf("usage: %s [--1d|--2d] [-h] [-q] --list=path1[,path2,...] FILE ...\n", argv0);
     printf("\n");
