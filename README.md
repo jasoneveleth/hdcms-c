@@ -11,36 +11,34 @@
 * https://stavshamir.github.io/python/making-your-c-library-callable-from-python-by-wrapping-it-with-cython/
 * https://medium.com/@mliuzzolino/wrapping-c-with-python-in-5-minutes-cdd1124f5c01
 * https://intermediate-and-advanced-software-carpentry.readthedocs.io/en/latest/c++-wrapping.html
-* https://docs.python.org/3/extending/extending.htmlhttps://opensource.com/article/19/5/how-write-good-c-main-function[how to write a good c main function]
+* https://docs.python.org/3/extending/extending.html
 
 # Install
 
 ## Unix (mac and linux)
 
-Install cmake and git.
+Install cmake and git. Then, run this in your shell:
 
 ```bash
-$ git clone https://gitlab.nist.gov/gitlab/jje4/hdcms.git
-$ cd hdcms
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make
-$ ./test_runner
-$ ./hdcms --1d --list=compound1,compound2 compounds_list
+git clone https://gitlab.nist.gov/gitlab/jje4/hdcms.git
+cd hdcms
+mkdir build
+cd build
+cmake ..
+make
+./test_runner
+./hdcms --1d --list=compound1,compound2 compounds_list
 ```
 
 ## Windows
 
-Download Git, CMake, and Visual Studio (with C++ CMake tools for Windows,
-and the latest SDK). Add MSBuild, CMake, and Git to your path.
-For me they were:
+You can use WSL (Windows Subsystem for Linux), and use the
+unix instructions above, or follow these directions:
 
-* `C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin`
-* `C:\Program File\CMake\bin`
-* `C:\Program Files\Git\bin`
-* optional (unix tools): `C:\Program Files\Git\usr\bin`
-* optional (cl): `C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\bin\Hostx64\x64`
+Download Git and Visual Studio (with C++ CMake tools for Windows,
+and the latest SDK). Add MSBuild, CMake, and Git to your system
+path (if you don't want to do that, the lines with `$env` on it
+will fix it).
 
 Then download [getopt.h from here](https://raw.githubusercontent.com/skandhurkat/Getopt-for-Visual-Studio/master/getopt.h)
 , then place it where your includes are, for me this was
@@ -48,25 +46,45 @@ Then download [getopt.h from here](https://raw.githubusercontent.com/skandhurkat
 But I think you can go into Visual Studio and use the VC folder
 too.
 
-Then run this in powershell
+Then run this in powershell:
 
 ```powershell
-> git clone https://gitlab.nist.gov/gitlab/jje4/hdcms.git
-> cd hdcms
-> mkdir build
-> cd build
-> cmake ..
-> msbuild high_dimensional_consensus_mass_spec.sln
-> .\test_runner
-> .\hdcms --1d --list=compound1,compound2 compounds_list
+$env:PATH += ";C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin
+$env:PATH += ";C:\Program Files\Git\bin
+$env:PATH += ";C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Cmake\bin"
+# optional (unix tools): $env:PATH += ";C:\Program Files\Git\usr\bin"
+# optional (cl): $env:PATH += ";C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\bin\Hostx64\x64"
+git clone https://gitlab.nist.gov/gitlab/jje4/hdcms.git
+cd hdcms
+mkdir build
+cd build
+cmake ..
+msbuild high_dimensional_consensus_mass_spec.sln
+.\test_runner
+.\hdcms --1d --list=compound1,compound2 compounds_list
 ```
 
-Notes: Probably irrelevant, but in order to compile something on its own using `cl` (without cmake and everything that is setup for this project), I needed to set up these environmental variables:
-```
-> $env:INCLUDE = "C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\winrt;"
-> $env:LIB = "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\ucrt\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\lib\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x64;"
+If you get a 'command not found'-like looking error, then one of
+the things (cmake, msbuild, or git) isn't in your path. Install
+WSL and use the unix instructions or you'll need to hunt around
+in your directory inside `Program Files` to find the right
+binaries. You can use File Explorer to search, or look at the
+paths I provided and try to adjust them to your situation. Good
+luck!
+
+<details>
+<summary>Debugging compiler</summary>
+Notes: Probably irrelevant, but in order to compile something on
+its own using `cl` (without cmake and everything that is setup
+for this project), I needed to set up these environmental
+variables (run in powershell):
+
+```powershell
+$env:INCLUDE = "C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\include;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um;C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\winrt;"
+$env:LIB = "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\ucrt\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\lib\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um\x64;"
 ```
 So they might be helpful if things aren't working.
+</details>
 
 # Design
 
