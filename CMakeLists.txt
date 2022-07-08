@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.13.4)
 
+
 IF(WIN32)
     # std:c17 (or something recent) is needed for `noreturn`
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /Wall /std:c17 /O2 /Zi")
@@ -7,8 +8,10 @@ IF(WIN32)
     # 4996: unsafe system calls, 4464: '..' in include path, 
     # 4706: assignment in conditional
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /wd4820 /wd4068 /wd5045 /wd4996 /wd4464 /wd4706")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DDATA_DIR=\\\"${CMAKE_SOURCE_DIR}/data/\\\"")
 ELSE()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wpedantic -O2 -fno-omit-frame-pointer -g")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDATA_DIR=\\\"${CMAKE_SOURCE_DIR}/data/\\\"")
 ENDIF()
 
 # Make excecutables output into current directory in both debug and release build modes (default on unix)

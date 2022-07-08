@@ -14,7 +14,9 @@ typedef bool (*testfunc)(void);
 
 // path from current working directory of shell running the test executable
 // CANNOT INCLUDE '%' CHARACTER BECAUSE USED IN snprintf()
-#define TESTDATADIR "../data/"
+#ifndef DATA_DIR
+#define DATA_DIR "../data/"
+#endif
 
 /* This makes compiler verify that `format` is a string literal.
  * The numbers are the index of the arguemnts starting from 1.
@@ -374,7 +376,7 @@ static bool
 test_vec_read_simple(void)
 {
     printf(__func__);
-    struct vec output = vec_from_file(TESTDATADIR "vec_read_simple.txt");
+    struct vec output = vec_from_file(DATA_DIR "vec_read_simple.txt");
     double data[] = {728, 283910, 812931, 72891};
     struct vec sol = vec_from_data(data, 4, false);
     bool ret = vec_equal(output, sol);
@@ -546,7 +548,7 @@ static bool
 test_vec_read_real(void)
 {
     printf(__func__);
-    struct vec output = vec_from_file(TESTDATADIR "vec_read_real.txt");
+    struct vec output = vec_from_file(DATA_DIR "vec_read_real.txt");
     double data[] = {
         9.192224975486361e-05,
         1.600568648962115e-04,
@@ -709,7 +711,7 @@ static bool
 test_read_line_w_newline(void) 
 {
     printf(__func__);
-    FILE *file = safe_fopen(TESTDATADIR "vec_read_simple.txt", "r");
+    FILE *file = safe_fopen(DATA_DIR "vec_read_simple.txt", "r");
     char *line = read_line(file);
     fclose(file);
     char *correct = "728";
@@ -722,7 +724,7 @@ static bool
 test_read_line_wo_newline(void) 
 {
     printf(__func__);
-    FILE *file = safe_fopen(TESTDATADIR "oneline.txt", "r");
+    FILE *file = safe_fopen(DATA_DIR "oneline.txt", "r");
     char *line = read_line(file);
     fclose(file);
     char *correct = "23.324872 378.3247832";
@@ -735,7 +737,7 @@ static bool
 test_read_vec_no_eof_eol(void)
 {
     printf(__func__);
-    struct vec v = vec_from_file(TESTDATADIR "no_newline.txt");
+    struct vec v = vec_from_file(DATA_DIR "no_newline.txt");
     double vdata[] = {
         34832749324832,
         32874789327894,
@@ -750,7 +752,7 @@ static bool
 test_mat_read_no_extra_newln_ints(void)
 {
     printf(__func__);
-    struct matrix m = mat_from_file(TESTDATADIR "mat_no_extra_newln_ints.txt");
+    struct matrix m = mat_from_file(DATA_DIR "mat_no_extra_newln_ints.txt");
     double ndata[] = {
         7, 62, 40, 1,
         75, 92, 31, 12,
@@ -767,7 +769,7 @@ static bool
 test_mat_read_blank_lines_ints(void)
 {
     printf(__func__);
-    struct matrix m = mat_from_file(TESTDATADIR "mat_blank_line_ints.txt");
+    struct matrix m = mat_from_file(DATA_DIR "mat_blank_line_ints.txt");
     double ndata[] = {
         7, 62, 40, 1,
         75, 92, 31, 12,
@@ -784,7 +786,7 @@ static bool
 test_mat_read_ints(void)
 {
     printf(__func__);
-    struct matrix m = mat_from_file(TESTDATADIR "mat_ints.txt");
+    struct matrix m = mat_from_file(DATA_DIR "mat_ints.txt");
     double ndata[] = {
         7, 62, 40, 1,
         75, 92, 31, 12,
@@ -801,7 +803,7 @@ static bool
 test_mat_read_trailing_white_space(void)
 {
     printf(__func__);
-    struct matrix m = mat_from_file(TESTDATADIR "mat_trailing_white_space.txt");
+    struct matrix m = mat_from_file(DATA_DIR "mat_trailing_white_space.txt");
     double ndata[] = {
         5, 4, 10,
         1, 3, 8
@@ -816,7 +818,7 @@ static bool
 test_mat_read_leading_white_space(void)
 {
     printf(__func__);
-    struct matrix m = mat_from_file(TESTDATADIR "mat_leading_white_space.txt");
+    struct matrix m = mat_from_file(DATA_DIR "mat_leading_white_space.txt");
     double ndata[] = {
         5, 4, 10,
         1, 3, 8
@@ -831,7 +833,7 @@ static bool
 test_analytes_normal_1_1_1(void)
 {
     printf(__func__);
-    struct matrix m = mat_from_file(TESTDATADIR "analytes_normal_1_1_1.txt");
+    struct matrix m = mat_from_file(DATA_DIR "analytes_normal_1_1_1.txt");
     double ndata[] = {
         9.806176300000000e+01, 3.145928075948926e-03,
         1.460602040000000e+02, 2.329312500803309e-03,
@@ -894,10 +896,10 @@ test_similarity_analysis(void)
             // this loop reads the 5 replicates into `replicates`
             for (size_t k = 0; k < 5; k++) {
                 // calling with NULL returns the length of the string
-                size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
+                size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
                 char *buf = safe_calloc(bufsz + 1, sizeof(char));
 
-                safe_snprintf(buf, bufsz + 1, TESTDATADIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
+                safe_snprintf(buf, bufsz + 1, DATA_DIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
                 struct matrix m = mat_from_file(buf);
                 free(buf);
 
@@ -927,7 +929,7 @@ test_mat_read_cm_data(void)
 {
     printf(__func__);
     struct matrix m = mat_from_data(cm1_1_4, 231, 2, 2, 0);
-    struct matrix k = mat_from_file(TESTDATADIR "CM1_1_4.txt");
+    struct matrix k = mat_from_file(DATA_DIR "CM1_1_4.txt");
     bool ret = mat_equal(k, m);
     mat_free(k);
     mat_free(m);
@@ -938,7 +940,7 @@ static bool
 test_scaled_data(void)
 {
     printf(__func__);
-    struct matrix m = mat_from_file(TESTDATADIR "CM1_1_4.txt");
+    struct matrix m = mat_from_file(DATA_DIR "CM1_1_4.txt");
     struct matrix sol = mat_from_data(cm1_1_4_scaled, 231, 2, 2, 0);
     scaled_data(m);
     bool ret = mat_equal(m, sol);
@@ -951,9 +953,9 @@ test_spec_vec(void)
 {
     printf(__func__);
 
-    struct vec sol = vec_from_file(TESTDATADIR "spec_vec_CM1_1_4.txt");
+    struct vec sol = vec_from_file(DATA_DIR "spec_vec_CM1_1_4.txt");
 
-    struct matrix m = mat_from_file(TESTDATADIR "CM1_1_4.txt");
+    struct matrix m = mat_from_file(DATA_DIR "CM1_1_4.txt");
 
     scaled_data(m);
     struct vec v = spec_vec(m, 0.1);
@@ -970,15 +972,15 @@ test_spec_vec_all(void)
     printf(__func__);
     bool ret = true;
     for (size_t i = 0; i < 10; i++) {
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         struct vec sol = vec_from_file(filename);
         free(filename);
 
-        bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         struct matrix m = mat_from_file(filename);
         free(filename);
 
@@ -998,18 +1000,18 @@ test_spec_vec_all_matarr(void)
     printf(__func__);
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         matarr_set(A, i, mat_from_file(filename));
         free(filename);
     }
 
     bool ret = true;
     for (size_t i = 0; i < 10; i++) {
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "spec_vec_CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         struct vec sol = vec_from_file(filename);
         free(filename);
 
@@ -1029,14 +1031,14 @@ test_bin_stat(void)
 {
     printf(__func__);
 
-    struct matrix sol = mat_from_file(TESTDATADIR "bin_stats_CM1_1.txt");
+    struct matrix sol = mat_from_file(DATA_DIR "bin_stats_CM1_1.txt");
 
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1061,9 +1063,9 @@ test_prob_dot_prob_through(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1075,9 +1077,9 @@ test_prob_dot_prob_through(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1100,9 +1102,9 @@ test_prob_dot_prob(void)
     printf(__func__);
     double sol = 0.034024882840827;
 
-    struct matrix bin_stats_1 = mat_from_file(TESTDATADIR "bin_stats_CM1_1.txt");
+    struct matrix bin_stats_1 = mat_from_file(DATA_DIR "bin_stats_CM1_1.txt");
 
-    struct matrix bin_stats_3 = mat_from_file(TESTDATADIR "bin_stats_CM1_3.txt");
+    struct matrix bin_stats_3 = mat_from_file(DATA_DIR "bin_stats_CM1_3.txt");
 
     double ans = prob_dot_prod(bin_stats_1, bin_stats_3);
     bool ret = equals(sol, ans);
@@ -1116,9 +1118,9 @@ test_CM1_25_and_CM1_28_prob_dot_prod(void)
 {
     printf(__func__);
     double sol = 0.041264598345041;
-    struct matrix bin_stats_25 = mat_from_file(TESTDATADIR "bin_stats_CM1_25.txt");
+    struct matrix bin_stats_25 = mat_from_file(DATA_DIR "bin_stats_CM1_25.txt");
 
-    struct matrix bin_stats_28 = mat_from_file(TESTDATADIR "bin_stats_CM1_28.txt");
+    struct matrix bin_stats_28 = mat_from_file(DATA_DIR "bin_stats_CM1_28.txt");
 
     bool ret = equals(sol, prob_dot_prod(bin_stats_25, bin_stats_28));
     mat_free(bin_stats_25);
@@ -1130,16 +1132,16 @@ static bool
 test_spec_vec_10_CM1_28(void)
 {
     printf(__func__);
-    struct matrix A_1 = mat_from_file(TESTDATADIR "CM1_28_1.txt");
-    struct matrix A_2 = mat_from_file(TESTDATADIR "CM1_28_2.txt");
-    struct matrix A_3 = mat_from_file(TESTDATADIR "CM1_28_3.txt");
-    struct matrix A_4 = mat_from_file(TESTDATADIR "CM1_28_4.txt");
-    struct matrix A_5 = mat_from_file(TESTDATADIR "CM1_28_5.txt");
-    struct matrix A_6 = mat_from_file(TESTDATADIR "CM1_28_6.txt");
-    struct matrix A_7 = mat_from_file(TESTDATADIR "CM1_28_7.txt");
-    struct matrix A_8 = mat_from_file(TESTDATADIR "CM1_28_8.txt");
-    struct matrix A_9 = mat_from_file(TESTDATADIR "CM1_28_9.txt");
-    struct matrix A_10 = mat_from_file(TESTDATADIR "CM1_28_10.txt");
+    struct matrix A_1 = mat_from_file(DATA_DIR "CM1_28_1.txt");
+    struct matrix A_2 = mat_from_file(DATA_DIR "CM1_28_2.txt");
+    struct matrix A_3 = mat_from_file(DATA_DIR "CM1_28_3.txt");
+    struct matrix A_4 = mat_from_file(DATA_DIR "CM1_28_4.txt");
+    struct matrix A_5 = mat_from_file(DATA_DIR "CM1_28_5.txt");
+    struct matrix A_6 = mat_from_file(DATA_DIR "CM1_28_6.txt");
+    struct matrix A_7 = mat_from_file(DATA_DIR "CM1_28_7.txt");
+    struct matrix A_8 = mat_from_file(DATA_DIR "CM1_28_8.txt");
+    struct matrix A_9 = mat_from_file(DATA_DIR "CM1_28_9.txt");
+    struct matrix A_10 = mat_from_file(DATA_DIR "CM1_28_10.txt");
     scaled_data(A_1);
     scaled_data(A_2);
     scaled_data(A_3);
@@ -1161,16 +1163,16 @@ test_spec_vec_10_CM1_28(void)
     struct vec A_9_spec = spec_vec(A_9, 0.1);
     struct vec A_10_spec = spec_vec(A_10, 0.1);
 
-    struct vec sol_spec_vec_A_1 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_1.txt");
-    struct vec sol_spec_vec_A_2 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_2.txt");
-    struct vec sol_spec_vec_A_3 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_3.txt");
-    struct vec sol_spec_vec_A_4 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_4.txt");
-    struct vec sol_spec_vec_A_5 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_5.txt");
-    struct vec sol_spec_vec_A_6 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_6.txt");
-    struct vec sol_spec_vec_A_7 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_7.txt");
-    struct vec sol_spec_vec_A_8 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_8.txt");
-    struct vec sol_spec_vec_A_9 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_9.txt");
-    struct vec sol_spec_vec_A_10 = vec_from_file(TESTDATADIR "spec_vec_CM1_28_10.txt");
+    struct vec sol_spec_vec_A_1 = vec_from_file(DATA_DIR "spec_vec_CM1_28_1.txt");
+    struct vec sol_spec_vec_A_2 = vec_from_file(DATA_DIR "spec_vec_CM1_28_2.txt");
+    struct vec sol_spec_vec_A_3 = vec_from_file(DATA_DIR "spec_vec_CM1_28_3.txt");
+    struct vec sol_spec_vec_A_4 = vec_from_file(DATA_DIR "spec_vec_CM1_28_4.txt");
+    struct vec sol_spec_vec_A_5 = vec_from_file(DATA_DIR "spec_vec_CM1_28_5.txt");
+    struct vec sol_spec_vec_A_6 = vec_from_file(DATA_DIR "spec_vec_CM1_28_6.txt");
+    struct vec sol_spec_vec_A_7 = vec_from_file(DATA_DIR "spec_vec_CM1_28_7.txt");
+    struct vec sol_spec_vec_A_8 = vec_from_file(DATA_DIR "spec_vec_CM1_28_8.txt");
+    struct vec sol_spec_vec_A_9 = vec_from_file(DATA_DIR "spec_vec_CM1_28_9.txt");
+    struct vec sol_spec_vec_A_10 = vec_from_file(DATA_DIR "spec_vec_CM1_28_10.txt");
 
     bool ret = true;
     ret = ret && vec_equal(A_1_spec, sol_spec_vec_A_1);
@@ -1224,16 +1226,16 @@ test_bin_stats_CM1_28(void)
     struct matarray L = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix A_i = mat_from_file(filename);
         free(filename);
         scaled_data(A_i);
         matarr_set(L, i, A_i);
     }
-    struct matrix sol = mat_from_file(TESTDATADIR "bin_stats_CM1_28.txt");
+    struct matrix sol = mat_from_file(DATA_DIR "bin_stats_CM1_28.txt");
     struct matrix bin_stats = bin_stat_1D(L, 0.1);
     bool ret = mat_equal(sol, bin_stats);
     mat_free(bin_stats);
@@ -1249,9 +1251,9 @@ test_CM1_25_and_CM1_28(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1263,9 +1265,9 @@ test_CM1_25_and_CM1_28(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1289,9 +1291,9 @@ test_CM1_25_and_CM1_10(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1303,9 +1305,9 @@ test_CM1_25_and_CM1_10(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1328,9 +1330,9 @@ test_CM1_27_and_CM1_4(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1342,9 +1344,9 @@ test_CM1_27_and_CM1_4(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1367,9 +1369,9 @@ test_CM1_1_and_CM1_11(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1381,9 +1383,9 @@ test_CM1_1_and_CM1_11(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1406,9 +1408,9 @@ test_CM1_24_and_CM1_21(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1420,9 +1422,9 @@ test_CM1_24_and_CM1_21(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1445,9 +1447,9 @@ test_CM1_25_and_CM1_21(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1459,9 +1461,9 @@ test_CM1_25_and_CM1_21(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1484,9 +1486,9 @@ test_CM1_23_and_CM1_8(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1498,9 +1500,9 @@ test_CM1_23_and_CM1_8(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1523,9 +1525,9 @@ test_CM1_10_and_CM1_21(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1537,9 +1539,9 @@ test_CM1_10_and_CM1_21(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1562,9 +1564,9 @@ test_CM1_10_and_CM1_22(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1576,9 +1578,9 @@ test_CM1_10_and_CM1_22(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1601,9 +1603,9 @@ test_CM1_10_and_CM1_7(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1615,9 +1617,9 @@ test_CM1_10_and_CM1_7(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1640,9 +1642,9 @@ test_CM1_11_and_CM1_12(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1654,9 +1656,9 @@ test_CM1_11_and_CM1_12(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1679,9 +1681,9 @@ test_CM1_11_and_CM1_3(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1693,9 +1695,9 @@ test_CM1_11_and_CM1_3(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1718,9 +1720,9 @@ test_CM1_12_and_CM1_18(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1732,9 +1734,9 @@ test_CM1_12_and_CM1_18(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1757,9 +1759,9 @@ test_CM1_12_and_CM1_23(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1771,9 +1773,9 @@ test_CM1_12_and_CM1_23(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1796,9 +1798,9 @@ test_CM1_13_and_CM1_12(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1810,9 +1812,9 @@ test_CM1_13_and_CM1_12(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1835,9 +1837,9 @@ test_CM1_14_and_CM1_3(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_14_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_14_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_14_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_14_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1849,9 +1851,9 @@ test_CM1_14_and_CM1_3(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1874,9 +1876,9 @@ test_CM1_15_and_CM1_12(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1888,9 +1890,9 @@ test_CM1_15_and_CM1_12(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1913,9 +1915,9 @@ test_CM1_15_and_CM1_13(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1927,9 +1929,9 @@ test_CM1_15_and_CM1_13(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1952,9 +1954,9 @@ test_CM1_18_and_CM1_5(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1966,9 +1968,9 @@ test_CM1_18_and_CM1_5(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -1991,9 +1993,9 @@ test_CM1_20_and_CM1_11(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2005,9 +2007,9 @@ test_CM1_20_and_CM1_11(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2030,9 +2032,9 @@ test_CM1_20_and_CM1_12(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2044,9 +2046,9 @@ test_CM1_20_and_CM1_12(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2069,9 +2071,9 @@ test_CM1_20_and_CM1_17(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2083,9 +2085,9 @@ test_CM1_20_and_CM1_17(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2108,9 +2110,9 @@ test_CM1_20_and_CM1_20(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2122,9 +2124,9 @@ test_CM1_20_and_CM1_20(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2147,9 +2149,9 @@ test_CM1_22_and_CM1_17(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2161,9 +2163,9 @@ test_CM1_22_and_CM1_17(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2186,9 +2188,9 @@ test_CM1_23_and_CM1_22(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2200,9 +2202,9 @@ test_CM1_23_and_CM1_22(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2225,9 +2227,9 @@ test_CM1_24_and_CM1_11(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2239,9 +2241,9 @@ test_CM1_24_and_CM1_11(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2264,9 +2266,9 @@ test_CM1_26_and_CM1_1(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2278,9 +2280,9 @@ test_CM1_26_and_CM1_1(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2303,9 +2305,9 @@ test_CM1_26_and_CM1_11(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2317,9 +2319,9 @@ test_CM1_26_and_CM1_11(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2342,9 +2344,9 @@ test_CM1_26_and_CM1_12(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2356,9 +2358,9 @@ test_CM1_26_and_CM1_12(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2381,9 +2383,9 @@ test_CM1_26_and_CM1_2(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2395,9 +2397,9 @@ test_CM1_26_and_CM1_2(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2420,9 +2422,9 @@ test_CM1_27_and_CM1_16(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2434,9 +2436,9 @@ test_CM1_27_and_CM1_16(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_16_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_16_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_16_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_16_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2459,9 +2461,9 @@ test_CM1_27_and_CM1_28(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2473,9 +2475,9 @@ test_CM1_27_and_CM1_28(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2498,9 +2500,9 @@ test_CM1_28_and_CM1_1(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2512,9 +2514,9 @@ test_CM1_28_and_CM1_1(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2537,9 +2539,9 @@ test_CM1_28_and_CM1_20(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2551,9 +2553,9 @@ test_CM1_28_and_CM1_20(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2576,9 +2578,9 @@ test_CM1_1_and_CM1_8(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2590,9 +2592,9 @@ test_CM1_1_and_CM1_8(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2615,9 +2617,9 @@ test_CM1_2_and_CM1_2(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2629,9 +2631,9 @@ test_CM1_2_and_CM1_2(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2654,9 +2656,9 @@ test_CM1_2_and_CM1_26(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2668,9 +2670,9 @@ test_CM1_2_and_CM1_26(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2693,9 +2695,9 @@ test_CM1_2_and_CM1_6(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2707,9 +2709,9 @@ test_CM1_2_and_CM1_6(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2732,9 +2734,9 @@ test_CM1_3_and_CM1_18(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2746,9 +2748,9 @@ test_CM1_3_and_CM1_18(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2771,9 +2773,9 @@ test_CM1_3_and_CM1_20(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2785,9 +2787,9 @@ test_CM1_3_and_CM1_20(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2810,9 +2812,9 @@ test_CM1_3_and_CM1_6(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2824,9 +2826,9 @@ test_CM1_3_and_CM1_6(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2849,9 +2851,9 @@ test_CM1_4_and_CM1_6(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2863,9 +2865,9 @@ test_CM1_4_and_CM1_6(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2888,9 +2890,9 @@ test_CM1_5_and_CM1_12(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2902,9 +2904,9 @@ test_CM1_5_and_CM1_12(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2927,9 +2929,9 @@ test_CM1_5_and_CM1_20(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2941,9 +2943,9 @@ test_CM1_5_and_CM1_20(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2966,9 +2968,9 @@ test_CM1_7_and_CM1_9(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -2980,9 +2982,9 @@ test_CM1_7_and_CM1_9(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -3005,9 +3007,9 @@ test_CM1_8_and_CM1_19(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -3019,9 +3021,9 @@ test_CM1_8_and_CM1_19(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_19_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_19_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_19_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_19_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -3044,9 +3046,9 @@ test_CM1_9_and_CM1_3(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -3058,9 +3060,9 @@ test_CM1_9_and_CM1_3(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -3083,9 +3085,9 @@ test_CM1_9_and_CM1_6(void)
     struct matarray A = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -3097,9 +3099,9 @@ test_CM1_9_and_CM1_6(void)
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
         // filename
-        size_t bufsz = safe_snprintf(NULL, 0, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
         char *filename = safe_calloc(bufsz + 1, sizeof(char));
-        safe_snprintf(filename, bufsz + 1, TESTDATADIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
+        safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
         scaled_data(m);
@@ -3119,12 +3121,12 @@ static bool
 test_CM1_10_vs_21_sanity_check(void)
 {
     printf(__func__);
-    struct matrix m = mat_from_file(TESTDATADIR "CM1_10_1.txt");
-    struct matrix m2 = mat_from_file(TESTDATADIR "CM1_10_3.txt");
-    struct matrix m3 = mat_from_file(TESTDATADIR "CM1_10_4.txt");
-    struct matrix n = mat_from_file(TESTDATADIR "CM1_21_1.txt");
-    struct matrix n2 = mat_from_file(TESTDATADIR "CM1_21_3.txt");
-    struct matrix n3 = mat_from_file(TESTDATADIR "CM1_21_4.txt");
+    struct matrix m = mat_from_file(DATA_DIR "CM1_10_1.txt");
+    struct matrix m2 = mat_from_file(DATA_DIR "CM1_10_3.txt");
+    struct matrix m3 = mat_from_file(DATA_DIR "CM1_10_4.txt");
+    struct matrix n = mat_from_file(DATA_DIR "CM1_21_1.txt");
+    struct matrix n2 = mat_from_file(DATA_DIR "CM1_21_3.txt");
+    struct matrix n3 = mat_from_file(DATA_DIR "CM1_21_4.txt");
     scaled_data(m);
     scaled_data(m2);
     scaled_data(m3);
