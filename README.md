@@ -49,8 +49,8 @@ too.
 Then run this in powershell:
 
 ```powershell
-$env:PATH += ";C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin
-$env:PATH += ";C:\Program Files\Git\bin
+$env:PATH += ";C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin"
+$env:PATH += ";C:\Program Files\Git\bin"
 $env:PATH += ";C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Cmake\bin"
 # optional (unix tools): $env:PATH += ";C:\Program Files\Git\usr\bin"
 # optional (cl): $env:PATH += ";C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\bin\Hostx64\x64"
@@ -90,8 +90,8 @@ So they might be helpful if things aren't working.
 
 # Examples/Usage
 
-See the `examples/` directory for example usage. And see
-`./build/hdcms --help` for usage.
+See the `examples/README.md` and the directory for example usage.
+And run `./build/hdcms --help` for usage.
 
 # Design
 
