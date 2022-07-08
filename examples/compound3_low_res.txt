@@ -1,0 +1,7 @@
+../data/CM1_3_1.txt
+../data/CM1_3_2.txt
+../data/CM1_3_3.txt
+../data/CM1_3_4.txt
+../data/CM1_3_5.txt
+../data/CM1_3_6.txt
+../data/CM1_3_7.txt

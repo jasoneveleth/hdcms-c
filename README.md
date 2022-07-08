@@ -88,6 +88,11 @@ $env:LIB = "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\ucrt\x64;C:\
 So they might be helpful if things aren't working.
 </details>
 
+# Examples/Usage
+
+See the `examples/` directory for example usage. And see
+`./build/hdcms --help` for usage.
+
 # Design
 
 My `src/` directory has `main.c` (functions associated with CLI),

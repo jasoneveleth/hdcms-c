@@ -1,2 +1,4 @@
 *.o
 build/
+examples/python-hdcms-package/hdcms.egg-info
+*.egg-info
