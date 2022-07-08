@@ -2,16 +2,15 @@
 
 # TODO
 
-[minmax](https://data.nist.gov/od/id/mds2-2418)
+* detect if it's 1 compound (print summary stats abbreviated
+  note: the edges of these stats are usually 0s), 2 compounds (do
+  a compare), or 3+ compounds (matrix compare) in `main.c`
 
-### python bindings
-
-* https://dev.to/erikwhiting88/how-to-use-c-functions-in-python-7do
-* http://docs.cython.org/en/latest/src/userguide/external_C_code.html
-* https://stavshamir.github.io/python/making-your-c-library-callable-from-python-by-wrapping-it-with-cython/
-* https://medium.com/@mliuzzolino/wrapping-c-with-python-in-5-minutes-cdd1124f5c01
-* https://intermediate-and-advanced-software-carpentry.readthedocs.io/en/latest/c++-wrapping.html
-* https://docs.python.org/3/extending/extending.html
+* [minmax](https://data.nist.gov/od/id/mds2-2418)
+* test whether "note on stability" matters at all
+* [bonetti](~/.root/time/sem06/nist/reading/JBonetti multivariate statistics.pdf)
+* When binning and taking the max rather than the most recent
+  measurement in `spec_vec`.
 
 # Install
 
@@ -22,13 +21,14 @@ Install cmake and git. Then, run this in your shell:
 ```bash
 git clone https://gitlab.nist.gov/gitlab/jje4/hdcms.git
 cd hdcms
-mkdir build
-cd build
-cmake ..
-make
-./test_runner
-./hdcms --1d --list=compound1,compound2 compounds_list
+cmake -B build
+make -C build
+./build/test_runner
 ```
+
+Note: the `data/` directory is hard coded in
+`./build/test_runner`, so if you move it, or any of it's parent
+directories, you'll need to cmake again.
 
 ## Windows
 
@@ -56,12 +56,10 @@ $env:PATH += ";C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\I
 # optional (cl): $env:PATH += ";C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.32.31326\bin\Hostx64\x64"
 git clone https://gitlab.nist.gov/gitlab/jje4/hdcms.git
 cd hdcms
-mkdir build
+cmake -B build
 cd build
-cmake ..
 msbuild high_dimensional_consensus_mass_spec.sln
 .\test_runner
-.\hdcms --1d --list=compound1,compound2 compounds_list
 ```
 
 If you get a 'command not found'-like looking error, then one of
@@ -71,6 +69,10 @@ in your directory inside `Program Files` to find the right
 binaries. You can use File Explorer to search, or look at the
 paths I provided and try to adjust them to your situation. Good
 luck!
+
+Note: the `data/` directory is hard coded in
+`./build/test_runner`, so if you move it, or any of it's parent
+directories, you'll need to cmake again.
 
 <details>
 <summary>Debugging compiler</summary>
@@ -121,20 +123,15 @@ smallest stack space I can find of 128KB).
 
 # Increasing performance
 
-* store floats in files as hex (make a converter)
+* store floats in files as hex (make a converter from ascii to
+  bin)
 * don't use a temp matrix in `bin_stat_1D`, rather, recode the
   standard deviation and mean from scratch on an array of
   vectors, or make the `spec_vec` function take in an answer
   array and fill that out rather than allocating separate one
-
 * align malloc and realloc of large arrays -- probably doesn't matter
 * cache a 9000 `vec_arange` and reuse it, or make one even bigger
   and just make the lenght of the vector stop before the end
-
-Possibly try binning and taking the max rather than the most
-recent measurement in `spec_vec`.
-
-only calculate half the table and write to both addresses at the same time
 
 ## Flame graphs
 

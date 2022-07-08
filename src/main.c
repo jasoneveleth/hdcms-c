@@ -13,8 +13,8 @@
 
 enum mode {ONED, TWOD};
 static char *argv0;
-static double width;
-static int mflag;
+static double width = DEFAULT_WIDTH; // defaults
+static int mflag = ONED; // defaults
 
 noreturn static void
 usage(void) {
@@ -26,26 +26,29 @@ usage(void) {
     exit(2);
 }
 
-static struct matrix
-compare_1d(const struct matarray arr)
+static inline double
+compare_compound(const struct matrix m1, const struct matrix m2, int mflag)
 {
-    struct matrix m = mat_zeros(arr.length, arr.length);
-    for (size_t i = 0; i < arr.length; i++) {
-        for (size_t j = 0; j < arr.length; j++) {
-            mat_set(m, i, j, prob_dot_prod(matarr_get(arr, i), matarr_get(arr, j)));
-        }
+    if (mflag == ONED) {
+        return prob_dot_prod(m1, m2);
+    } else if (mflag == TWOD) {
+        size_t n = m2.len1; // >= longest possible length
+        return peak_sim_measure_L2(m1, m2, n);
+    } else {
+        printf("\n");
+        usage();
     }
-    return m;
 }
 
 static struct matrix
-compare_2d(const struct matarray arr)
+compare_all(const struct matarray arr, int mflag)
 {
     struct matrix m = mat_zeros(arr.length, arr.length);
     for (size_t i = 0; i < arr.length; i++) {
-        for (size_t j = 0; j < arr.length; j++) {
-            size_t n = matarr_get(arr, i).len1; // >= longest possible length
-            mat_set(m, i, j, peak_sim_measure_L2(matarr_get(arr, i), matarr_get(arr, j), n));
+        for (size_t j = 0; j <= i; j++) {
+            double sim = compare_compound(matarr_get(arr, i), matarr_get(arr, j), mflag);
+            mat_set(m, i, j, sim);
+            mat_set(m, j, i, sim);
         }
     }
     return m;
@@ -64,7 +67,7 @@ file_readable(const char *const path)
 }
 
 static struct matrix
-filenames_to_stats(char *str)
+filenames_to_stats(char *str, int mflag)
 {
     struct matarray arr = matarr_zeros(2);
 
@@ -113,7 +116,7 @@ list_file(const char *const filename, const struct matarray arr, const size_t i)
     fclose(fileptr);                     // Close the file
     buffer[len] = '\0';                  // NUL terminate the string
 
-    struct matrix stats = filenames_to_stats(buffer);
+    struct matrix stats = filenames_to_stats(buffer, mflag);
     free(buffer);
     matarr_set(arr, i, stats);
 }
@@ -121,7 +124,7 @@ list_file(const char *const filename, const struct matarray arr, const size_t i)
 static void
 list_option(char *str, struct matarray arr, const size_t i)
 {
-    struct matrix stats = filenames_to_stats(str);
+    struct matrix stats = filenames_to_stats(str, mflag);
     matarr_set(arr, i, stats);
 }
 
@@ -291,11 +294,7 @@ main(int argc, char *argv[])
 
     // done parsing args
 
-    struct matrix comparison;
-    if (mflag == ONED)
-        comparison = compare_1d(replicate_stats);
-    else
-        comparison = compare_2d(replicate_stats);
+    struct matrix comparison = compare_all(replicate_stats, mflag);
     matarr_free(replicate_stats);
 
     if (HAS_WINDOWS)

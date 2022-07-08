@@ -45,9 +45,9 @@
 #endif
 
 #ifdef _WIN32
-#include <stdnoreturn.h>
-#else
 #define noreturn
+#else
+#include <stdnoreturn.h>
 #endif
 
 #endif // FIXWINDOWS_H
