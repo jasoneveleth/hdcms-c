@@ -18,11 +18,22 @@ static int mflag = ONED; // defaults
 
 noreturn static void
 usage(void) {
-    printf("usage: %s [--1d|--2d] [-h] [-q] --list=path1[,path2,...] FILE ...\n", argv0);
+    printf("USAGE:\n");
+    printf("\t%s [--1d|--2d] [-h] --list=path1[,path2,...] FILE ...\n", argv0);
     printf("\n");
-    printf("The default mode is --2d, which is for high resolution spectra.\n");
-    printf("The argument --list is a list of pathnames to replicate files of a compound.\n");
-    printf("The argument FILE should contain a list of pathnames to replicate files of a compound.\n");
+    printf("ARGS:\n");
+    printf("\t%-30sA file with a list of replicate measurements.\n", "FILE");
+    printf("\t%-30sA list of replicate measurements.\n", "--list=path1[,path2,...]");
+    printf("\n");
+    printf("Enter as many compounds as you want in either \"--list\" or \"FILE\" format.\n");
+    printf("One compound per \"--list\" or \"FILE\" entry. The measurements must be\n");
+    printf("text files with 1 coordinate per line\n");
+    printf("\n");
+    printf("OPTIONS:\n");
+    printf("\t%-30sSwitch for low resolution data (default).\n", "--1d, --low-res");
+    printf("\t%-30sSwitch for high resolution data.\n", "--2d, --high-res");
+    printf("\t%-30sShow this help message\n", "-h, --help");
+    printf("\n");
     exit(2);
 }
 
@@ -214,8 +225,10 @@ main(int argc, char *argv[])
     static struct option longopts[] = {
         { "1d",         no_argument, /*changes*/NULL,           ONED },
         { "1D",         no_argument, /*changes*/NULL,           ONED },
+        { "low-res",    no_argument, /*changes*/NULL,           ONED },
         { "2d",         no_argument, /*changes*/NULL,           TWOD },
         { "2D",         no_argument, /*changes*/NULL,           TWOD },
+        { "high-res",   no_argument, /*changes*/NULL,           TWOD },
         { "list",       required_argument,      NULL,           'l' },
         { "help",       no_argument,            NULL,           'h' },
         { "quiet",      no_argument,            NULL,           'q' },
@@ -224,7 +237,7 @@ main(int argc, char *argv[])
     };
     // set 1d / 2d flag (you aren't allow to initilize a structure with non
     // const expression)
-    longopts[0].flag = longopts[1].flag = longopts[2].flag = longopts[3].flag = &mflag;
+    longopts[0].flag = longopts[1].flag = longopts[2].flag = longopts[3].flag = longopts[4].flag = longopts[5].flag = &mflag;
 
     mflag = TWOD;
     nreplicates = 0;
