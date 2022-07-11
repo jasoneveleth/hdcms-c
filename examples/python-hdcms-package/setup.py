@@ -1,17 +1,9 @@
 from setuptools import setup, Extension
-# import numpy
+import numpy as np
 import os
-import sys
-
-# deal with macros
-macros = []
-if os.getenv('REPEL'):
-    macros.append(('REPEL',1))
-if sys.platform == 'darwin':
-    macros.append(('MAC', 1))
 
 module = Extension("hdcms", # name that you `import` in python
-                   define_macros=macros,
+                   include_dirs=[os.getcwd(), np.get_include()],
                    sources=["python.c"])
 
 setup(
