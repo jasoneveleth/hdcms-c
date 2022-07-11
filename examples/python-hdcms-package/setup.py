@@ -2,8 +2,11 @@ from setuptools import setup, Extension
 import numpy as np
 import os
 
+cwd = os.path.dirname(os.path.realpath(__file__))
+proj_root = os.path.realpath(os.path.join(cwd, "..", ".."))
+
 module = Extension("hdcms", # name that you `import` in python
-                   include_dirs=[os.getcwd(), np.get_include()],
+                   include_dirs=[cwd, np.get_include()],
                    sources=["python.c"])
 
 setup(
