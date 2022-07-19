@@ -3154,6 +3154,103 @@ test_CM1_10_vs_21_sanity_check(void)
 }
 
 static bool
+test_symmetric_1d(void)
+{
+    printf(__func__);
+    struct matrix m_10_1 = mat_from_file(DATA_DIR "CM1_10_1.txt");
+    struct matrix m_10_2 = mat_from_file(DATA_DIR "CM1_10_2.txt");
+    struct matrix m_10_3 = mat_from_file(DATA_DIR "CM1_10_3.txt");
+    struct matrix m_10_4 = mat_from_file(DATA_DIR "CM1_10_4.txt");
+    struct matrix m_10_5 = mat_from_file(DATA_DIR "CM1_10_5.txt");
+    struct matrix m_10_6 = mat_from_file(DATA_DIR "CM1_10_6.txt");
+    struct matrix m_3_1 = mat_from_file(DATA_DIR "CM1_3_1.txt");
+    struct matrix m_3_2 = mat_from_file(DATA_DIR "CM1_3_2.txt");
+    struct matrix m_3_3 = mat_from_file(DATA_DIR "CM1_3_3.txt");
+    struct matrix m_3_4 = mat_from_file(DATA_DIR "CM1_3_4.txt");
+    struct matrix m_3_5 = mat_from_file(DATA_DIR "CM1_3_5.txt");
+    struct matrix m_3_6 = mat_from_file(DATA_DIR "CM1_3_6.txt");
+
+    struct matrix data_10[6];
+    data_10[0] = m_10_1;
+    data_10[1] = m_10_2;
+    data_10[2] = m_10_3;
+    data_10[3] = m_10_4;
+    data_10[4] = m_10_5;
+    data_10[5] = m_10_6;
+
+    struct matrix data_3[6];
+    data_3[0] = m_3_1;
+    data_3[1] = m_3_2;
+    data_3[2] = m_3_3;
+    data_3[3] = m_3_4;
+    data_3[4] = m_3_5;
+    data_3[5] = m_3_6;
+
+    struct matarray arr = matarr_from_data(data_10, 6, 0);
+    struct matarray arr2 = matarr_from_data(data_3, 6, 0);
+    struct matrix a = bin_stat_1D(arr, 0.1);
+    struct matrix a2 = bin_stat_1D(arr2, 0.1);
+    bool ret = prob_dot_prod(a, a2) == prob_dot_prod(a2, a);
+    bool ret2 = equals(prob_dot_prod(a, a2), 0.14003071140822);
+    mat_free(a);
+    mat_free(a2);
+    matarr_free(arr);
+    matarr_free(arr2);
+    return ret && ret2;
+}
+
+static bool
+test_peak_stat_all_through(void)
+{
+    printf(__func__);
+    struct matrix m_10_1 = mat_from_file(DATA_DIR "analytes_normal_10_1_1.txt");
+    struct matrix m_10_2 = mat_from_file(DATA_DIR "analytes_normal_10_2_1.txt");
+    struct matrix m_10_3 = mat_from_file(DATA_DIR "analytes_normal_10_3_1.txt");
+    struct matrix m_10_4 = mat_from_file(DATA_DIR "analytes_normal_10_4_1.txt");
+    struct matrix m_10_5 = mat_from_file(DATA_DIR "analytes_normal_10_5_1.txt");
+    struct matrix m_9_1 = mat_from_file(DATA_DIR  "analytes_normal_9_1_1.txt");
+    struct matrix m_9_2 = mat_from_file(DATA_DIR  "analytes_normal_9_2_1.txt");
+    struct matrix m_9_3 = mat_from_file(DATA_DIR  "analytes_normal_9_3_1.txt");
+    struct matrix m_9_4 = mat_from_file(DATA_DIR  "analytes_normal_9_4_1.txt");
+    struct matrix m_9_5 = mat_from_file(DATA_DIR  "analytes_normal_9_5_1.txt");
+
+    struct matrix data_10[5];
+    data_10[0] = m_10_1;
+    data_10[1] = m_10_2;
+    data_10[2] = m_10_3;
+    data_10[3] = m_10_4;
+    data_10[4] = m_10_5;
+
+    struct matrix data_9[5];
+    data_9[0] = m_9_1;
+    data_9[1] = m_9_2;
+    data_9[2] = m_9_3;
+    data_9[3] = m_9_4;
+    data_9[4] = m_9_5;
+
+    struct matarray arr = matarr_from_data(data_10, 5, 0);
+    struct matarray arr2 = matarr_from_data(data_9, 5, 0);
+    struct matrix a = peak_stat(arr, 10);
+    struct matrix a2 = peak_stat(arr2, 10);
+    FILE *f = fopen("/tmp/mat", "w");
+    mat_fprintf(f, a);
+    fclose(f);
+    FILE *f2 = fopen("/tmp/mat2", "w");
+    mat_fprintf(f, a2);
+    fclose(f2);
+    printf("\n");
+    double d = peak_sim_measure_L2(a, a2, 10);
+    printf("\n========\n");
+    double d2 = peak_sim_measure_L2(a2, a, 10);
+    bool ret = equals(d, 201.282585841773e-006) && equals(d2, 240.632397866844e-006);
+    mat_free(a);
+    mat_free(a2);
+    matarr_free(arr);
+    matarr_free(arr2);
+    return ret;
+}
+
+static bool
 simple(void)
 {
     printf(__func__);
@@ -3271,6 +3368,8 @@ int main(int argc, char *argv[])
         test_CM1_9_and_CM1_3,
         test_CM1_9_and_CM1_6,
         test_CM1_10_vs_21_sanity_check,
+        test_symmetric_1d,
+        test_peak_stat_all_through,
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);
