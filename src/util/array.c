@@ -605,11 +605,9 @@ vec_fscanf(FILE *file)
     while (!feof(file)) {
         char *line = read_line(file);
 
-        if (*line == '\0'       // empty line
-                || *line == '#' // line starts with '#'
-                || (0x41 <= *line && *line <= 0x5A) // [A-Z]
-                || (0x61 <= *line && *line <= 0x7A) // [a-z]
-                ) { 
+        // empty line
+        // line starts with '#'
+        if (*line == '\0' || *line == '#') { 
             free(line);
             continue;
         }
@@ -649,11 +647,8 @@ mat_fscanf(FILE *file)
 
     // handle header and first line, get # of columns
     char *line = read_line(file);
-    while (*line == '\0'       // empty line
-                || *line == '#' // line starts with '#'
-                || (0x41 <= *line && *line <= 0x5A) // [A-Z]
-                || (0x61 <= *line && *line <= 0x7A) // [a-z]
-                ) { 
+    // empty line || line starts with '#'
+    while (*line == '\0' || *line == '#') { 
         free(line);
         line = read_line(file);
     }
