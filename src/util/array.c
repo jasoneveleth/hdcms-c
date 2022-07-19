@@ -605,7 +605,11 @@ vec_fscanf(FILE *file)
     while (!feof(file)) {
         char *line = read_line(file);
 
-        if (*line == '\0') { // empty line
+        if (*line == '\0'       // empty line
+                || *line == '#' // line starts with '#'
+                || (0x41 <= *line && *line <= 0x5A) // [A-Z]
+                || (0x61 <= *line && *line <= 0x7A) // [a-z]
+                ) { 
             free(line);
             continue;
         }
@@ -643,9 +647,17 @@ mat_fscanf(FILE *file)
     double *data = safe_calloc(allocd, sizeof(double));
     char *sep = " \t,";
 
-    // handle first line, get # of columns
-    char *first_line = read_line(file);
-    char *resumer = first_line;
+    // handle header and first line, get # of columns
+    char *line = read_line(file);
+    while (*line == '\0'       // empty line
+                || *line == '#' // line starts with '#'
+                || (0x41 <= *line && *line <= 0x5A) // [A-Z]
+                || (0x61 <= *line && *line <= 0x7A) // [a-z]
+                ) { 
+        free(line);
+        line = read_line(file);
+    }
+    char *resumer = line;
     char *token;
     while ((token = find_token(&resumer, sep))) {
         if (allocd <= num_cols) {
@@ -655,7 +667,7 @@ mat_fscanf(FILE *file)
         double ele = safe_strtod(token);
         data[num_cols++] = ele;
     }
-    free(first_line);
+    free(line);
 
     // handle the rest of the rows, assume the # of columns never changes
     size_t col_zero = num_cols; // ptr offset to col_zero of this row
