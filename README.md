@@ -6,6 +6,15 @@
   note: the edges of these stats are usually 0s), 2 compounds (do
   a compare), or 3+ compounds (matrix compare) in `main.c`
 
+* do cross validation, add one more and test the standard
+  deviation
+
+start with 1 instrument
+
+make a cross validation
+
+
+
 * [minmax](https://data.nist.gov/od/id/mds2-2418)
 * test whether "note on stability" matters at all
 * [bonetti](~/.root/time/sem06/nist/reading/JBonetti multivariate statistics.pdf)
