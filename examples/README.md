@@ -1,9 +1,8 @@
 # Shell
 
 You can just use the `hdcms` binary that is normally compiled.
-Check out the examples in `main.sh` (or `main.bat` if you're on
+Check out the examples in `main.sh` (or `main.ps1` if you're on
 windows)
-
 
 # Python
 
