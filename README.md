@@ -2,22 +2,7 @@
 
 # TODO
 
-* detect if it's 1 compound (print summary stats abbreviated
-  note: the edges of these stats are usually 0s), 2 compounds (do
-  a compare), or 3+ compounds (matrix compare) in `main.c`
-
-* do cross validation, add one more and test the standard
-  deviation
-
-start with 1 instrument
-
-make a cross validation
-
-
-
-* [minmax](https://data.nist.gov/od/id/mds2-2418)
 * test whether "note on stability" matters at all
-* [bonetti](~/.root/time/sem06/nist/reading/JBonetti multivariate statistics.pdf)
 * When binning and taking the max rather than the most recent
   measurement in `spec_vec`.
 
@@ -100,7 +85,27 @@ So they might be helpful if things aren't working.
 # Examples/Usage
 
 See the `examples/README.md` and the directory for example usage.
-And run `./build/hdcms --help` for usage.
+And run `./build/hdcms --help` for usage. 
+
+Mass spec replicate files must be an optional header prefixed
+with `#`, and then m/z abundance values separated by white space
+on the same line. For example:
+
+```
+#Scan 839 (8.328 min): JDKLSJFLDSFJLK\DATA.MS (-83902)
+#PSEUDOEPHEDRINE
+#Modified: subtraced
+4.01e+01  1.27e+02
+5.09e+01  6.24e+02
+5.40e+01  9.38e+02
+2.56e+02  2.15e+01
+```
+
+I have included a python file (`examples/clean.py`) which will
+turn text into a valid data file, and show you deletions. It will
+also make a backup and print out the backup directory. (use
+`--dry-run` option to just tell you what it would do and not
+actually do it).
 
 # Design
 
