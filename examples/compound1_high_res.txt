@@ -1,1 +1,4 @@
 ../data/analytes_normal_1_1_1.txt
+../data/analytes_normal_1_2_1.txt
+../data/analytes_normal_1_3_1.txt
+../data/analytes_normal_1_4_1.txt
