@@ -2,6 +2,7 @@
 
 # TODO
 
+* FF has the raw data without new lines
 * naming: these aren't really replicates, or repetitions, or
   duplicates, they are just measurements (or aggregations of
   measurements over time)

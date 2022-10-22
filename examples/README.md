@@ -6,26 +6,5 @@ windows)
 
 # Python
 
-## Setup
-
-```bash
-$ python -m pip install hdcms
-```
-
-## Usage
-
-```bash
-$ python main.py
-$ python minmax.py
-```
-
-for more information (in python):
-
-```python
->>> import hdcms
->>> help(hdcms)
-```
-
-# R
-
+Checkout [python api documentation](https://pypi.org/project/hdcms-helper/) or [github](https://github.com/jasoneveleth/hdcms-helper)
 
