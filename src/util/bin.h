@@ -47,7 +47,7 @@ struct matrix bin_stat_1D(const struct matarray A, double bin_width, double tota
  * This measures the similarity between bin_stats.
  *
  * inputs: two nx2 arrays which are the mean and stadard deviation of each of
- *         the bins
+ *         the bins (and the desingularization, to avoid div by 0)
  * output: double representing the similarity between them
  *
  * `prob_dot_prod` treats each of the rows as represeting two real-valued
@@ -64,8 +64,10 @@ struct matrix bin_stat_1D(const struct matarray A, double bin_width, double tota
 
  * , which is the weighted average of the products of the means by the
  * similarity of the functions.
+ *
+ * The default for desingularization should be 1e-4
  */
-double prob_dot_prod(const struct matrix u, const struct matrix v);
+double prob_dot_prod(const struct matrix u, const struct matrix v, double desingularization);
 
 #endif // BIN_H
 

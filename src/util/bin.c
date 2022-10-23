@@ -82,7 +82,7 @@ scaled_data(const struct matrix m)
 }
 
 double 
-prob_dot_prod(const struct matrix u_orig, const struct matrix v_orig)
+prob_dot_prod(const struct matrix u_orig, const struct matrix v_orig, double desingularization)
 {
     // input are nx2 matrices of (mean, std) pairs
     // assert input correct
@@ -105,9 +105,9 @@ prob_dot_prod(const struct matrix u_orig, const struct matrix v_orig)
     struct vec v_mean = vec_from_col(v, 0);
     struct vec v_std = vec_from_col(v, 1);
 
-    // add 1e-4 so we don't have 0 std
-    vec_add_const(u_std, 1e-4);
-    vec_add_const(v_std, 1e-4);
+    // add small float so we don't have 0 std
+    vec_add_const(u_std, desingularization);
+    vec_add_const(v_std, desingularization);
 
     struct vec weights = vec_copy(u_std);
     vec_scale(weights, 2);

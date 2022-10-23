@@ -41,7 +41,7 @@ static inline double
 compare_compound(const struct matrix m1, const struct matrix m2, int mflag)
 {
     if (mflag == ONED) {
-        return prob_dot_prod(m1, m2);
+        return prob_dot_prod(m1, m2, 1e-4);
     } else if (mflag == TWOD) {
         size_t n = m2.len1; // >= longest possible length
         return peak_sim_measure_L2(m1, m2, n);
