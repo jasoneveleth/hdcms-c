@@ -34,13 +34,14 @@ struct vec spec_vec(const struct matrix m, double width);
  * bins's mean/std)
  *
  * inputs: array of replicate spetra
- * outpus: 9000x2 array of mean and std for each bin of the binned replicate
+ * outpus: nx2 array of mean and std for each bin of the binned replicate
  *         measurements.
  *
  * The strategy here is too make a temporary matrix which stores all the outputs
  * of the `spec_vec` calls as rows and call vec_mean and vec_std on the columns.
+ * Usually for mass spec, use bin_width of `0.1`, and total_width of `900.`.
  */
-struct matrix bin_stat_1D(const struct matarray A, double width);
+struct matrix bin_stat_1D(const struct matarray A, double bin_width, double total_width);
 
 /*
  * This measures the similarity between bin_stats.

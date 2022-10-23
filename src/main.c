@@ -96,7 +96,7 @@ filenames_to_stats(char *str, int mflag)
     arr.length = i; // wastes some of the malloc'd mem but that's okay
     struct matrix stats;
     if (mflag == ONED) {
-        stats = bin_stat_1D(arr, width);
+        stats = bin_stat_1D(arr, width, 900.);
     } else if (mflag == TWOD) {
         size_t n = matarr_get(arr, 0).len1; // >= longest possible length
         stats = peak_stat(arr, n);

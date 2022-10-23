@@ -3,14 +3,13 @@
 #include "bin.h"
 
 struct matrix 
-bin_stat_1D(const struct matarray A, double width)
+bin_stat_1D(const struct matarray A, double bin_width, double total_width)
 {
-    double num_bins = floor(900./width);
-    width = 900./num_bins; // XXX unneeded (since it happens in `prob_dot_prod`)
+    double num_bins = floor(total_width/bin_width);
     struct matrix M = mat_zeros(A.length, (size_t)num_bins);
     for (size_t i = 0; i < A.length; i++) {
         struct matrix spectra = matarr_get(A, i);
-        struct vec bin_heights = spec_vec(spectra, width);
+        struct vec bin_heights = spec_vec(spectra, bin_width);
         vec_to_row(M, bin_heights, i);
         vec_free(bin_heights);
     }
