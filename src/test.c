@@ -3238,9 +3238,7 @@ test_peak_stat_all_through(void)
     FILE *f2 = fopen("/tmp/mat2", "w");
     mat_fprintf(f, a2);
     fclose(f2);
-    printf("\n");
     double d = peak_sim_measure_L2(a, a2, 10);
-    printf("\n========\n");
     double d2 = peak_sim_measure_L2(a2, a, 10);
     bool ret = equals(d, 201.282585841773e-006) && equals(d2, 240.632397866844e-006);
     mat_free(a);
