@@ -39,13 +39,12 @@ usage(void) {
 }
 
 static inline double
-compare_compound(const struct matrix m1, const struct matrix m2, int mflag)
+compare_compound(const struct matrix m1, const struct matrix m2, int mflag, double desingularization, size_t max_peaks)
 {
     if (mflag == ONED) {
-        return prob_dot_prod(m1, m2, 1e-4);
+        return prob_dot_prod(m1, m2, desingularization);
     } else if (mflag == TWOD) {
-        size_t n = m2.len1; // >= longest possible length
-        return peak_sim_measure_L2(m1, m2, n);
+        return peak_sim_measure_L2(m1, m2, max_peaks);
     } else {
         printf("\n");
         usage();
@@ -53,12 +52,12 @@ compare_compound(const struct matrix m1, const struct matrix m2, int mflag)
 }
 
 static struct matrix
-compare_all(const struct matarray arr, int mflag)
+compare_all(const struct matarray arr, int mflag, double desingularization, size_t max_peaks)
 {
     struct matrix m = mat_zeros(arr.length, arr.length);
     for (size_t i = 0; i < arr.length; i++) {
         for (size_t j = 0; j <= i; j++) {
-            double sim = compare_compound(matarr_get(arr, i), matarr_get(arr, j), mflag);
+            double sim = compare_compound(matarr_get(arr, i), matarr_get(arr, j), mflag, desingularization, max_peaks);
             mat_set(m, i, j, sim);
             mat_set(m, j, i, sim);
         }
@@ -309,7 +308,8 @@ main(int argc, char *argv[])
 
     // done parsing args
 
-    struct matrix comparison = compare_all(replicate_stats, mflag);
+    size_t max_peaks = matarr_get(replicate_stats, 0).len1; // >= longest possible length
+    struct matrix comparison = compare_all(replicate_stats, mflag, 1e-4, max_peaks);
     matarr_free(replicate_stats);
 
     if (HAS_WINDOWS)
