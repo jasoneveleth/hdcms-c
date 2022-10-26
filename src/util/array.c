@@ -262,7 +262,6 @@ vec_equal(const struct vec v1, const struct vec v2)
     bool ret = true;
     for (size_t i = 0; i < v1.length; i++) {
         if (!equals(vec_get(v1, i), vec_get(v2, i))) {
-            printf("%zd: %14e %14e\n", i, vec_get(v1, i), vec_get(v2, i));
             ret = false;
         }
     }

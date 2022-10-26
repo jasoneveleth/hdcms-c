@@ -18,16 +18,16 @@ size_t min3(const size_t x, const size_t y, const size_t z);
 void scaled_data(const struct matrix m);
 
 /*
- * This function bins the spectra m (an array of (x,y) pairs) into 9000 bins
+ * This function bins the spectra m (an array of (x,y) pairs) into bins
  *
  * inputs: nx2 matrix of spectra measurement coordinates
- * outputs: vector of the hieght of the spectra in 9000 bins
+ * outputs: vector of the hieght of the spectra in bins
  *
  * Takes each coordinate and finds the bin it belongs to. If two elements are
  * in the same bin, we take the one we encountered last. Note that we use
- * (900. / width) as the number of bins, a well tested width to use is 0.1.
+ * 9000 bins, a well tested start and end are 0 and 899.90000000000009094947.
  */
-struct vec spec_vec(const struct matrix m, double width);
+struct vec spec_vec(const struct matrix m, double start, double end, double num_bins);
 
 /*
  * This function returns summary statistics for the replicates (each of the
@@ -39,9 +39,9 @@ struct vec spec_vec(const struct matrix m, double width);
  *
  * The strategy here is too make a temporary matrix which stores all the outputs
  * of the `spec_vec` calls as rows and call vec_mean and vec_std on the columns.
- * Usually for mass spec, use bin_width of `0.1`, and total_width of `900.`.
+ * Usually for mass spec, use start=0, stop=899.90000000000009094947, and num_bins of `9000`.
  */
-struct matrix bin_stat_1D(const struct matarray A, double bin_width, double total_width);
+struct matrix bin_stat_1D(const struct matarray A, double start, double stop, double num_bins);
 
 /*
  * This measures the similarity between bin_stats.

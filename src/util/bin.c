@@ -3,13 +3,12 @@
 #include "bin.h"
 
 struct matrix 
-bin_stat_1D(const struct matarray A, double bin_width, double total_width)
+bin_stat_1D(const struct matarray A, double start, double end, double num_bins)
 {
-    double num_bins = floor(total_width/bin_width);
     struct matrix M = mat_zeros(A.length, (size_t)num_bins);
     for (size_t i = 0; i < A.length; i++) {
         struct matrix spectra = matarr_get(A, i);
-        struct vec bin_heights = spec_vec(spectra, bin_width);
+        struct vec bin_heights = spec_vec(spectra, start, end, num_bins);
         vec_to_row(M, bin_heights, i);
         vec_free(bin_heights);
     }
@@ -58,12 +57,10 @@ get_bin(const struct vec bins, double val)
 }
 
 struct vec 
-spec_vec(const struct matrix m, double width)
+spec_vec(const struct matrix m, double start, double end, double num_bins)
 {
-    double n = floor(900./width);
-    width = 900./n;
-    struct vec t = vec_linspace(0, 900. * ((n - 1) / n), n);
-    struct vec v = vec_zeros((size_t)n);
+    struct vec t = vec_linspace(start, end, num_bins);
+    struct vec v = vec_zeros((size_t)num_bins);
 
     for (size_t i = 0; i < m.len1; i++) {
         size_t i_max = get_bin(t, mat_get(m, i, 0));

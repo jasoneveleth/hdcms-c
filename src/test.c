@@ -11,6 +11,8 @@
 #include "util/bin.h"
 
 typedef bool (*testfunc)(void);
+// the division and stuff I did before causes the float 899.9 to be 0x408c1f3333333334, rather than 0x408c1f3333333333, so all my tests are wrong if I do 899.9
+#define end (899.90000000000009094947)
 
 // path from current working directory of shell running the test executable
 // CANNOT INCLUDE '%' CHARACTER BECAUSE USED IN snprintf()
@@ -958,7 +960,7 @@ test_spec_vec(void)
     struct matrix m = mat_from_file(DATA_DIR "CM1_1_4.txt");
 
     scaled_data(m);
-    struct vec v = spec_vec(m, 0.1);
+    struct vec v = spec_vec(m, 0, end, 9000);
     bool ret = vec_equal(v, sol);
     vec_free(v);
     vec_free(sol);
@@ -985,7 +987,7 @@ test_spec_vec_all(void)
         free(filename);
 
         scaled_data(m);
-        struct vec v = spec_vec(m, 0.1);
+        struct vec v = spec_vec(m, 0, end, 9000);
         ret = ret && vec_equal(v, sol);
         vec_free(v);
         vec_free(sol);
@@ -1017,7 +1019,7 @@ test_spec_vec_all_matarr(void)
 
         struct matrix m = matarr_get(A, i);
         scaled_data(m);
-        struct vec v = spec_vec(m, 0.1);
+        struct vec v = spec_vec(m, 0, end, 9000);
         ret = ret && vec_equal(v, sol);
         vec_free(v);
         vec_free(sol);
@@ -1045,7 +1047,7 @@ test_bin_stat(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats = bin_stat_1D(A, 0, end, 9000);
 
     bool ret = mat_equal(sol, bin_stats);
     mat_free(sol);
@@ -1072,7 +1074,7 @@ test_prob_dot_prob_through(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1086,7 +1088,7 @@ test_prob_dot_prob_through(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(sol, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1152,16 +1154,16 @@ test_spec_vec_10_CM1_28(void)
     scaled_data(A_8);
     scaled_data(A_9);
     scaled_data(A_10);
-    struct vec A_1_spec = spec_vec(A_1, 0.1);
-    struct vec A_2_spec = spec_vec(A_2, 0.1);
-    struct vec A_3_spec = spec_vec(A_3, 0.1);
-    struct vec A_4_spec = spec_vec(A_4, 0.1);
-    struct vec A_5_spec = spec_vec(A_5, 0.1);
-    struct vec A_6_spec = spec_vec(A_6, 0.1);
-    struct vec A_7_spec = spec_vec(A_7, 0.1);
-    struct vec A_8_spec = spec_vec(A_8, 0.1);
-    struct vec A_9_spec = spec_vec(A_9, 0.1);
-    struct vec A_10_spec = spec_vec(A_10, 0.1);
+    struct vec A_1_spec = spec_vec(A_1, 0, end, 9000);
+    struct vec A_2_spec = spec_vec(A_2, 0, end, 9000);
+    struct vec A_3_spec = spec_vec(A_3, 0, end, 9000);
+    struct vec A_4_spec = spec_vec(A_4, 0, end, 9000);
+    struct vec A_5_spec = spec_vec(A_5, 0, end, 9000);
+    struct vec A_6_spec = spec_vec(A_6, 0, end, 9000);
+    struct vec A_7_spec = spec_vec(A_7, 0, end, 9000);
+    struct vec A_8_spec = spec_vec(A_8, 0, end, 9000);
+    struct vec A_9_spec = spec_vec(A_9, 0, end, 9000);
+    struct vec A_10_spec = spec_vec(A_10, 0, end, 9000);
 
     struct vec sol_spec_vec_A_1 = vec_from_file(DATA_DIR "spec_vec_CM1_28_1.txt");
     struct vec sol_spec_vec_A_2 = vec_from_file(DATA_DIR "spec_vec_CM1_28_2.txt");
@@ -1236,7 +1238,7 @@ test_bin_stats_CM1_28(void)
         matarr_set(L, i, A_i);
     }
     struct matrix sol = mat_from_file(DATA_DIR "bin_stats_CM1_28.txt");
-    struct matrix bin_stats = bin_stat_1D(L, 0.1, 900.);
+    struct matrix bin_stats = bin_stat_1D(L, 0, end, 9000);
     bool ret = mat_equal(sol, bin_stats);
     mat_free(bin_stats);
     mat_free(sol);
@@ -1260,7 +1262,7 @@ test_CM1_25_and_CM1_28(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1274,7 +1276,7 @@ test_CM1_25_and_CM1_28(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.041264598345041, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1300,7 +1302,7 @@ test_CM1_25_and_CM1_10(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1314,7 +1316,7 @@ test_CM1_25_and_CM1_10(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.072582556629134, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1339,7 +1341,7 @@ test_CM1_27_and_CM1_4(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1353,7 +1355,7 @@ test_CM1_27_and_CM1_4(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.021623181634144, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1378,7 +1380,7 @@ test_CM1_1_and_CM1_11(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1392,7 +1394,7 @@ test_CM1_1_and_CM1_11(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.04089280788519, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1417,7 +1419,7 @@ test_CM1_24_and_CM1_21(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1431,7 +1433,7 @@ test_CM1_24_and_CM1_21(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.12515913619196, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1456,7 +1458,7 @@ test_CM1_25_and_CM1_21(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1470,7 +1472,7 @@ test_CM1_25_and_CM1_21(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.066069968923634, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1495,7 +1497,7 @@ test_CM1_23_and_CM1_8(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1509,7 +1511,7 @@ test_CM1_23_and_CM1_8(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.001484153831093, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1534,7 +1536,7 @@ test_CM1_10_and_CM1_21(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1548,7 +1550,7 @@ test_CM1_10_and_CM1_21(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.06845171025487, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1573,7 +1575,7 @@ test_CM1_10_and_CM1_22(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1587,7 +1589,7 @@ test_CM1_10_and_CM1_22(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.036359745578049, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1612,7 +1614,7 @@ test_CM1_10_and_CM1_7(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1626,7 +1628,7 @@ test_CM1_10_and_CM1_7(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.029871109665094, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1651,7 +1653,7 @@ test_CM1_11_and_CM1_12(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1665,7 +1667,7 @@ test_CM1_11_and_CM1_12(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.084960498296299, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1690,7 +1692,7 @@ test_CM1_11_and_CM1_3(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1704,7 +1706,7 @@ test_CM1_11_and_CM1_3(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.093213135837302, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1729,7 +1731,7 @@ test_CM1_12_and_CM1_18(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1743,7 +1745,7 @@ test_CM1_12_and_CM1_18(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.016897263730676, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1768,7 +1770,7 @@ test_CM1_12_and_CM1_23(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1782,7 +1784,7 @@ test_CM1_12_and_CM1_23(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.056214831376217, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1807,7 +1809,7 @@ test_CM1_13_and_CM1_12(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1821,7 +1823,7 @@ test_CM1_13_and_CM1_12(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.004101523575941, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1846,7 +1848,7 @@ test_CM1_14_and_CM1_3(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1860,7 +1862,7 @@ test_CM1_14_and_CM1_3(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.057425859524548, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1885,7 +1887,7 @@ test_CM1_15_and_CM1_12(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1899,7 +1901,7 @@ test_CM1_15_and_CM1_12(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.055218397676643, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1924,7 +1926,7 @@ test_CM1_15_and_CM1_13(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1938,7 +1940,7 @@ test_CM1_15_and_CM1_13(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.013231966438739, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -1963,7 +1965,7 @@ test_CM1_18_and_CM1_5(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -1977,7 +1979,7 @@ test_CM1_18_and_CM1_5(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.012781966810721, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2002,7 +2004,7 @@ test_CM1_20_and_CM1_11(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2016,7 +2018,7 @@ test_CM1_20_and_CM1_11(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.072328503941529, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2041,7 +2043,7 @@ test_CM1_20_and_CM1_12(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2055,7 +2057,7 @@ test_CM1_20_and_CM1_12(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.07456522293608, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2080,7 +2082,7 @@ test_CM1_20_and_CM1_17(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2094,7 +2096,7 @@ test_CM1_20_and_CM1_17(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.094404829387605, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2119,7 +2121,7 @@ test_CM1_20_and_CM1_20(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2133,7 +2135,7 @@ test_CM1_20_and_CM1_20(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(1, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2158,7 +2160,7 @@ test_CM1_22_and_CM1_17(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2172,7 +2174,7 @@ test_CM1_22_and_CM1_17(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.03751249943288, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2197,7 +2199,7 @@ test_CM1_23_and_CM1_22(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2211,7 +2213,7 @@ test_CM1_23_and_CM1_22(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.022740246848618, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2236,7 +2238,7 @@ test_CM1_24_and_CM1_11(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2250,7 +2252,7 @@ test_CM1_24_and_CM1_11(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.051801154974774, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2275,7 +2277,7 @@ test_CM1_26_and_CM1_1(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2289,7 +2291,7 @@ test_CM1_26_and_CM1_1(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.022912835862035, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2314,7 +2316,7 @@ test_CM1_26_and_CM1_11(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2328,7 +2330,7 @@ test_CM1_26_and_CM1_11(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.040749418848459, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2353,7 +2355,7 @@ test_CM1_26_and_CM1_12(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2367,7 +2369,7 @@ test_CM1_26_and_CM1_12(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.110433675124284, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2392,7 +2394,7 @@ test_CM1_26_and_CM1_2(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2406,7 +2408,7 @@ test_CM1_26_and_CM1_2(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.023472628814994, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2431,7 +2433,7 @@ test_CM1_27_and_CM1_16(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2445,7 +2447,7 @@ test_CM1_27_and_CM1_16(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.057995289632189, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2470,7 +2472,7 @@ test_CM1_27_and_CM1_28(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2484,7 +2486,7 @@ test_CM1_27_and_CM1_28(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.035569551931446, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2509,7 +2511,7 @@ test_CM1_28_and_CM1_1(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2523,7 +2525,7 @@ test_CM1_28_and_CM1_1(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.022519129110172, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2548,7 +2550,7 @@ test_CM1_28_and_CM1_20(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2562,7 +2564,7 @@ test_CM1_28_and_CM1_20(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.281531338126355, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2587,7 +2589,7 @@ test_CM1_1_and_CM1_8(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2601,7 +2603,7 @@ test_CM1_1_and_CM1_8(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.010513748623968, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2626,7 +2628,7 @@ test_CM1_2_and_CM1_2(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2640,7 +2642,7 @@ test_CM1_2_and_CM1_2(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(1.0, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2665,7 +2667,7 @@ test_CM1_2_and_CM1_26(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2679,7 +2681,7 @@ test_CM1_2_and_CM1_26(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.023472628814994, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2704,7 +2706,7 @@ test_CM1_2_and_CM1_6(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2718,7 +2720,7 @@ test_CM1_2_and_CM1_6(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.021362257050611, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2743,7 +2745,7 @@ test_CM1_3_and_CM1_18(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2757,7 +2759,7 @@ test_CM1_3_and_CM1_18(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.004160752445243, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2782,7 +2784,7 @@ test_CM1_3_and_CM1_20(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2796,7 +2798,7 @@ test_CM1_3_and_CM1_20(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.102379914691872, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2821,7 +2823,7 @@ test_CM1_3_and_CM1_6(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2835,7 +2837,7 @@ test_CM1_3_and_CM1_6(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.028129541037335, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2860,7 +2862,7 @@ test_CM1_4_and_CM1_6(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2874,7 +2876,7 @@ test_CM1_4_and_CM1_6(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.018767371051262, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2899,7 +2901,7 @@ test_CM1_5_and_CM1_12(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2913,7 +2915,7 @@ test_CM1_5_and_CM1_12(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.063673316564264, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2938,7 +2940,7 @@ test_CM1_5_and_CM1_20(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2952,7 +2954,7 @@ test_CM1_5_and_CM1_20(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.084359053077657, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -2977,7 +2979,7 @@ test_CM1_7_and_CM1_9(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -2991,7 +2993,7 @@ test_CM1_7_and_CM1_9(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.105884314043279, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -3016,7 +3018,7 @@ test_CM1_8_and_CM1_19(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -3030,7 +3032,7 @@ test_CM1_8_and_CM1_19(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.009837382753993, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -3055,7 +3057,7 @@ test_CM1_9_and_CM1_3(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -3069,7 +3071,7 @@ test_CM1_9_and_CM1_3(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.109741556620843, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -3094,7 +3096,7 @@ test_CM1_9_and_CM1_6(void)
         matarr_set(A, i, m);
         free(filename);
     }
-    struct matrix bin_stats_A = bin_stat_1D(A, 0.1, 900.);
+    struct matrix bin_stats_A = bin_stat_1D(A, 0, end, 9000);
 
     struct matarray B = matarr_zeros(10);
     for (size_t i = 0; i < 10; i++) {
@@ -3108,7 +3110,7 @@ test_CM1_9_and_CM1_6(void)
         matarr_set(B, i, m);
         free(filename);
     }
-    struct matrix bin_stats_B = bin_stat_1D(B, 0.1, 900.);
+    struct matrix bin_stats_B = bin_stat_1D(B, 0, end, 9000);
 
     bool ret = equals(0.012490393307203, prob_dot_prod(bin_stats_A, bin_stats_B, 1e-4));
     mat_free(bin_stats_A);
@@ -3143,8 +3145,8 @@ test_CM1_10_vs_21_sanity_check(void)
     ndata[2] = n3;
     struct matarray arr = matarr_from_data(data, 3, false);
     struct matarray arr2 = matarr_from_data(ndata, 3, false);
-    struct matrix a = bin_stat_1D(arr, 0.1, 900.);
-    struct matrix a2 = bin_stat_1D(arr2, 0.1, 900.);
+    struct matrix a = bin_stat_1D(arr, 0, end, 9000);
+    struct matrix a2 = bin_stat_1D(arr2, 0, end, 9000);
     double d = prob_dot_prod(a, a2, 1e-4);
     mat_free(a);
     mat_free(a2);
@@ -3188,8 +3190,8 @@ test_symmetric_1d(void)
 
     struct matarray arr = matarr_from_data(data_10, 6, 0);
     struct matarray arr2 = matarr_from_data(data_3, 6, 0);
-    struct matrix a = bin_stat_1D(arr, 0.1, 900.);
-    struct matrix a2 = bin_stat_1D(arr2, 0.1, 900.);
+    struct matrix a = bin_stat_1D(arr, 0, end, 9000);
+    struct matrix a2 = bin_stat_1D(arr2, 0, end, 9000);
     bool ret = prob_dot_prod(a, a2, 1e-4) == prob_dot_prod(a2, a, 1e-4);
     bool ret2 = equals(prob_dot_prod(a, a2, 1e-4), 0.14003071140822);
     mat_free(a);
@@ -3396,6 +3398,7 @@ int main(int argc, char *argv[])
     if (num_failed) printf(RED);
     printf("fail: %zu\n" RESET, num_failed);
     puts(GREEN "======================" RESET);
+
     return ret;
 
 }

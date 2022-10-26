@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <math.h>
 #include "main.h"
 #include "util/array.h"
 #include "util/bin.h" // oned
@@ -96,7 +97,8 @@ filenames_to_stats(char *str, int mflag)
     arr.length = i; // wastes some of the malloc'd mem but that's okay
     struct matrix stats;
     if (mflag == ONED) {
-        stats = bin_stat_1D(arr, width, 900.);
+        double n = floor(900./width); // num_bins
+        stats = bin_stat_1D(arr, 0, 900. * ((n - 1) / n), n);
     } else if (mflag == TWOD) {
         size_t n = matarr_get(arr, 0).len1; // >= longest possible length
         stats = peak_stat(arr, n);
