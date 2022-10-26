@@ -49,6 +49,9 @@ size_t min3(const size_t x, const size_t y, const size_t z);
  * greater than or less than `n`, and we will use the min of `m1.len2`, `m2.len2`,
  * and `n` as n moving forward. 
  *
+ * The desingularization is the amount we add to the standard deviation to avoid
+ * divide by 0 errors.
+ *
  * We compare the most important (highest) peak in both matrices with all the
  * peaks in the other matrix. We select the best peak in the other matrix by
  * similarity. Repeat until n peaks have been matched. We use the similalrity
@@ -56,7 +59,7 @@ size_t min3(const size_t x, const size_t y, const size_t z);
  * average of the products of the y-values of matched peaks. We return that
  * weighted average. Which is a similarity measure between the two compounds.
  */
-double peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n);
+double peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desingularization, size_t n);
 
 /*
  * Measures the similarity of two peaks.
@@ -66,7 +69,7 @@ double peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_
  *              v = { v_1, v_2, v_3, v_4 }
  * output: similarity of the two peaks
  *
- * This function first adds 1e-4 to both the stdev's to avoid having an
+ * This function first adds desingularization, to both the stdev's to avoid having an
  * ill-conditioned peak. Then, measures the angle between the two functions:
 
     $$f_1(x,y) = e^{-(1/2)[(\frac{x-u_1}{u_3})^2 + (\frac{y-u_2}{u_4})^2]}$$
@@ -80,7 +83,7 @@ double peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_
 
  * `cos_sim_L2` is just evaluating that expression.
  */
-double cos_sim_L2(const struct vec u, const struct vec v);
+double cos_sim_L2(const struct vec u, const struct vec v, double desingularization);
 
 /*
  * Creates a list of peaks with each element of the list being the coordinates

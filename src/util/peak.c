@@ -16,7 +16,7 @@ min3(const size_t x, const size_t y, const size_t z)
 
 // (2 4xn matrices (output of `peak_stat`), number of peaks) -> similarity of them btwn 0 and 1
 double
-peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n) 
+peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desingularization, size_t n) 
 {
     n = min3(m1.len1, m2.len1, n);
     if (n == 0) {
@@ -52,7 +52,7 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, size_t n)
 #pragma GCC diagnostic pop
                 vec_set(sim_scores, j, -inf);
             } else {
-                vec_set(sim_scores, j, cos_sim_L2(u, v));
+                vec_set(sim_scores, j, cos_sim_L2(u, v, desingularization));
             }
         }
 
@@ -107,7 +107,7 @@ peak_stat(const struct matarray replicates, size_t n)
 }
 
 double
-cos_sim_L2(const struct vec u, const struct vec v)
+cos_sim_L2(const struct vec u, const struct vec v, double desingularization)
 {
     // assert input correct
     if (u.length != 4) {

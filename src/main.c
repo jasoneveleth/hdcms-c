@@ -44,7 +44,7 @@ compare_compound(const struct matrix m1, const struct matrix m2, int mflag, doub
     if (mflag == ONED) {
         return prob_dot_prod(m1, m2, desingularization);
     } else if (mflag == TWOD) {
-        return peak_sim_measure_L2(m1, m2, max_peaks);
+        return peak_sim_measure_L2(m1, m2, desingularization, max_peaks);
     } else {
         printf("\n");
         usage();
@@ -78,7 +78,7 @@ file_readable(const char *const path)
 }
 
 static struct matrix
-filenames_to_stats(char *str, int mflag)
+filenames_to_stats(char *str, int mflag, double start, double end, double num_bins)
 {
     struct matarray arr = matarr_zeros(2);
 
@@ -96,8 +96,7 @@ filenames_to_stats(char *str, int mflag)
     arr.length = i; // wastes some of the malloc'd mem but that's okay
     struct matrix stats;
     if (mflag == ONED) {
-        double n = floor(900./width); // num_bins
-        stats = bin_stat_1D(arr, 0, 900. * ((n - 1) / n), n);
+        stats = bin_stat_1D(arr, start, end, num_bins);
     } else if (mflag == TWOD) {
         size_t n = matarr_get(arr, 0).len1; // >= longest possible length
         stats = peak_stat(arr, n);
@@ -128,7 +127,7 @@ list_file(const char *const filename, const struct matarray arr, const size_t i)
     fclose(fileptr);                     // Close the file
     buffer[len] = '\0';                  // NUL terminate the string
 
-    struct matrix stats = filenames_to_stats(buffer, mflag);
+    struct matrix stats = filenames_to_stats(buffer, mflag, 0, 900. * (8999. / 9000.), 9000.);
     free(buffer);
     matarr_set(arr, i, stats);
 }
@@ -136,7 +135,7 @@ list_file(const char *const filename, const struct matarray arr, const size_t i)
 static void
 list_option(char *str, struct matarray arr, const size_t i)
 {
-    struct matrix stats = filenames_to_stats(str, mflag);
+    struct matrix stats = filenames_to_stats(str, mflag, 0, 900. * (8999. / 9000.), 9000.);
     matarr_set(arr, i, stats);
 }
 

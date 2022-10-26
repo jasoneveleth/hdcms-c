@@ -83,7 +83,7 @@ test_cos_sim_L2(void)
     double vdata[] = {90, 1, 0.09, 0.11};
     struct vec u = vec_from_data(udata, 4, false);
     struct vec v = vec_from_data(vdata, 4, false);
-    double sim = cos_sim_L2(u, v);
+    double sim = cos_sim_L2(u, v, 1e-4);
     vec_free(u);
     vec_free(v);
     return equals(sim, 7.9235e-13);
@@ -111,7 +111,7 @@ test_cos_sim_3rd_highest_of_12_11_30V(void)
     struct vec v = vec_from_data(vdata, 4, false);
     vec_scale(u, 1e2);
     vec_scale(v, 1e2);
-    double sim1 = cos_sim_L2(u, v);
+    double sim1 = cos_sim_L2(u, v, 1e-4);
     vec_free(u);
     vec_free(v);
     return equals(sim1, 0.599328450629485);
@@ -139,7 +139,7 @@ test_cos_sim_11th_highest_of_12_11_30V(void)
     struct vec v = vec_from_data(vdata2, 4, false);
     vec_scale(u, 1e2);
     vec_scale(v, 1e2);
-    double sim2 = cos_sim_L2(u, v);
+    double sim2 = cos_sim_L2(u, v, 1e-4);
     vec_free(u);
     vec_free(v);
     return equals(sim2, 0.734449667053694);
@@ -395,7 +395,7 @@ test_cos_sim_extra1(void)
     double bdata[] = {100.001, 0.908, 0.004, 0.01};
     struct vec u = vec_from_data(adata, 4, false);
     struct vec v = vec_from_data(bdata, 4, false);
-    return equals(cos_sim_L2(u, v), 0);
+    return equals(cos_sim_L2(u, v, 1e-4), 0);
 }
 
 static bool
@@ -406,7 +406,7 @@ test_cos_sim_extra2(void)
     double bdata[] = {100.001, 0.908, 0.004, 0.01};
     struct vec u = vec_from_data(adata, 4, false);
     struct vec v = vec_from_data(bdata, 4, false);
-    return equals(cos_sim_L2(u, v), 7.856829001024321e-01);
+    return equals(cos_sim_L2(u, v, 1e-4), 7.856829001024321e-01);
 }
 
 static bool
@@ -419,7 +419,7 @@ test_peak_sim_measure_simple(void)
         100.001, 0.908, 0.004, 0.01};
     struct matrix A = mat_from_data(adata, 2, 4, 4, false);
     struct matrix B = mat_from_data(bdata, 2, 4, 4, false);
-    double sim = peak_sim_measure_L2(A, B, 2);
+    double sim = peak_sim_measure_L2(A, B, 1e-4, 2);
     bool ret = equals(sim, 7.906904116230999e-01);
     mat_free(A);
     mat_free(B);
@@ -452,7 +452,7 @@ test_peak_sim_measure_complex(void)
         110.329, 0.322, 0.5, 0.02};
     struct matrix A = mat_from_data(adata, 10, 4, 4, false);
     struct matrix B = mat_from_data(bdata, 10, 4, 4, false);
-    double sim = peak_sim_measure_L2(A, B, 10);
+    double sim = peak_sim_measure_L2(A, B, 1e-4, 10);
     bool ret = equals(sim, 0.00045443404003044953);
     mat_free(A);
     mat_free(B);
@@ -489,7 +489,7 @@ test_peak_sim_measure_complex2(void)
     };
     struct matrix A = mat_from_data(adata, 10, 4, 4, false);
     struct matrix B = mat_from_data(bdata, 10, 4, 4, false);
-    double sim = peak_sim_measure_L2(A, B, 10);
+    double sim = peak_sim_measure_L2(A, B, 1e-4, 10);
     bool ret = equals(sim, 0.00045443404003044953);
     mat_free(A);
     mat_free(B);
@@ -526,7 +526,7 @@ test_peak_sim_measure_n_less_than_both(void)
     };
     struct matrix A = mat_from_data(adata, 10, 4, 4, false);
     struct matrix B = mat_from_data(bdata, 10, 4, 4, false);
-    double sim = peak_sim_measure_L2(A, B, 4);
+    double sim = peak_sim_measure_L2(A, B, 1e-4, 4);
     bool ret = equals(sim, 0.00012678008971000085);
     mat_free(A);
     mat_free(B);
@@ -539,7 +539,7 @@ test_peak_sim_measure_real(void)
     printf(__func__);
     struct matrix A = mat_from_data(stat_m13_i_2, 13, 4, 4, false);
     struct matrix B = mat_from_data(stat_m12_i_3, 25, 4, 4, false);
-    double sim = peak_sim_measure_L2(A, B, 20);
+    double sim = peak_sim_measure_L2(A, B, 1e-4, 20);
     bool ret = equals(sim, 0);
     mat_free(A);
     mat_free(B);
@@ -691,7 +691,7 @@ test_edge_case_0_peak_sim(void)
     double ndata[] = {420, 69, 0, 0};
     struct matrix n = {1, 4, 4, ndata, false};
     int fd = suppress_stderr();
-    double d = peak_sim_measure_L2(m, n, 5);
+    double d = peak_sim_measure_L2(m, n, 1e-4, 5);
     resume_stderr(fd);
     return equals(d, 0);
 }
@@ -917,7 +917,7 @@ test_similarity_analysis(void)
         for (size_t j = 0; j < 3; j++) {
             struct matrix A = matarr_get(analyte_peak_stats, (2*i) * 3 + j);
             struct matrix B = matarr_get(analyte_peak_stats, (2*i + 1) * 3 + j);
-            mat_set(similarity_measures, i, j, peak_sim_measure_L2(A, B, 25));
+            mat_set(similarity_measures, i, j, peak_sim_measure_L2(A, B, 1e-4, 25));
         }
     }
     matarr_free(analyte_peak_stats);
@@ -3240,8 +3240,8 @@ test_peak_stat_all_through(void)
     FILE *f2 = fopen("/tmp/mat2", "w");
     mat_fprintf(f, a2);
     fclose(f2);
-    double d = peak_sim_measure_L2(a, a2, 10);
-    double d2 = peak_sim_measure_L2(a2, a, 10);
+    double d = peak_sim_measure_L2(a, a2, 1e-4, 10);
+    double d2 = peak_sim_measure_L2(a2, a, 1e-4, 10);
     bool ret = equals(d, 201.282585841773e-006) && equals(d2, 240.632397866844e-006);
     mat_free(a);
     mat_free(a2);
