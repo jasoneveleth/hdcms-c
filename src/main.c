@@ -271,6 +271,11 @@ main(int argc, char *argv[])
     argc -= optind;
     argv += optind;
 
+    if (nreplicates == 0) {
+        fprintf(stderr, "no arguments supplied\n");
+        usage();
+    }
+
     struct matarray replicate_stats = matarr_zeros(2);
 
     for (size_t i = 0; i < nreplicates; i++) {
