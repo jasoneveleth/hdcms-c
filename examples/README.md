@@ -6,5 +6,5 @@ windows)
 
 # Python
 
-Checkout [python api documentation](https://pypi.org/project/hdcms-helper/) or [github](https://github.com/jasoneveleth/hdcms-helper)
+Checkout [python api documentation](https://pypi.org/project/hdcms/) or [github](https://github.com/jasoneveleth/hdcms-python)
 
