@@ -180,7 +180,7 @@ test_peak_sort_simple(void)
 
     struct matrix adata[] = {m1, m2};
     struct matarray input = matarr_from_data(adata, 2, false);
-    struct matarray output = peak_sort(input, n);
+    struct matarray output = peak_sort(input, n, inf);
 
     // answer
     double peak0data[] = {72, 0.68, 79, 0.61};
@@ -240,7 +240,7 @@ test_peak_sort_zeros(void)
 
     struct matrix adata[] = {m1, m2, m3, m4, m5};
     struct matarray input = matarr_from_data(adata, 5, false);
-    struct matarray output = peak_sort(input, n);
+    struct matarray output = peak_sort(input, n, inf);
 
     // answer
     double peak0data[] = {72, 0.68, 79, 0.61, 0, 0, 0, 0, 0, 0};
@@ -282,7 +282,7 @@ test_peak_sort_real2(void)
 
     struct matrix adata[] = {m1, m2, m3, m4, m5};
     struct matarray input = matarr_from_data(adata, 5, false);
-    struct matarray output = peak_sort(input, n);
+    struct matarray output = peak_sort(input, n, inf);
 
     // answer
     struct matrix peak0 = mat_from_data(p_m13_2__0_data, 5, 2, 2, false);
@@ -318,7 +318,7 @@ test_peak_sort_real15(void)
 
     struct matrix adata[] = {m1, m2, m3, m4, m5};
     struct matarray input = matarr_from_data(adata, 5, false);
-    struct matarray output = peak_sort(input, n);
+    struct matarray output = peak_sort(input, n, inf);
 
     // answer
     struct matrix peak0 = mat_from_data(p_m13_2__0_data, 5, 2, 2, false);
@@ -364,7 +364,7 @@ test_peak_stat_real(void)
 
     struct matrix adata[] = {m1, m2, m3, m4, m5};
     struct matarray input = matarr_from_data(adata, 5, false);
-    struct matrix output = peak_stat(input, n);
+    struct matrix output = peak_stat(input, n, inf);
 
     struct matrix sol = mat_from_data(stat_m13_i_2, 13, 4, 4, false);
     bool ret = mat_equal(output, sol);
@@ -419,7 +419,7 @@ test_peak_sim_measure_simple(void)
         100.001, 0.908, 0.004, 0.01};
     struct matrix A = mat_from_data(adata, 2, 4, 4, false);
     struct matrix B = mat_from_data(bdata, 2, 4, 4, false);
-    double sim = peak_sim_measure_L2(A, B, 1e-4, 2);
+    double sim = peak_sim_measure_L2(A, B, 1e-4, 2, inf);
     bool ret = equals(sim, 7.906904116230999e-01);
     mat_free(A);
     mat_free(B);
@@ -452,7 +452,7 @@ test_peak_sim_measure_complex(void)
         110.329, 0.322, 0.5, 0.02};
     struct matrix A = mat_from_data(adata, 10, 4, 4, false);
     struct matrix B = mat_from_data(bdata, 10, 4, 4, false);
-    double sim = peak_sim_measure_L2(A, B, 1e-4, 10);
+    double sim = peak_sim_measure_L2(A, B, 1e-4, 10, inf);
     bool ret = equals(sim, 0.00045443404003044953);
     mat_free(A);
     mat_free(B);
@@ -489,7 +489,7 @@ test_peak_sim_measure_complex2(void)
     };
     struct matrix A = mat_from_data(adata, 10, 4, 4, false);
     struct matrix B = mat_from_data(bdata, 10, 4, 4, false);
-    double sim = peak_sim_measure_L2(A, B, 1e-4, 10);
+    double sim = peak_sim_measure_L2(A, B, 1e-4, 10, inf);
     bool ret = equals(sim, 0.00045443404003044953);
     mat_free(A);
     mat_free(B);
@@ -526,7 +526,7 @@ test_peak_sim_measure_n_less_than_both(void)
     };
     struct matrix A = mat_from_data(adata, 10, 4, 4, false);
     struct matrix B = mat_from_data(bdata, 10, 4, 4, false);
-    double sim = peak_sim_measure_L2(A, B, 1e-4, 4);
+    double sim = peak_sim_measure_L2(A, B, 1e-4, 4, inf);
     bool ret = equals(sim, 0.00012678008971000085);
     mat_free(A);
     mat_free(B);
@@ -539,7 +539,7 @@ test_peak_sim_measure_real(void)
     printf(__func__);
     struct matrix A = mat_from_data(stat_m13_i_2, 13, 4, 4, false);
     struct matrix B = mat_from_data(stat_m12_i_3, 25, 4, 4, false);
-    double sim = peak_sim_measure_L2(A, B, 1e-4, 20);
+    double sim = peak_sim_measure_L2(A, B, 1e-4, 20, inf);
     bool ret = equals(sim, 0);
     mat_free(A);
     mat_free(B);
@@ -579,7 +579,7 @@ test_edgecase_contains_0_peak_sort(void)
     struct matrix m = mat_zeros(0, 0);
     struct matrix adata[] = {m};
     struct matarray arr = matarr_from_data(adata, 1, false);
-    struct matarray output = peak_sort(arr, 5);
+    struct matarray output = peak_sort(arr, 5, inf);
     bool ret = output.length == 0;
     mat_free(m);
     matarr_free(output);
@@ -591,7 +591,7 @@ test_edgecase_0_peak_sort(void)
 {
     printf(__func__);
     struct matarray m = matarr_zeros(0);
-    struct matarray output = peak_sort(m, 5);
+    struct matarray output = peak_sort(m, 5, inf);
     bool ret = output.length == 5;
     matarr_free(m);
     matarr_free(output);
@@ -609,7 +609,7 @@ test_edgecase_1_peak_sort(void)
     struct matrix m = mat_from_data(mdata, 4, 2, 2, false);
     struct matarray arr = matarr_zeros(1);
     matarr_set(arr, 0, m);
-    struct matarray output = peak_sort(arr, 5);
+    struct matarray output = peak_sort(arr, 5, inf);
     // output should be 4 matrices each of which is 1 pt
     double sol1data[] = {79, 0.61};
     double sol2data[] = {110, 0.5};
@@ -642,7 +642,7 @@ test_edge_case_1_peak_stat(void)
     struct matrix m = mat_from_data(mdata, 4, 2, 2, false);
     struct matarray arr = matarr_zeros(1);
     matarr_set(arr, 0, m);
-    struct matrix output = peak_stat(arr, 5);
+    struct matrix output = peak_stat(arr, 5, inf);
     double soldata[] = {
         79, 0.61, 0, 0,
         110, 0.5, 0, 0,
@@ -663,7 +663,7 @@ test_edgecase_contains_0_peak_stat(void)
     struct matrix m = mat_zeros(0, 0);
     struct matrix adata[] = {m};
     struct matarray arr = matarr_from_data(adata, 1, false);
-    struct matrix output = peak_stat(arr, 5);
+    struct matrix output = peak_stat(arr, 5, inf);
     bool ret = output.len1 == 0;
     mat_free(output);
     mat_free(m);
@@ -676,7 +676,7 @@ test_edgecase_0_peak_stat(void)
     printf(__func__);
     struct matarray m = matarr_zeros(0);
     int fd = suppress_stderr();
-    struct matrix output = peak_stat(m, 5);
+    struct matrix output = peak_stat(m, 5, inf);
     resume_stderr(fd);
     bool ret = output.len1 == 0 && output.len2 == 0;
     matarr_free(m);
@@ -691,7 +691,7 @@ test_edge_case_0_peak_sim(void)
     double ndata[] = {420, 69, 0, 0};
     struct matrix n = {1, 4, 4, ndata, false};
     int fd = suppress_stderr();
-    double d = peak_sim_measure_L2(m, n, 1e-4, 5);
+    double d = peak_sim_measure_L2(m, n, 1e-4, 5, inf);
     resume_stderr(fd);
     return equals(d, 0);
 }
@@ -907,7 +907,7 @@ test_similarity_analysis(void)
 
                 matarr_set(replicates, k, m);
             }
-            struct matrix p = peak_stat(replicates, 15);
+            struct matrix p = peak_stat(replicates, 15, inf);
             matarr_free(replicates);
             matarr_set(analyte_peak_stats, i * 3 + j, p);
         }
@@ -917,7 +917,7 @@ test_similarity_analysis(void)
         for (size_t j = 0; j < 3; j++) {
             struct matrix A = matarr_get(analyte_peak_stats, (2*i) * 3 + j);
             struct matrix B = matarr_get(analyte_peak_stats, (2*i + 1) * 3 + j);
-            mat_set(similarity_measures, i, j, peak_sim_measure_L2(A, B, 1e-4, 25));
+            mat_set(similarity_measures, i, j, peak_sim_measure_L2(A, B, 1e-4, 25, inf));
         }
     }
     matarr_free(analyte_peak_stats);
@@ -3232,16 +3232,16 @@ test_peak_stat_all_through(void)
 
     struct matarray arr = matarr_from_data(data_10, 5, 0);
     struct matarray arr2 = matarr_from_data(data_9, 5, 0);
-    struct matrix a = peak_stat(arr, 10);
-    struct matrix a2 = peak_stat(arr2, 10);
+    struct matrix a = peak_stat(arr, 10, inf);
+    struct matrix a2 = peak_stat(arr2, 10, inf);
     FILE *f = fopen("/tmp/mat", "w");
     mat_fprintf(f, a);
     fclose(f);
     FILE *f2 = fopen("/tmp/mat2", "w");
     mat_fprintf(f, a2);
     fclose(f2);
-    double d = peak_sim_measure_L2(a, a2, 1e-4, 10);
-    double d2 = peak_sim_measure_L2(a2, a, 1e-4, 10);
+    double d = peak_sim_measure_L2(a, a2, 1e-4, 10, inf);
+    double d2 = peak_sim_measure_L2(a2, a, 1e-4, 10, inf);
     bool ret = equals(d, 201.282585841773e-006) && equals(d2, 240.632397866844e-006);
     mat_free(a);
     mat_free(a2);

@@ -14,9 +14,15 @@ min3(const size_t x, const size_t y, const size_t z)
     return min2(min2(x, y), z);
 }
 
+size_t
+max(size_t x, size_t y)
+{
+    return x < y ? y : x;
+}
+
 // (2 4xn matrices (output of `peak_stat`), number of peaks) -> similarity of them btwn 0 and 1
 double
-peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desingularization, size_t n) 
+peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desingularization, size_t n, double xtol) 
 {
     n = min3(m1.len1, m2.len1, n);
     if (n == 0) {
@@ -78,7 +84,7 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desin
 
 // (matrices of spectra, number of peaks) -> nx4 matrix of peaks
 struct matrix
-peak_stat(const struct matarray replicates, size_t n) 
+peak_stat(const struct matarray replicates, size_t n, double xtol) 
 {
     if (replicates.length <= 0) {
         WARNING("peak_stat got %zd length array\n", replicates.length);
@@ -92,7 +98,7 @@ peak_stat(const struct matarray replicates, size_t n)
     }
 
     struct matrix B = mat_zeros(n, 4);
-    struct matarray P = peak_sort(replicates, n);
+    struct matarray P = peak_sort(replicates, n, xtol);
     for (size_t i = 0; i < P.length; i++) {
         struct matrix M = matarr_get(P, i);
         struct vec x = vec_from_col(M, 0);
@@ -127,9 +133,9 @@ cos_sim_L2(const struct vec u, const struct vec v, double desingularization)
 
     // add 1e-4 to all std, to avoid the 0 std div 0 error
     double v0 = vec_get(v, 0),        v1 = vec_get(v, 1),
-           v2 = vec_get(v, 2) + 1e-4, v3 = vec_get(v, 3) + 1e-4,
+           v2 = vec_get(v, 2) + desingularization, v3 = vec_get(v, 3) + desingularization,
            u0 = vec_get(u, 0),        u1 = vec_get(u, 1),
-           u2 = vec_get(u, 2) + 1e-4, u3 = vec_get(u, 3) + 1e-4;
+           u2 = vec_get(u, 2) + desingularization, u3 = vec_get(u, 3) + desingularization;
     double tmp2 = (2*u2*v2) / (u2*u2 + v2*v2);
     double tmp3 = (2*u3*v3) / (u3*u3 + v3*v3);
     double a = sqrt(tmp2) * sqrt(tmp3);
@@ -141,7 +147,7 @@ cos_sim_L2(const struct vec u, const struct vec v, double desingularization)
 // (matrices of spectra, number of peaks) -> n matrices s.t. ith matrix is the
 // pts assoc. with ith largest peak
 struct matarray
-peak_sort(const struct matarray replicates, size_t n)
+peak_sort(const struct matarray replicates, size_t n, double xtol)
 {
     // reset n
     for (size_t i = 0; i < replicates.length; i++) {
@@ -182,12 +188,18 @@ peak_sort(const struct matarray replicates, size_t n)
                 }
             }
 
-            // assign smallest point to peak mat
-            mat_set(peak, j, 0, mat_get(mj, rowargmin, 0));
-            mat_set(peak, j, 1, mat_get(mj, rowargmin, 1));
+            if (fabs(mat_get(mj, rowargmin, 0) - maxx) > xtol) {
+                mat_set(peak, j, 0, maxx);
+                mat_set(peak, j, 1, 0);
+            } else {
+                // assign smallest point to peak mat
+                mat_set(peak, j, 0, mat_get(mj, rowargmin, 0));
+                mat_set(peak, j, 1, mat_get(mj, rowargmin, 1));
 
-            // set y value of the point to -inf so it never matches or is a max
-            mat_set(mj, rowargmin, 1, -inf);
+                // set y value of the point to -inf so it never matches or is a max
+                mat_set(mj, rowargmin, 1, -inf);
+            }
+
         }
 
         // make the next peak a new matrix in P

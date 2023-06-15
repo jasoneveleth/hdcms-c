@@ -44,7 +44,7 @@ compare_compound(const struct matrix m1, const struct matrix m2, int mflag, doub
     if (mflag == ONED) {
         return prob_dot_prod(m1, m2, desingularization);
     } else if (mflag == TWOD) {
-        return peak_sim_measure_L2(m1, m2, desingularization, max_peaks);
+        return peak_sim_measure_L2(m1, m2, desingularization, max_peaks, inf);
     } else {
         printf("\n");
         usage();
@@ -99,7 +99,7 @@ filenames_to_stats(char *str, int mflag, double start, double end, double num_bi
         stats = bin_stat_1D(arr, start, end, num_bins);
     } else if (mflag == TWOD) {
         size_t n = matarr_get(arr, 0).len1; // >= longest possible length
-        stats = peak_stat(arr, n);
+        stats = peak_stat(arr, n, inf);
     } else {
         printf("\n");
         usage();

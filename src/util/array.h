@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <math.h>
 
 #if !defined(RED) || !defined(RESET)
 #define RED ""
