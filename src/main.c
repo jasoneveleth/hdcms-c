@@ -44,7 +44,7 @@ compare_compound(const struct matrix m1, const struct matrix m2, int mflag, doub
     if (mflag == ONED) {
         return prob_dot_prod(m1, m2, desingularization);
     } else if (mflag == TWOD) {
-        return peak_sim_measure_L2(m1, m2, desingularization, max_peaks, inf);
+        return peak_sim_measure_L2(m1, m2, desingularization, max_peaks);
     } else {
         printf("\n");
         usage();

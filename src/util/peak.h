@@ -52,9 +52,6 @@ size_t min3(const size_t x, const size_t y, const size_t z);
  * The `desingularization` is the amount we add to the standard deviation to avoid
  * divide by 0 errors.
  *
- * The `xtol` is the amount of distance in the x direction that we permit for
- * being part of the same peak.
- *
  * We compare the most important (highest) peak in both matrices with all the
  * peaks in the other matrix. We select the best peak in the other matrix by
  * similarity. Repeat until n peaks have been matched. We use the similalrity
@@ -62,7 +59,7 @@ size_t min3(const size_t x, const size_t y, const size_t z);
  * average of the products of the y-values of matched peaks. We return that
  * weighted average. Which is a similarity measure between the two compounds.
  */
-double peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desingularization, size_t n, double xtol);
+double peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desingularization, size_t n);
 
 /*
  * Measures the similarity of two peaks.
@@ -105,7 +102,9 @@ double cos_sim_L2(const struct vec u, const struct vec v, double desingularizati
  *
  * This is a helper routine for peak_stat.
  *
- * See abox for `xtol` description.
+ * The `xtol` is the amount of distance in the x direction that we permit for
+ * being part of the same peak.
+ *
  */
 struct matarray peak_sort(const struct matarray replicates, size_t n, double xtol);
 

@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <math.h>
+#include "array.h"
 #include "peak.h"
 
 size_t
@@ -22,7 +23,7 @@ max(size_t x, size_t y)
 
 // (2 4xn matrices (output of `peak_stat`), number of peaks) -> similarity of them btwn 0 and 1
 double
-peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desingularization, size_t n, double xtol) 
+peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desingularization, size_t n) 
 {
     n = min3(m1.len1, m2.len1, n);
     if (n == 0) {
@@ -92,13 +93,8 @@ peak_stat(const struct matarray replicates, size_t n, double xtol)
         return m;
     }
 
-    // reset n
-    for (size_t i = 0; i < replicates.length; i++) {
-        n = min2(n, matarr_get(replicates, i).len1);
-    }
-
-    struct matrix B = mat_zeros(n, 4);
     struct matarray P = peak_sort(replicates, n, xtol);
+    struct matrix B = mat_zeros(P.length, 4);
     for (size_t i = 0; i < P.length; i++) {
         struct matrix M = matarr_get(P, i);
         struct vec x = vec_from_col(M, 0);
@@ -149,25 +145,33 @@ cos_sim_L2(const struct vec u, const struct vec v, double desingularization)
 struct matarray
 peak_sort(const struct matarray replicates, size_t n, double xtol)
 {
-    // reset n
-    for (size_t i = 0; i < replicates.length; i++) {
-        n = min2(n, matarr_get(replicates, i).len1);
-    }
-
     struct matarray P = matarr_zeros(n);
     struct matarray replicates_copy = matarr_copy(replicates);
-    for (size_t i = 0; i < n; i++) {
+    size_t i;
+
+    bool warn = false;
+
+    for (i = 0; i < n; i++) {
         // find largest point left in all replicates
         double maxy = -inf;
         double maxx = 0;
         for (size_t j = 0; j < replicates_copy.length; j++) {
             struct matrix mj = matarr_get(replicates_copy, j);
+            if (mj.len2 == 0) {
+                warn = true;
+                continue;
+            }
             struct vec ys = vec_from_col(mj, 1);
             size_t argmax = vec_argmax(ys);
             if (vec_get(ys, argmax) > maxy) {
                 maxx = mat_get(mj, argmax, 0);
                 maxy = mat_get(mj, argmax, 1);
             }
+        }
+
+        // we've exhausted all replicates and there are no peaks left
+        if (maxy == -inf) {
+            break;
         }
 
         // find points in replicates closest to p
@@ -192,7 +196,7 @@ peak_sort(const struct matarray replicates, size_t n, double xtol)
                 mat_set(peak, j, 0, maxx);
                 mat_set(peak, j, 1, 0);
             } else {
-                // assign smallest point to peak mat
+                // assign closest point to peak
                 mat_set(peak, j, 0, mat_get(mj, rowargmin, 0));
                 mat_set(peak, j, 1, mat_get(mj, rowargmin, 1));
 
@@ -205,6 +209,24 @@ peak_sort(const struct matarray replicates, size_t n, double xtol)
         // make the next peak a new matrix in P
         matarr_set(P, i, peak);
     }
+
+    // we do this so we only warn the user once through the loop
+    if (warn) {
+        WARNING("%s\n", "peak_sort given a matrix with dimension (<something>, 0)");
+    }
+
+    // if we exhausted the replicates before we got n peaks, then make a smaller
+    // matarray
+    if (i != n) {
+        struct matarray a = matarr_zeros(i);
+        for (size_t j = 0; j < i; j++) {
+            matarr_set(a, j, matarr_get(P, j));
+        }
+        P.is_owner = false;
+        matarr_free(P);
+        P = a;
+    }
+
     matarr_free(replicates_copy);
     return P;
 }
