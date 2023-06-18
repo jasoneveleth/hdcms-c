@@ -43,7 +43,6 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desin
 
         struct matrix *matrix_without_max_peak_p;
         struct vec u; // peak with max y value
-        bool m1_has_larger_peak = mat_get(m1_copy, m1_argmax, 1) >= mat_get(m2_copy, m2_argmax, 1);
         double m1_max_y = vec_get(m1_ys, m1_argmax);
         double m2_max_y = vec_get(m2_ys, m2_argmax);
         if (m1_max_y > m2_max_y) {

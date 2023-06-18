@@ -878,30 +878,6 @@ test_analytes_normal_1_1_1(void)
     return ret;
 }
 
-static struct matarray
-get_reps(void)
-{
-    struct matarray replicates = matarr_zeros(5);
-    long i = 0;
-    long j = 0;
-    for (size_t k = 0; k < 5; k++) {
-        // calling with NULL returns the length of the string
-        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
-        char *buf = safe_calloc(bufsz + 1, sizeof(char));
-
-        safe_snprintf(buf, bufsz + 1, DATA_DIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
-        struct matrix m = mat_from_file(buf);
-        free(buf);
-
-        matarr_set(replicates, k, m);
-    }
-
-    for (size_t k = 0; k < 5; k++) {
-        printf("%ld\n", matarr_get(replicates, k).len1);
-    }
-    return replicates;
-}
-
 static bool
 test_similarity_analysis(void)
 {
