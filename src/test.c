@@ -878,18 +878,42 @@ test_analytes_normal_1_1_1(void)
     return ret;
 }
 
+static struct matarray
+get_reps(void)
+{
+    struct matarray replicates = matarr_zeros(5);
+    long i = 0;
+    long j = 0;
+    for (size_t k = 0; k < 5; k++) {
+        // calling with NULL returns the length of the string
+        size_t bufsz = safe_snprintf(NULL, 0, DATA_DIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
+        char *buf = safe_calloc(bufsz + 1, sizeof(char));
+
+        safe_snprintf(buf, bufsz + 1, DATA_DIR "analytes_normal_%zd_%zd_%zd.txt", i+1, k+1, j+1);
+        struct matrix m = mat_from_file(buf);
+        free(buf);
+
+        matarr_set(replicates, k, m);
+    }
+
+    for (size_t k = 0; k < 5; k++) {
+        printf("%ld\n", matarr_get(replicates, k).len1);
+    }
+    return replicates;
+}
+
 static bool
 test_similarity_analysis(void)
 {
     printf(__func__);
     double soldata[] = {
-        2.714820552749603e-11,     3.133250698158485e-03,     3.624474914739576e-08,
-        1.274166485409238e-07,     6.966236433131534e-06,     8.158015509877866e-13,
-        2.200872268233036e-02,                         0,     2.204101096985747e-04,
-        8.963423883881168e-01,     4.810626370915526e-16,     5.518881843724404e-19,
-        2.459234783200257e-04,     4.308393317187379e-06,     1.266741377548182e-03,
-        6.570605538696780e-02,     1.212102981190234e-05,     1.963276486504726e-10,
-        9.445490457064037e-03,     9.054240490062887e-01,     8.650218111500563e-01,
+       4.9724471844829e-06,   0.0034324525562574,   0.0012348150309999, 
+       3.0830648255571e-07,  7.6289687969678e-06,  8.1476117849199e-11, 
+         0.031483737653354,  0.00036894878571581,  0.00029186337791813, 
+          0.89823840240846,  1.5217240207035e-07,  2.2572257818931e-08, 
+       0.00025774796614895,    0.025567196737203,   0.0061176439253594, 
+         0.066829119981499,  5.4313071899279e-05,   5.999880022382e-06, 
+        0.0094513789777955,      0.9069065686973,      0.8652981846375, 
     };
     struct matrix sol = mat_from_data(soldata, 7, 3, 3, false);
 
@@ -935,7 +959,7 @@ test_similarity_analysis(void)
     printf("\n");
     for (size_t i = 0; i < 7; i++) {
         for (size_t j = 0; j < 3; j++) {
-            printf("%10.5g ", mat_get(sol, i, j) - mat_get(similarity_measures, i, j));
+            printf("%20.14g, ", mat_get(similarity_measures, i, j));
         }
         printf("\n");
     }
@@ -3313,7 +3337,7 @@ test_bound_x_vals(void)
     size_t found3 = false;
     size_t found4 = false;
     for (size_t i = 0; i < a.len1; i++) {
-        double val = mat_get(a, i, 0);
+        double val = mat_get(a, i, 1);
         if (val == 0.7/2) {
             found1 = true;
         } else if (val == 0.8/2) {
@@ -3370,7 +3394,6 @@ int main(int argc, char *argv[])
         test_edgecase_contains_0_peak_stat,
         test_edgecase_0_peak_stat,
         test_edge_case_0_peak_sim,
-        // test_edge_case_0_cos_sim,
         test_read_line_w_newline,
         test_read_line_wo_newline,
         test_vec_read_simple,
@@ -3382,6 +3405,10 @@ int main(int argc, char *argv[])
         test_mat_read_trailing_white_space,
         test_mat_read_leading_white_space,
         test_analytes_normal_1_1_1,
+        // this test is just to ensure we haven't changed anything, not the
+        // correctness of an algorithm, if it fails, know that something
+        // changed, and if that's okay (and the results are similar) just fix it
+        // so it passes
         test_similarity_analysis,
 
         // 1D
@@ -3448,7 +3475,7 @@ int main(int argc, char *argv[])
         test_symmetric_1d,
         test_peak_stat_all_through,
         test_bound_x,
-        // test_bound_x_vals,
+        test_bound_x_vals,
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);
