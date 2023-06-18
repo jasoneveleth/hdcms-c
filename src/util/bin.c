@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <math.h>
+#include "array.h"
 #include "bin.h"
 
 struct matrix 
@@ -71,11 +72,24 @@ spec_vec(const struct matrix m, double start, double end, double num_bins)
 }
 
 void
-scaled_data(const struct matrix m)
+scaled_data(const struct matrix m, char type)
 {
-    struct vec v = vec_from_col(m, 1);
-    double max = vec_max(v);
-    vec_invscale(v, max);
+    if (type == 'm') {
+        // max
+        struct vec v = vec_from_col(m, 1);
+        double max = vec_max(v);
+        vec_invscale(v, max);
+    } else if (type == 'u') {
+        // unit
+        struct vec v = vec_from_col(m, 1);
+        double dot = vec_dot(v, v);
+        vec_invscale(v, sqrt(dot));
+    } else if (type == 'n') {
+        // no scaling
+        return;
+    } else {
+        WARNING("specified unimplemented scaling `%c`, must be: m, u, or n", type);
+    }
 }
 
 double 

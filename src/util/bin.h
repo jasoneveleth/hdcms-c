@@ -8,14 +8,17 @@ size_t min2(const size_t x, const size_t y);
 size_t min3(const size_t x, const size_t y, const size_t z);
 
 /*
- * Scales input data (y-values) between 0 and 1
+ * Scales input data's y-values
  *
- * input: nx2 matrix of a spectra measurement coordinates
+ * input: nx2 matrix of a spectra measurement coordinates, char representing type
  * output: none
  *
  * Note: mutates the matrix in place.
+ * 'm' => scale so the max is 1
+ * 'n' => no scaling
+ * 'u' => unit scaling (turn it into a unit vector)
  */
-void scaled_data(const struct matrix m);
+void scaled_data(const struct matrix m, char type);
 
 /*
  * This function bins the spectra m (an array of (x,y) pairs) into bins

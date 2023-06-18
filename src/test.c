@@ -956,7 +956,7 @@ test_scaled_data(void)
     printf(__func__);
     struct matrix m = mat_from_file(DATA_DIR "CM1_1_4.txt");
     struct matrix sol = mat_from_data(cm1_1_4_scaled, 231, 2, 2, 0);
-    scaled_data(m);
+    scaled_data(m, 'm');
     bool ret = mat_equal(m, sol);
     mat_free(m);
     return ret;
@@ -971,7 +971,7 @@ test_spec_vec(void)
 
     struct matrix m = mat_from_file(DATA_DIR "CM1_1_4.txt");
 
-    scaled_data(m);
+    scaled_data(m, 'm');
     struct vec v = spec_vec(m, 0, end, 9000);
     bool ret = vec_equal(v, sol);
     vec_free(v);
@@ -998,7 +998,7 @@ test_spec_vec_all(void)
         struct matrix m = mat_from_file(filename);
         free(filename);
 
-        scaled_data(m);
+        scaled_data(m, 'm');
         struct vec v = spec_vec(m, 0, end, 9000);
         ret = ret && vec_equal(v, sol);
         vec_free(v);
@@ -1030,7 +1030,7 @@ test_spec_vec_all_matarr(void)
         free(filename);
 
         struct matrix m = matarr_get(A, i);
-        scaled_data(m);
+        scaled_data(m, 'm');
         struct vec v = spec_vec(m, 0, end, 9000);
         ret = ret && vec_equal(v, sol);
         vec_free(v);
@@ -1055,7 +1055,7 @@ test_bin_stat(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1082,7 +1082,7 @@ test_prob_dot_prob_through(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1096,7 +1096,7 @@ test_prob_dot_prob_through(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1156,16 +1156,16 @@ test_spec_vec_10_CM1_28(void)
     struct matrix A_8 = mat_from_file(DATA_DIR "CM1_28_8.txt");
     struct matrix A_9 = mat_from_file(DATA_DIR "CM1_28_9.txt");
     struct matrix A_10 = mat_from_file(DATA_DIR "CM1_28_10.txt");
-    scaled_data(A_1);
-    scaled_data(A_2);
-    scaled_data(A_3);
-    scaled_data(A_4);
-    scaled_data(A_5);
-    scaled_data(A_6);
-    scaled_data(A_7);
-    scaled_data(A_8);
-    scaled_data(A_9);
-    scaled_data(A_10);
+    scaled_data(A_1, 'm');
+    scaled_data(A_2, 'm');
+    scaled_data(A_3, 'm');
+    scaled_data(A_4, 'm');
+    scaled_data(A_5, 'm');
+    scaled_data(A_6, 'm');
+    scaled_data(A_7, 'm');
+    scaled_data(A_8, 'm');
+    scaled_data(A_9, 'm');
+    scaled_data(A_10, 'm');
     struct vec A_1_spec = spec_vec(A_1, 0, end, 9000);
     struct vec A_2_spec = spec_vec(A_2, 0, end, 9000);
     struct vec A_3_spec = spec_vec(A_3, 0, end, 9000);
@@ -1246,7 +1246,7 @@ test_bin_stats_CM1_28(void)
 
         struct matrix A_i = mat_from_file(filename);
         free(filename);
-        scaled_data(A_i);
+        scaled_data(A_i, 'm');
         matarr_set(L, i, A_i);
     }
     struct matrix sol = mat_from_file(DATA_DIR "bin_stats_CM1_28.txt");
@@ -1270,7 +1270,7 @@ test_CM1_25_and_CM1_28(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1284,7 +1284,7 @@ test_CM1_25_and_CM1_28(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1310,7 +1310,7 @@ test_CM1_25_and_CM1_10(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1324,7 +1324,7 @@ test_CM1_25_and_CM1_10(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1349,7 +1349,7 @@ test_CM1_27_and_CM1_4(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1363,7 +1363,7 @@ test_CM1_27_and_CM1_4(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1388,7 +1388,7 @@ test_CM1_1_and_CM1_11(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1402,7 +1402,7 @@ test_CM1_1_and_CM1_11(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1427,7 +1427,7 @@ test_CM1_24_and_CM1_21(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1441,7 +1441,7 @@ test_CM1_24_and_CM1_21(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1466,7 +1466,7 @@ test_CM1_25_and_CM1_21(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_25_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1480,7 +1480,7 @@ test_CM1_25_and_CM1_21(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1505,7 +1505,7 @@ test_CM1_23_and_CM1_8(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1519,7 +1519,7 @@ test_CM1_23_and_CM1_8(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1544,7 +1544,7 @@ test_CM1_10_and_CM1_21(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1558,7 +1558,7 @@ test_CM1_10_and_CM1_21(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_21_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1583,7 +1583,7 @@ test_CM1_10_and_CM1_22(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1597,7 +1597,7 @@ test_CM1_10_and_CM1_22(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1622,7 +1622,7 @@ test_CM1_10_and_CM1_7(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_10_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1636,7 +1636,7 @@ test_CM1_10_and_CM1_7(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1661,7 +1661,7 @@ test_CM1_11_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1675,7 +1675,7 @@ test_CM1_11_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1700,7 +1700,7 @@ test_CM1_11_and_CM1_3(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1714,7 +1714,7 @@ test_CM1_11_and_CM1_3(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1739,7 +1739,7 @@ test_CM1_12_and_CM1_18(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1753,7 +1753,7 @@ test_CM1_12_and_CM1_18(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1778,7 +1778,7 @@ test_CM1_12_and_CM1_23(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1792,7 +1792,7 @@ test_CM1_12_and_CM1_23(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1817,7 +1817,7 @@ test_CM1_13_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1831,7 +1831,7 @@ test_CM1_13_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1856,7 +1856,7 @@ test_CM1_14_and_CM1_3(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_14_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1870,7 +1870,7 @@ test_CM1_14_and_CM1_3(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1895,7 +1895,7 @@ test_CM1_15_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1909,7 +1909,7 @@ test_CM1_15_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1934,7 +1934,7 @@ test_CM1_15_and_CM1_13(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_15_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1948,7 +1948,7 @@ test_CM1_15_and_CM1_13(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_13_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -1973,7 +1973,7 @@ test_CM1_18_and_CM1_5(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -1987,7 +1987,7 @@ test_CM1_18_and_CM1_5(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2012,7 +2012,7 @@ test_CM1_20_and_CM1_11(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2026,7 +2026,7 @@ test_CM1_20_and_CM1_11(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2051,7 +2051,7 @@ test_CM1_20_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2065,7 +2065,7 @@ test_CM1_20_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2090,7 +2090,7 @@ test_CM1_20_and_CM1_17(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2104,7 +2104,7 @@ test_CM1_20_and_CM1_17(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2129,7 +2129,7 @@ test_CM1_20_and_CM1_20(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2143,7 +2143,7 @@ test_CM1_20_and_CM1_20(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2168,7 +2168,7 @@ test_CM1_22_and_CM1_17(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2182,7 +2182,7 @@ test_CM1_22_and_CM1_17(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_17_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2207,7 +2207,7 @@ test_CM1_23_and_CM1_22(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_23_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2221,7 +2221,7 @@ test_CM1_23_and_CM1_22(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_22_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2246,7 +2246,7 @@ test_CM1_24_and_CM1_11(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_24_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2260,7 +2260,7 @@ test_CM1_24_and_CM1_11(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2285,7 +2285,7 @@ test_CM1_26_and_CM1_1(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2299,7 +2299,7 @@ test_CM1_26_and_CM1_1(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2324,7 +2324,7 @@ test_CM1_26_and_CM1_11(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2338,7 +2338,7 @@ test_CM1_26_and_CM1_11(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_11_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2363,7 +2363,7 @@ test_CM1_26_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2377,7 +2377,7 @@ test_CM1_26_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2402,7 +2402,7 @@ test_CM1_26_and_CM1_2(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2416,7 +2416,7 @@ test_CM1_26_and_CM1_2(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2441,7 +2441,7 @@ test_CM1_27_and_CM1_16(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2455,7 +2455,7 @@ test_CM1_27_and_CM1_16(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_16_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2480,7 +2480,7 @@ test_CM1_27_and_CM1_28(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_27_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2494,7 +2494,7 @@ test_CM1_27_and_CM1_28(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2519,7 +2519,7 @@ test_CM1_28_and_CM1_1(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2533,7 +2533,7 @@ test_CM1_28_and_CM1_1(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2558,7 +2558,7 @@ test_CM1_28_and_CM1_20(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_28_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2572,7 +2572,7 @@ test_CM1_28_and_CM1_20(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2597,7 +2597,7 @@ test_CM1_1_and_CM1_8(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_1_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2611,7 +2611,7 @@ test_CM1_1_and_CM1_8(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2636,7 +2636,7 @@ test_CM1_2_and_CM1_2(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2650,7 +2650,7 @@ test_CM1_2_and_CM1_2(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2675,7 +2675,7 @@ test_CM1_2_and_CM1_26(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2689,7 +2689,7 @@ test_CM1_2_and_CM1_26(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_26_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2714,7 +2714,7 @@ test_CM1_2_and_CM1_6(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_2_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2728,7 +2728,7 @@ test_CM1_2_and_CM1_6(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2753,7 +2753,7 @@ test_CM1_3_and_CM1_18(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2767,7 +2767,7 @@ test_CM1_3_and_CM1_18(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_18_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2792,7 +2792,7 @@ test_CM1_3_and_CM1_20(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2806,7 +2806,7 @@ test_CM1_3_and_CM1_20(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2831,7 +2831,7 @@ test_CM1_3_and_CM1_6(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2845,7 +2845,7 @@ test_CM1_3_and_CM1_6(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2870,7 +2870,7 @@ test_CM1_4_and_CM1_6(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_4_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2884,7 +2884,7 @@ test_CM1_4_and_CM1_6(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2909,7 +2909,7 @@ test_CM1_5_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2923,7 +2923,7 @@ test_CM1_5_and_CM1_12(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_12_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2948,7 +2948,7 @@ test_CM1_5_and_CM1_20(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_5_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -2962,7 +2962,7 @@ test_CM1_5_and_CM1_20(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_20_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -2987,7 +2987,7 @@ test_CM1_7_and_CM1_9(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_7_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -3001,7 +3001,7 @@ test_CM1_7_and_CM1_9(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -3026,7 +3026,7 @@ test_CM1_8_and_CM1_19(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_8_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -3040,7 +3040,7 @@ test_CM1_8_and_CM1_19(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_19_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -3065,7 +3065,7 @@ test_CM1_9_and_CM1_3(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -3079,7 +3079,7 @@ test_CM1_9_and_CM1_3(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_3_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -3104,7 +3104,7 @@ test_CM1_9_and_CM1_6(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_9_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(A, i, m);
         free(filename);
     }
@@ -3118,7 +3118,7 @@ test_CM1_9_and_CM1_6(void)
         safe_snprintf(filename, bufsz + 1, DATA_DIR "CM1_6_%ld.txt", i+1); // i+1 for 1-indexed
 
         struct matrix m = mat_from_file(filename);
-        scaled_data(m);
+        scaled_data(m, 'm');
         matarr_set(B, i, m);
         free(filename);
     }
@@ -3141,12 +3141,12 @@ test_CM1_10_vs_21_sanity_check(void)
     struct matrix n = mat_from_file(DATA_DIR "CM1_21_1.txt");
     struct matrix n2 = mat_from_file(DATA_DIR "CM1_21_3.txt");
     struct matrix n3 = mat_from_file(DATA_DIR "CM1_21_4.txt");
-    scaled_data(m);
-    scaled_data(m2);
-    scaled_data(m3);
-    scaled_data(n);
-    scaled_data(n2);
-    scaled_data(n3);
+    scaled_data(m, 'm');
+    scaled_data(m2, 'm');
+    scaled_data(m3, 'm');
+    scaled_data(n, 'm');
+    scaled_data(n2, 'm');
+    scaled_data(n3, 'm');
     struct matrix data[3];
     data[0] = m;
     data[1] = m2;
@@ -3368,6 +3368,35 @@ test_little_peaks_under_close_big_peaks(void)
 }
 
 static bool
+test_scaling(void)
+{
+    printf(__func__);
+    double mdata[] = {1, 3, 
+        2, 5, 
+        3, 2,
+        4, 4,
+        5, 3
+    };
+    struct matrix m = mat_from_data(mdata, 5, 2, 2, 0);
+    struct matrix mu = mat_copy(m);
+    struct matrix mn = mat_copy(m);
+    struct matrix mm = m;
+
+    scaled_data(mm, 'm');
+    scaled_data(mu, 'u');
+    scaled_data(mn, 'n');
+
+    bool n_good = mat_get(mn, 0, 1) == 3 && mat_get(mn, 3, 1) == 4;
+    bool u_good = mat_get(mu, 0, 1) == 1/sqrt(7.) && mat_get(mu, 2, 1) == 2/(3.*sqrt(7.));
+    bool m_good = mat_get(mm, 1, 1) == 1.0 && mat_get(mm, 3, 1) == 4./5;
+    bool ret = n_good && u_good && m_good;
+
+    mat_free(mn);
+    mat_free(mu);
+    return ret;
+}
+
+static bool
 simple(void)
 {
     printf(__func__);
@@ -3495,6 +3524,7 @@ int main(int argc, char *argv[])
         test_bound_x,
         test_bound_x_vals,
         test_little_peaks_under_close_big_peaks,
+        test_scaling,
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);

@@ -78,7 +78,7 @@ file_readable(const char *const path)
 }
 
 static struct matrix
-filenames_to_stats(char *str, int mflag, double start, double end, double num_bins)
+filenames_to_stats(char *str, int mflag, double start, double end, double num_bins, char scaling)
 {
     struct matarray arr = matarr_zeros(2);
 
@@ -90,7 +90,7 @@ filenames_to_stats(char *str, int mflag, double start, double end, double num_bi
             arr.data = safe_realloc(arr.data, arr.length * sizeof(*arr.data));
         }
         struct matrix m = mat_from_file(path);
-        scaled_data(m); // this is redundant in TWOD since the data we are given is scaled
+        scaled_data(m, scaling);
         matarr_set(arr, i, m);
     }
     arr.length = i; // wastes some of the malloc'd mem but that's okay
@@ -127,7 +127,7 @@ list_file(const char *const filename, const struct matarray arr, const size_t i)
     fclose(fileptr);                     // Close the file
     buffer[len] = '\0';                  // NUL terminate the string
 
-    struct matrix stats = filenames_to_stats(buffer, mflag, 0, 900. * (8999. / 9000.), 9000.);
+    struct matrix stats = filenames_to_stats(buffer, mflag, 0, 900. * (8999. / 9000.), 9000., 'm');
     free(buffer);
     matarr_set(arr, i, stats);
 }
@@ -135,7 +135,7 @@ list_file(const char *const filename, const struct matarray arr, const size_t i)
 static void
 list_option(char *str, struct matarray arr, const size_t i)
 {
-    struct matrix stats = filenames_to_stats(str, mflag, 0, 900. * (8999. / 9000.), 9000.);
+    struct matrix stats = filenames_to_stats(str, mflag, 0, 900. * (8999. / 9000.), 9000., 'm');
     matarr_set(arr, i, stats);
 }
 
