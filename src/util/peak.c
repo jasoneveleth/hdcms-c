@@ -44,10 +44,30 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desin
         struct matrix *matrix_without_max_peak_p;
         struct vec u; // peak with max y value
         bool m1_has_larger_peak = mat_get(m1_copy, m1_argmax, 1) >= mat_get(m2_copy, m2_argmax, 1);
-        matrix_without_max_peak_p = m1_has_larger_peak ? &m2_copy : &m1_copy;
-        u = m1_has_larger_peak
-            ? vec_from_row(m1_copy, m1_argmax)
-            : vec_from_row(m2_copy, m2_argmax);
+        double m1_max_y = vec_get(m1_ys, m1_argmax);
+        double m2_max_y = vec_get(m2_ys, m2_argmax);
+        if (m1_max_y > m2_max_y) {
+            matrix_without_max_peak_p = &m2_copy;
+            u = vec_from_row(m1_copy, m1_argmax);
+        } else if (m1_max_y < m2_max_y) {
+            matrix_without_max_peak_p = &m1_copy;
+            u = vec_from_row(m2_copy, m2_argmax);
+        } else {
+            // equal, break tie with lexigraphic sort
+            size_t i = 0;
+            for (; vec_get(m1_ys, i) == vec_get(m2_ys, i); i++) {
+                if (i >= n - 1) {
+                    break;
+                }
+            }
+            if (mat_get(m1_copy, i, 1) > mat_get(m2_copy, i, 1)) {
+                matrix_without_max_peak_p = &m2_copy;
+                u = vec_from_row(m1_copy, m1_argmax);
+            } else {
+                matrix_without_max_peak_p = &m1_copy;
+                u = vec_from_row(m2_copy, m2_argmax);
+            }
+        }
 
         struct vec sim_scores = vec_zeros(matrix_without_max_peak_p->len1);
         for (size_t j = 0; j < matrix_without_max_peak_p->len1; j++) {
