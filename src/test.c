@@ -956,13 +956,6 @@ test_similarity_analysis(void)
         }
     }
 
-    printf("\n");
-    for (size_t i = 0; i < 7; i++) {
-        for (size_t j = 0; j < 3; j++) {
-            printf("%20.14g, ", mat_get(similarity_measures, i, j));
-        }
-        printf("\n");
-    }
     matarr_free(analyte_peak_stats);
     bool ret = mat_equal(similarity_measures, sol);
     mat_free(similarity_measures);
@@ -3294,6 +3287,22 @@ test_peak_stat_all_through(void)
 }
 
 static bool
+test_peak_order_matters(void)
+{
+    printf(__func__);
+    double m1data[] = {0.2, 0.5, 1e-2, 1e-2,
+        0.4, 1.0, 1e-2, 1e-2};
+    double m2data[] = {0.5, 0.95, 1e-2, 1e-2,
+        0.7, 1.0, 1e-2, 1e-2};
+    struct matrix m1 = mat_from_data(m1data, 2, 4, 4, false);
+    struct matrix m2 = mat_from_data(m2data, 2, 4, 4, false);
+    double d = peak_sim_measure_L2(m1, m2, 1e-4, 3);
+    double d2 = peak_sim_measure_L2(m2, m1, 1e-4, 3);
+    bool ret = d == d2;
+    return ret;
+}
+
+static bool
 test_bound_x(void)
 {
     printf(__func__);
@@ -3474,6 +3483,8 @@ int main(int argc, char *argv[])
         test_CM1_10_vs_21_sanity_check,
         test_symmetric_1d,
         test_peak_stat_all_through,
+
+        test_peak_order_matters,
         test_bound_x,
         test_bound_x_vals,
     };
