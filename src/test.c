@@ -3339,6 +3339,35 @@ test_bound_x_vals(void)
 }
 
 static bool
+test_little_peaks_under_close_big_peaks(void)
+{
+    printf(__func__);
+    double udata[] = {1, 5, 1.1, 0.2};
+    double vdata[] = {1, 0.2, 1.1, 4.9};
+
+    struct matrix u = mat_from_data(udata, 2, 2, 2, false);
+    struct matrix v = mat_from_data(vdata, 2, 2, 2, false);
+
+    struct matrix adata[] = {u, v};
+    struct matarray input = matarr_from_data(adata, 2, false);
+    struct matrix a = peak_stat(input, 10, 0.05);
+
+    bool ret = a.len1 == 2;
+    size_t found1 = false;
+    size_t found2 = false;
+    for (size_t i = 0; i < a.len1; i++) {
+        double val = mat_get(a, i, 1);
+        if (val == (5+0.2)/2) {
+            found1 = true;
+        }
+        if (val == (4.9+0.2)/2) {
+            found2 = true;
+        }
+    }
+    return ret && found1 && found2;
+}
+
+static bool
 simple(void)
 {
     printf(__func__);
@@ -3465,6 +3494,7 @@ int main(int argc, char *argv[])
         test_peak_order_matters,
         test_bound_x,
         test_bound_x_vals,
+        test_little_peaks_under_close_big_peaks,
     };
 
     const size_t len = sizeof(tests)/sizeof(tests[0]);
