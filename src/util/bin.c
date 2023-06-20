@@ -6,7 +6,6 @@
 struct matrix 
 bin_stat_1D(const struct matarray A, double start, double end, double num_bins)
 {
-    matarr_printf(A);
     struct matrix M = mat_zeros(A.length, (size_t)num_bins);
     for (size_t i = 0; i < A.length; i++) {
         struct matrix spectra = matarr_get(A, i);
@@ -14,7 +13,6 @@ bin_stat_1D(const struct matarray A, double start, double end, double num_bins)
         vec_to_row(M, bin_heights, i);
         vec_free(bin_heights);
     }
-    mat_printf(M);
 
     struct matrix B = mat_zeros((size_t)num_bins, 2);
     for (size_t i = 0; i < num_bins; i++) {
@@ -23,7 +21,6 @@ bin_stat_1D(const struct matarray A, double start, double end, double num_bins)
         mat_set(B, i, 1, vec_std(ith_bin));
     }
     mat_free(M);
-    mat_printf(B);
     return B;
 }
 
