@@ -81,6 +81,7 @@ static struct matrix
 filenames_to_stats(char *str, int mflag, double start, double end, double num_bins, char scaling, double xtol)
 {
     struct matarray arr = matarr_zeros(2);
+    printf("%c %g\n", scaling, xtol);
 
     char *path;
     size_t i;
