@@ -6,7 +6,6 @@
 struct matrix 
 bin_stat_1D(const struct matarray A, double start, double end, double num_bins)
 {
-    matarr_printf(A);
     struct matrix M = mat_zeros(A.length, (size_t)num_bins);
     for (size_t i = 0; i < A.length; i++) {
         struct matrix spectra = matarr_get(A, i);
@@ -61,7 +60,9 @@ get_bin(const struct vec bins, double val)
 struct vec 
 spec_vec(const struct matrix m, double start, double end, double num_bins)
 {
-    struct vec t = vec_linspace(start, end, num_bins);
+    // +1 since linspace allocates a size $n$ array, but that's 1 less than the
+    // number of bins
+    struct vec t = vec_linspace(start, end, num_bins+1);
     struct vec v = vec_zeros((size_t)num_bins);
 
     for (size_t i = 0; i < m.len1; i++) {
