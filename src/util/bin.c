@@ -6,6 +6,7 @@
 struct matrix 
 bin_stat_1D(const struct matarray A, double start, double end, double num_bins)
 {
+    matarr_printf(A);
     struct matrix M = mat_zeros(A.length, (size_t)num_bins);
     for (size_t i = 0; i < A.length; i++) {
         struct matrix spectra = matarr_get(A, i);
