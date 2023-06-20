@@ -262,6 +262,7 @@ vec_equal(const struct vec v1, const struct vec v2)
     bool ret = true;
     for (size_t i = 0; i < v1.length; i++) {
         if (!equals(vec_get(v1, i), vec_get(v2, i))) {
+            printf("%g\n", vec_get(v1, i));
             ret = false;
         }
     }
@@ -770,11 +771,12 @@ matarr_zeros(size_t len)
 void
 matarr_free(struct matarray arr)
 {
-    for (size_t i = 0; i < arr.length; i++) {
-        mat_free(matarr_get(arr, i));
-    }
-    if (arr.is_owner)
+    if (arr.is_owner) {
+        for (size_t i = 0; i < arr.length; i++) {
+            mat_free(matarr_get(arr, i));
+        }
         free(arr.data);
+    }
 }
 
 void

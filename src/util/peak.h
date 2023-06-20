@@ -49,7 +49,7 @@ size_t min3(const size_t x, const size_t y, const size_t z);
  * greater than or less than `n`, and we will use the min of `m1.len2`, `m2.len2`,
  * and `n` as n moving forward. 
  *
- * The desingularization is the amount we add to the standard deviation to avoid
+ * The `desingularization` is the amount we add to the standard deviation to avoid
  * divide by 0 errors.
  *
  * We compare the most important (highest) peak in both matrices with all the
@@ -101,8 +101,12 @@ double cos_sim_L2(const struct vec u, const struct vec v, double desingularizati
  * it's y-value to -inf so it is never the closest or highest peak again.)
  *
  * This is a helper routine for peak_stat.
+ *
+ * The `xtol` is the amount of distance in the x direction that we permit for
+ * being part of the same peak.
+ *
  */
-struct matarray peak_sort(const struct matarray replicates, size_t n);
+struct matarray peak_sort(const struct matarray replicates, size_t n, double xtol);
 
 /*
  * Creates the peak statistics matrix from a list of peaks.
@@ -116,7 +120,9 @@ struct matarray peak_sort(const struct matarray replicates, size_t n);
  * of the x-values, std of the y-values. These are the 4 columns of the matrix
  * we are returning. The ith row of the matrix we return is the statistics for
  * the ith peak from the call to `peak_sort`.
+ *
+ * See abox for `xtol` description.
  */
-struct matrix peak_stat(const struct matarray replicates, size_t n);
+struct matrix peak_stat(const struct matarray replicates, size_t n, double xtol);
 
 #endif // PEAK_H

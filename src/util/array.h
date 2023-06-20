@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <stdbool.h>
+#include <math.h>
 
 #if !defined(RED) || !defined(RESET)
 #define RED ""
@@ -67,6 +68,9 @@ struct matrix
 static inline double
 vec_get(const struct vec v, size_t i)
 {
+    if (i >= v.length) {
+        printf("oh no\n");
+    }
     assert(i < v.length && "trying to get an index outside bounds in vector");
     return v.data[v.stride * i];
 }
