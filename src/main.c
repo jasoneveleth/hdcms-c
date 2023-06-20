@@ -98,7 +98,10 @@ filenames_to_stats(char *str, int mflag, double start, double end, double num_bi
     if (mflag == ONED) {
         stats = bin_stat_1D(arr, start, end, num_bins);
     } else if (mflag == TWOD) {
-        size_t n = matarr_get(arr, 0).len1; // >= longest possible length
+        size_t n = 0;
+        for (size_t i = 0; i < arr.length; i++) {
+            n += matarr_get(arr, i).len1;
+        }
         stats = peak_stat(arr, n, xtol);
     } else {
         printf("\n");
