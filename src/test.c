@@ -3393,6 +3393,17 @@ test_scaling(void)
 
     mat_free(mn);
     mat_free(mu);
+
+    double mdata1[] = {1, 0.4, 2, 69, 3, 2.3};
+    double mdata2[] = {1, 0.4, 2, 69, 3, 2.3};
+    double mdata3[] = {1, 0.4, 2, 69, 3, 2.3};
+    m = mat_from_data(mdata1, 3, 2, 2, 0);
+    struct matrix m2 = mat_from_data(mdata2, 3, 2, 2, 0);
+    struct matrix m3 = mat_from_data(mdata3, 3, 2, 2, 0);
+    scaled_data(m, 'm');
+    scaled_data(m2, 'n');
+    scaled_data(m3, 'u');
+    ret = ret && fabs(mat_get(m3, 1, 1)-0.99942813) < 0.0001 && mat_get(m2, 1, 1) == 69 && mat_get(m, 1, 1) == 1.;
     return ret;
 }
 
