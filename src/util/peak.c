@@ -106,8 +106,6 @@ peak_sim_measure_L2(const struct matrix m1, const struct matrix m2, double desin
 struct matrix
 peak_stat(const struct matarray replicates, size_t n, double xtol) 
 {
-    printf("%ld %g\n", n, xtol);
-    matarr_printf(replicates);
     if (replicates.length <= 0) {
         WARNING("peak_stat got %zd length array\n", replicates.length);
         struct matrix m = {0, 0, 0, NULL, false};
