@@ -1,17 +1,5 @@
 # High Dimensional Consensus Mass Spec - HDCMS
 
-# TODO
-
-* FF has the raw data without new lines
-* naming: these aren't really replicates, or repetitions, or
-  duplicates, they are just measurements (or aggregations of
-  measurements over time)
-* test whether "note on stability" matters at all
-* When binning and taking the max rather than the most recent
-  measurement in `spec_vec`.
-* make a cosine similarity, and test it against my implementation
-  using min-max test
-
 # Install
 
 ## Unix (mac and linux)
