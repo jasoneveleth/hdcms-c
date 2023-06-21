@@ -78,7 +78,7 @@ file_readable(const char *const path)
 }
 
 static struct matrix
-filenames_to_stats(char *str, int mflag, double start, double end, double num_bins, char scaling)
+filenames_to_stats(char *str, int mflag, double start, double end, double num_bins, char scaling, double xtol)
 {
     struct matarray arr = matarr_zeros(2);
 
@@ -98,8 +98,11 @@ filenames_to_stats(char *str, int mflag, double start, double end, double num_bi
     if (mflag == ONED) {
         stats = bin_stat_1D(arr, start, end, num_bins);
     } else if (mflag == TWOD) {
-        size_t n = matarr_get(arr, 0).len1; // >= longest possible length
-        stats = peak_stat(arr, n, inf);
+        size_t n = 0;
+        for (size_t i = 0; i < arr.length; i++) {
+            n += matarr_get(arr, i).len1;
+        }
+        stats = peak_stat(arr, n, xtol);
     } else {
         printf("\n");
         usage();
@@ -127,7 +130,7 @@ list_file(const char *const filename, const struct matarray arr, const size_t i)
     fclose(fileptr);                     // Close the file
     buffer[len] = '\0';                  // NUL terminate the string
 
-    struct matrix stats = filenames_to_stats(buffer, mflag, 0, 900. * (8999. / 9000.), 9000., 'm');
+    struct matrix stats = filenames_to_stats(buffer, mflag, 0, 900. * (8999. / 9000.), 9000., 'm', inf);
     free(buffer);
     matarr_set(arr, i, stats);
 }
@@ -135,7 +138,7 @@ list_file(const char *const filename, const struct matarray arr, const size_t i)
 static void
 list_option(char *str, struct matarray arr, const size_t i)
 {
-    struct matrix stats = filenames_to_stats(str, mflag, 0, 900. * (8999. / 9000.), 9000., 'm');
+    struct matrix stats = filenames_to_stats(str, mflag, 0, 900. * (8999. / 9000.), 9000., 'm', inf);
     matarr_set(arr, i, stats);
 }
 
