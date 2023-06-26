@@ -7,7 +7,7 @@
 Install cmake and git. Then, run this in your shell:
 
 ```bash
-git clone https://gitlab.nist.gov/gitlab/jje4/hdcms.git
+$ git clone https://github.com/jasoneveleth/hdcms-c
 cd hdcms
 cmake -B build
 make -C build
@@ -153,7 +153,7 @@ smallest stack space I can find of 128KB).
 Setup: 
 
 ```bash
-$ git clone git@github.com:brendangregg/FlameGraph
+$ git clone https://github.com/jasoneveleth/hdcms-c
 $ cd /path/to/bin
 $ ln -s /path/to/FlameGraph/stackcollapse-perf.pl
 $ ln -s /path/to/FlameGraph/flamegraph.pl
