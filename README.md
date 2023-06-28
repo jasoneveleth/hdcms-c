@@ -8,7 +8,7 @@ Install cmake and git. Then, run this in your shell:
 
 ```bash
 $ git clone https://github.com/jasoneveleth/hdcms-c
-cd hdcms
+cd hdcms-c
 cmake -B build
 make -C build
 ./build/test_runner
